@@ -1,34 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Suhyeon Yu — Portfolio
 
-## Getting Started
+A recruiter-focused portfolio for Suhyeon Yu, built with Next.js, React, TypeScript, and Tailwind CSS. The homepage links to dedicated case-study routes for selected work.
 
-First, run the development server:
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Quality checks:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm typecheck
+pnpm lint
+pnpm build
+pnpm test:e2e
+```
 
-## Learn More
+## Design reference
 
-To learn more about Next.js, take a look at the following resources:
+The compact editorial layout, floating profile menu, full-color stack treatment, and masked wave divider are inspired by [Colin Lienard's portfolio](https://colinlienard.com/en). Its [source project](https://github.com/colinlienard/colinlienard.com) is available under the MIT License. This repository implements the experience independently in Next.js and does not reuse Colin's personal content or assets.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The technology marks are local copies sourced from [Iconify](https://iconify.design/). ABC Fitness and Sungkyunkwan University marks are sourced from their official brand pages and remain the property of their respective owners. See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) for attribution and license notices.

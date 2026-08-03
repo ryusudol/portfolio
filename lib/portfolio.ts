@@ -20,9 +20,9 @@ export type ProjectLink = {
 export type Project = {
   id: "trainerize" | "unlearning-comparator" | "pytorch-cka";
   slug:
-    | "trainerize-profile-experience"
-    | "unlearning-comparator"
-    | "pytorch-cka";
+  | "trainerize-profile-experience"
+  | "unlearning-comparator"
+  | "pytorch-cka";
   title: string;
   context: string;
   description: string;
@@ -34,8 +34,8 @@ export type Project = {
   links: readonly ProjectLink[];
   confidentialityNote?: string;
   visual:
-    | { kind: "trainerize" }
-    | { kind: "image"; src: string; alt: string; unoptimized?: boolean };
+  | { kind: "trainerize" }
+  | { kind: "image"; src: string; alt: string; unoptimized?: boolean };
 };
 
 export type Technology = {
@@ -46,7 +46,6 @@ export const contact = {
   email: "suhyeon.yu.2789@gmail.com",
   github: "https://github.com/ryusudol",
   linkedin: "https://www.linkedin.com/in/suhyeon-yu",
-  resume: "/documents/Suhyeon-Yu-Resume.pdf",
   source: "https://github.com/ryusudol/portfolio",
 } as const;
 
@@ -61,7 +60,7 @@ export const experiences: readonly Experience[] = [
       "Working across a production web surface used by coaches and clients.",
       "Translating complex account, progress, and coaching information into a clearer responsive hierarchy.",
     ],
-    technologies: ["React", "TypeScript", "Responsive UI", "Design systems"],
+    technologies: ["React", "TypeScript", "Redux", "SCSS", "RxJS"],
     confidential: true,
     logo: {
       src: "/images/brands/abc-fitness-logo.png",
@@ -77,7 +76,7 @@ export const experiences: readonly Experience[] = [
       "Cut React rerenders by about 30% by migrating shared state from Context API to selector-based Zustand subscriptions.",
       "Iterated on interaction workflows through three Figma user-study rounds and helped ship an IEEE TVCG-published open-source platform.",
     ],
-    technologies: ["React", "TypeScript", "D3.js", "Zustand", "Figma"],
+    technologies: ["React", "TypeScript", "D3.js", "Zustand", "Redux", "Figma"],
     logo: {
       src: "/images/brands/skku.png",
       variant: "skku",
@@ -97,6 +96,7 @@ export const experiences: readonly Experience[] = [
       "TypeScript",
       "TanStack Query",
       "Tailwind CSS",
+      "Redux",
       "AWS",
     ],
     logo: {
@@ -123,7 +123,7 @@ export const projects: readonly Project[] = [
     ],
     metric: "Current",
     metricLabel: "product experience",
-    technologies: ["React", "TypeScript", "Responsive UI"],
+    technologies: ["React", "TypeScript"],
     links: [],
     confidentialityNote:
       "This case study stays intentionally high level. Visuals are reconstructed for the portfolio, and proprietary product details are not disclosed.",

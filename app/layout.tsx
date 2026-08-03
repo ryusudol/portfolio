@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
 
 const description =
   "Suhyeon Yu is a frontend-focused software engineer crafting web experiences for both humans and agents.";
@@ -79,7 +80,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={GeistSans.variable}
+      className={cn(GeistSans.variable, "font-sans")}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >

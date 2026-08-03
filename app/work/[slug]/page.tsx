@@ -5,8 +5,11 @@ import { ArrowLeft, ArrowUpRight } from "reicon-react";
 
 import { ProfileMenu } from "@/components/profile-menu";
 import { ProjectArtwork } from "@/components/project-artwork";
-import { TechnologyIcon } from "@/components/technology-icon";
+import { SkipToContent } from "@/components/skip-to-content";
+import { TechnologyBadge } from "@/components/technology-badge";
+import { buttonVariants } from "@/components/ui/button";
 import { getProject, projects } from "@/lib/portfolio";
+import { cn } from "@/lib/utils";
 
 type ProjectPageProps = {
   params: Promise<{ slug: string }>;
@@ -40,12 +43,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <>
-      <a
-        className="fixed top-3 left-3 z-[100] -translate-y-[180%] rounded-xl border border-border-strong bg-surface px-4 py-[0.7rem] text-[0.85rem] shadow-portfolio transition-transform duration-[160ms] ease-in-out focus:translate-y-0 motion-reduce:transition-none"
-        href="#content"
-      >
-        Skip to content
-      </a>
+      <SkipToContent />
       <div
         className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[8.5rem] max-sm:h-28 backdrop-blur-[1px] [background:linear-gradient(to_bottom,var(--color-background)_0%,color-mix(in_srgb,var(--color-background)_88%,transparent)_44%,transparent_100%)] [mask-image:linear-gradient(to_bottom,#000_0_72%,transparent_100%)]"
         aria-hidden="true"
@@ -57,7 +55,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         className="mx-auto flex w-[min(40rem,calc(100vw-2.5rem))] max-[420px]:w-[min(calc(100%-2rem),40rem)] flex-col gap-14 max-sm:gap-11 pt-44 max-sm:pt-[8.75rem] pb-20 animate-content-enter motion-reduce:animate-none"
       >
         <Link
-          className="inline-flex w-fit items-center gap-[0.45rem] text-[0.8rem] text-muted transition-colors duration-[140ms] ease-in-out hover:text-foreground motion-reduce:transition-none [&>svg]:size-4"
+          className={cn(
+            buttonVariants({ variant: "link" }),
+            "h-auto w-fit items-center gap-[0.45rem] p-0 text-[0.8rem] text-muted-foreground no-underline transition-colors duration-instant ease-in-out hover:text-foreground hover:no-underline motion-reduce:transition-none [&>svg]:size-4",
+          )}
           href="/#work"
         >
           <ArrowLeft aria-hidden="true" />
@@ -65,26 +66,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </Link>
 
         <header className="grid gap-4">
-          <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted uppercase">
+          <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted-foreground uppercase">
             {project.context}
           </p>
           <h1 className="m-0 font-display text-[clamp(2.5rem,9vw,4.25rem)] font-[520] italic leading-[0.95] tracking-[-0.045em]">
             {project.title}
           </h1>
-          <span className="max-w-[35rem] text-base leading-[1.68] text-pretty text-muted">
+          <span className="max-w-[35rem] text-base leading-[1.68] text-pretty text-muted-foreground">
             {project.description}
           </span>
           <ul
-            className="mt-2 flex list-none flex-wrap gap-[0.4rem] p-0 [&_li]:inline-flex [&_li]:items-center [&_li]:gap-[0.34rem] [&_li]:rounded-[0.55rem] [&_li]:border [&_li]:border-border [&_li]:bg-[color-mix(in_srgb,var(--color-surface)_72%,transparent)] [&_li]:px-2 [&_li]:py-[0.27rem] [&_li]:text-[0.7rem] [&_li]:text-muted"
+            className="mt-2 flex list-none flex-wrap gap-[0.4rem] p-0"
             aria-label={`${project.title} technologies`}
           >
             {project.technologies.map((technology) => (
               <li key={technology}>
-                <TechnologyIcon
-                  name={technology}
-                  className="size-[0.9rem] shrink-0"
-                />
-                <span>{technology}</span>
+                <TechnologyBadge name={technology} />
               </li>
             ))}
           </ul>
@@ -96,25 +93,25 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         <div className="grid gap-14">
           <section className="grid gap-[0.8rem]">
-            <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted uppercase">
+            <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted-foreground uppercase">
               Overview
             </p>
             <h2 className="m-0 max-w-[30rem] text-[1.18rem] font-[610] tracking-[-0.015em]">
               Making a complex system easier to understand.
             </h2>
-            <p className="m-0 text-[0.94rem] leading-[1.72] text-pretty text-muted">
+            <p className="m-0 text-[0.94rem] leading-[1.72] text-pretty text-muted-foreground">
               {project.overview}
             </p>
           </section>
 
           <section className="grid gap-[0.8rem]">
-            <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted uppercase">
+            <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted-foreground uppercase">
               Contribution
             </p>
             <h2 className="m-0 max-w-[30rem] text-[1.18rem] font-[610] tracking-[-0.015em]">
               What I worked on
             </h2>
-            <ul className="m-0 grid list-[circle] gap-[0.65rem] pl-[1.1rem] text-[0.9rem] leading-[1.65] text-muted">
+            <ul className="m-0 grid list-[circle] gap-[0.65rem] pl-[1.1rem] text-[0.9rem] leading-[1.65] text-muted-foreground">
               {project.highlights.map((highlight) => (
                 <li key={highlight}>{highlight}</li>
               ))}
@@ -128,7 +125,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <strong className="font-display text-[2.2rem] font-semibold italic">
               {project.metric}
             </strong>
-            <span className="text-right text-[0.78rem] text-muted">
+            <span className="text-right text-[0.78rem] text-muted-foreground">
               {project.metricLabel}
             </span>
           </aside>
@@ -138,7 +135,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <strong className="text-[0.8rem] font-[610]">
                 Confidentiality note
               </strong>
-              <p className="mt-[0.35rem] mb-0 text-[0.82rem] leading-[1.6] text-muted">
+              <p className="mt-[0.35rem] mb-0 text-[0.82rem] leading-[1.6] text-muted-foreground">
                 {project.confidentialityNote}
               </p>
             </aside>
@@ -152,7 +149,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               {project.links.map((link) => (
                 <a
                   key={link.href}
-                  className="inline-flex min-h-[2.7rem] items-center gap-[0.4rem] rounded-[0.8rem] border border-border bg-surface-alt px-[0.85rem] py-[0.65rem] text-[0.8rem] font-[560] transition-[transform,background-color] duration-[140ms] ease-in-out hover:-translate-y-0.5 hover:bg-surface-hover motion-reduce:transition-none [&>svg]:size-[0.9rem]"
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "h-auto min-h-[2.7rem] gap-[0.4rem] rounded-[0.8rem] border-border bg-surface-alt px-[0.85rem] py-[0.65rem] text-[0.8rem] font-[560] transition-[transform,background-color] duration-instant ease-in-out hover:-translate-y-0.5 hover:bg-surface-hover focus-visible:ring-0 motion-reduce:transition-none [&>svg]:size-[0.9rem]",
+                  )}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -166,7 +166,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
 
         <Link
-          className="mt-4 inline-flex w-fit items-center gap-[0.45rem] text-[0.86rem] text-muted underline decoration-border-strong underline-offset-[0.25rem] transition-colors duration-[140ms] ease-in-out hover:text-foreground motion-reduce:transition-none [&>svg]:size-4"
+          className={cn(
+            buttonVariants({ variant: "link" }),
+            "mt-4 h-auto w-fit items-center gap-[0.45rem] p-0 text-[0.86rem] text-muted-foreground underline decoration-border-strong underline-offset-[0.25rem] transition-colors duration-instant ease-in-out hover:text-foreground motion-reduce:transition-none [&>svg]:size-4",
+          )}
           href="/#work"
         >
           Explore the other selected projects

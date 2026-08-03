@@ -24,7 +24,7 @@ export function ProjectArtwork({
       >
         <div className="absolute size-36 rounded-full bg-[rgb(120_98_255/28%)] blur-[45px]" />
         <div
-          className={`relative z-[2] overflow-hidden rounded-portfolio border border-white/[0.62] bg-white/[0.88] p-3 shadow-[0_18px_45px_rgb(59_44_105/19%)] transition-transform duration-[220ms] ease-in-out group-hover:scale-[1.025] group-hover:-rotate-[0.4deg] dark:border-white/10 dark:bg-[rgb(31_29_42/91%)] ${variant === "detail" ? "w-[62%] max-sm:w-[72%]" : "w-[78%]"}`}
+          className={`relative z-[2] overflow-hidden rounded-portfolio border border-white/[0.62] bg-white/[0.88] p-3 shadow-[0_18px_45px_rgb(59_44_105/19%)] transition-transform duration-motion ease-in-out group-hover:scale-[1.025] group-hover:-rotate-[0.4deg] dark:border-white/10 dark:bg-[rgb(31_29_42/91%)] ${variant === "detail" ? "w-[62%] max-sm:w-[72%]" : "w-[78%]"}`}
         >
           <div className="flex items-center gap-[0.35rem]">
             <span className="grid size-[1.4rem] place-items-center rounded-[0.45rem] bg-gradient-to-br from-[#ff875f] to-[#7758ff] text-[0.68rem] font-[750] text-white">
@@ -65,7 +65,7 @@ export function ProjectArtwork({
     <div
       data-artwork
       data-project={project.id}
-      className={`relative grid ${heightClass} place-items-center overflow-hidden bg-[color-mix(in_srgb,var(--color-surface)_66%,var(--color-background))]`}
+      className={`relative grid ${heightClass} place-items-center overflow-hidden bg-surface`}
     >
       <div
         className="absolute inset-[12%] opacity-[0.46] blur-[35px] saturate-[130%]"
@@ -86,7 +86,7 @@ export function ProjectArtwork({
         width={680}
         height={480}
         sizes="(max-width: 680px) 86vw, 600px"
-        className={`relative z-[2] rounded-[0.9rem] border border-white/[0.38] object-cover shadow-[0_18px_42px_rgb(35_30_26/18%)] transition-transform duration-[220ms] ease-in-out group-hover:scale-[1.025] motion-reduce:transition-none ${imageSizeClass}`}
+        className={`relative z-[2] rounded-[0.9rem] border border-white/[0.38] object-cover shadow-[0_18px_42px_rgb(35_30_26/18%)] transition-transform duration-motion ease-in-out group-hover:scale-[1.025] motion-reduce:transition-none ${imageSizeClass}`}
         unoptimized={project.visual.unoptimized}
       />
     </div>

@@ -1,0 +1,22 @@
+---
+description: Icons must come only from reicon-react; never install or import other icon libraries.
+alwaysApply: true
+---
+
+# Icons: reicon-react only
+
+This project uses **`reicon-react` as the only icon library**.
+
+## Never do
+
+- Do not import from Lucide, Tabler, Phosphor, Remix, Hugeicons, Radix Icons, react-icons, Heroicons, Feather, or any other icon package.
+- Do not add those packages to `package.json` / lockfile.
+- Do not set `components.json` `iconLibrary` to anything that would pull a non-reicon icon package into app code.
+
+## Always do
+
+- Import icons from `reicon-react` (e.g. `import { Home, Check } from "reicon-react"`).
+- After `pnpm dlx shadcn@latest add …`, if generated UI code imports another icon library:
+  1. Replace those imports/usages with `reicon-react` equivalents.
+  2. Remove the unwanted icon dependency if the CLI installed it.
+- Keep Biome `noRestrictedImports` bans intact; do not weaken them to allow other icon libs.

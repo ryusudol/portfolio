@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { Devices, Palette } from "reicon-react";
+import Image from "next/image";
 
 const iconPaths: Record<string, string> = {
   AWS: "/images/technologies/aws.svg",
@@ -13,45 +12,29 @@ const iconPaths: Record<string, string> = {
   PyTorch: "/images/technologies/pytorch.svg",
   Python: "/images/technologies/python.svg",
   React: "/images/technologies/react.svg",
+  Redux: "/images/technologies/redux.svg",
+  RxJS: "/images/technologies/rxjs.svg",
+  SCSS: "/images/technologies/scss.svg",
   "TanStack Query": "/images/technologies/tanstack-query.svg",
   "Tailwind CSS": "/images/technologies/tailwindcss.svg",
   TypeScript: "/images/technologies/typescript.svg",
   Zustand: "/images/technologies/zustand.svg",
 };
 
-export function TechnologyIcon({
-  name,
-  className = "",
-}: {
+interface TechnologyIcon {
   name: string;
   className?: string;
-}) {
-  let icon: ReactNode = null;
+}
 
-  if (name === "Responsive UI") {
-    icon = <Devices className="size-full" style={{ color: "#4f8cff" }} />;
-  } else if (name === "Design systems") {
-    icon = <Palette className="size-full" style={{ color: "#e265a7" }} />;
-  } else {
-    const src = iconPaths[name];
-    if (src) {
-      icon = (
-        // biome-ignore lint/performance/noImgElement: these are tiny local SVG marks that do not benefit from image optimization
-        <img
-          src={src}
-          alt=""
-          width="40"
-          height="40"
-          className="size-full object-contain"
-        />
-      );
-    }
-  }
-
-  if (!icon) return null;
+export function TechnologyIcon({ name, className = "" }: TechnologyIcon) {
+  const src = iconPaths[name];
+  if (!src) return null;
 
   const nextJsStyles =
     name === "Next.js" ? "rounded-full bg-white p-[0.06em]" : "";
+  // Figma's tall viewBox fills the square and reads oversized next to mark icons.
+  const imageClassName =
+    name === "Figma" ? "size-[78%] object-contain" : "size-full object-contain";
 
   return (
     <span
@@ -60,7 +43,13 @@ export function TechnologyIcon({
       data-testid="technology-icon"
       aria-hidden="true"
     >
-      {icon}
+      <Image
+        src={src}
+        alt=""
+        width={40}
+        height={40}
+        className={imageClassName}
+      />
     </span>
   );
 }

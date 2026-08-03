@@ -21,7 +21,7 @@ export default function OpenGraphImage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        background: "#faf9f7",
+        background: "#f9fafc",
         color: "#292724",
         padding: "72px 80px",
         fontFamily: "sans-serif",
@@ -43,7 +43,7 @@ export default function OpenGraphImage() {
             marginBottom: 34,
           }}
         >
-          SOFTWARE ENGINEER · HOUSTON, TEXAS
+          SOFTWARE ENGINEER
         </span>
         <span
           style={{
@@ -65,7 +65,7 @@ export default function OpenGraphImage() {
             marginTop: 30,
           }}
         >
-          Building fast, polished web experiences at ABC Fitness.
+          Crafting web experiences for both humans and agents.
         </span>
         <span
           style={{

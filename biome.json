@@ -30,7 +30,43 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "lucide": "Use reicon-react only. Other icon libraries are forbidden.",
+              "lucide-react": "Use reicon-react only. Other icon libraries are forbidden.",
+              "@tabler/icons-react": "Use reicon-react only. Other icon libraries are forbidden.",
+              "@phosphor-icons/react": "Use reicon-react only. Other icon libraries are forbidden.",
+              "@remixicon/react": "Use reicon-react only. Other icon libraries are forbidden.",
+              "@hugeicons/react": "Use reicon-react only. Other icon libraries are forbidden.",
+              "@hugeicons/core-free-icons": "Use reicon-react only. Other icon libraries are forbidden.",
+              "@radix-ui/react-icons": "Use reicon-react only. Other icon libraries are forbidden.",
+              "react-icons": "Use reicon-react only. Other icon libraries are forbidden.",
+              "@heroicons/react": "Use reicon-react only. Other icon libraries are forbidden.",
+              "react-feather": "Use reicon-react only. Other icon libraries are forbidden."
+            },
+            "patterns": [
+              {
+                "group": [
+                  "lucide/**",
+                  "lucide-react/**",
+                  "@tabler/**",
+                  "@phosphor-icons/**",
+                  "@remixicon/**",
+                  "@hugeicons/**",
+                  "@radix-ui/react-icons/**",
+                  "react-icons/**",
+                  "@heroicons/**"
+                ],
+                "message": "Use reicon-react only. Other icon libraries are forbidden."
+              }
+            ]
+          }
+        }
+      }
     },
     "domains": {
       "next": "recommended",

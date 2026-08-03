@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -22,7 +21,11 @@ import {
   Sun,
 } from "reicon-react";
 
+import { PortraitAvatar } from "@/components/portrait-avatar";
 import { type ThemePreference, useTheme } from "@/components/theme-provider";
+import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
+import { Separator } from "@/components/ui/separator";
 
 const navigation = [
   { href: "/#home", label: "Home", icon: Home },
@@ -177,15 +180,16 @@ export function ProfileMenu() {
   return (
     <div
       ref={rootRef}
-      className="profile-menu fixed top-12 left-1/2 z-50 w-[min(20rem,calc(100vw-2rem))] max-[420px]:w-[calc(100vw-2rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] border border-border bg-[color-mix(in_srgb,var(--color-surface)_91%,transparent)] shadow-[0_8px_28px_rgb(62_54_47/8%)] backdrop-blur-[18px] backdrop-saturate-150 transition-[width,border-radius,box-shadow] duration-[280ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] animate-profile-enter motion-reduce:animate-none motion-reduce:transition-none max-sm:top-4 dark:shadow-[0_12px_34px_rgb(0_0_0/24%)] data-[open=true]:w-[min(25rem,calc(100vw-2rem))] data-[open=true]:max-[420px]:w-[calc(100vw-2rem)] data-[open=true]:rounded-3xl data-[open=true]:shadow-portfolio"
+      className="profile-menu fixed top-12 left-1/2 z-50 w-[min(20rem,calc(100vw-2rem))] max-[420px]:w-[calc(100vw-2rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] border border-border bg-[color-mix(in_srgb,var(--color-surface)_91%,transparent)] shadow-[0_8px_28px_rgb(62_54_47/8%)] backdrop-blur-[18px] backdrop-saturate-150 transition-[width,border-radius,box-shadow] duration-panel ease-[cubic-bezier(0.2,0.7,0.2,1)] animate-profile-enter motion-reduce:animate-none motion-reduce:transition-none max-sm:top-4 dark:shadow-[0_12px_34px_rgb(0_0_0/24%)] data-[open=true]:w-[min(25rem,calc(100vw-2rem))] data-[open=true]:max-[420px]:w-[calc(100vw-2rem)] data-[open=true]:rounded-3xl data-[open=true]:shadow-portfolio"
       data-open={open}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
     >
-      <button
+      <Button
         ref={triggerRef}
         type="button"
-        className="profile-menu-trigger flex min-h-[3.45rem] w-full items-center gap-[0.7rem] border-0 bg-transparent p-[0.4rem] text-left"
+        variant="ghost"
+        className="profile-menu-trigger h-auto min-h-[3.45rem] w-full justify-start gap-[0.7rem] rounded-none border-0 bg-transparent p-[0.4rem] text-left hover:bg-transparent aria-expanded:bg-transparent dark:hover:bg-transparent dark:aria-expanded:bg-transparent focus-visible:border-transparent focus-visible:ring-0 active:translate-y-0"
         data-testid="profile-menu-trigger"
         aria-expanded={open}
         aria-controls="profile-menu-panel"
@@ -201,20 +205,18 @@ export function ProfileMenu() {
         onKeyDown={handleTriggerKeyDown}
       >
         <span className="flex min-w-0 flex-1 items-center">
-          <span className="profile-avatar-frame relative size-[2.65rem] shrink-0 overflow-hidden rounded-full">
-            <Image
-              src="/images/portrait/suhyeon-mountain-profile.png"
-              alt="Suhyeon Yu's profile image"
-              width={160}
-              height={160}
-              className="profile-avatar size-full object-cover"
-              priority
-            />
-          </span>
+          <PortraitAvatar
+            className="profile-avatar-frame size-[2.65rem] after:border-0"
+            imageClassName="profile-avatar"
+            imageSize={160}
+            priority
+          />
           <span className="profile-menu-copy ml-[0.6rem] flex min-w-0 flex-1 flex-col leading-[1.25]">
-            <span className="truncate text-[0.94rem]">Suhyeon Yu</span>
+            <span className="truncate text-[0.94rem] font-normal">
+              Suhyeon Yu
+            </span>
             <span
-              className="profile-menu-status relative block h-[0.95rem] text-[0.76rem] whitespace-nowrap text-muted [clip-path:inset(0_-0.5rem)]"
+              className="profile-menu-status relative block h-[0.95rem] text-[0.76rem] whitespace-nowrap text-muted-foreground [clip-path:inset(0_-0.5rem)]"
               aria-hidden="true"
             >
               {profileStatuses.map((status, index) => (
@@ -230,15 +232,15 @@ export function ProfileMenu() {
                         : "inactive"
                   }
                 >
-                  {status.kind === "availability" ? (
-                    <span className="availability-light relative size-1.5 shrink-0 blur-[1px] *:absolute *:inset-0 *:rounded-full *:bg-[#4ade80]">
+                  {status.kind === "availability" && (
+                    <span className="availability-light relative size-1.5 shrink-0 blur-[1px] *:absolute *:inset-0 *:rounded-full *:bg-[#4ade80] mr-0.5">
                       <span />
                       <span className="animate-availability-ping motion-reduce:animate-none" />
                     </span>
-                  ) : null}
-                  {status.kind === "email" ? (
+                  )}
+                  {status.kind === "email" && (
                     <Envelope className="profile-status-icon size-[0.78rem] shrink-0" />
-                  ) : null}
+                  )}
                   <span className="min-w-0 truncate">{status.label}</span>
                 </span>
               ))}
@@ -246,14 +248,14 @@ export function ProfileMenu() {
             <span className="sr-only">Software Engineer</span>
           </span>
         </span>
-        <kbd className="profile-shortcut mr-[0.35rem] flex items-center gap-[0.14rem] rounded-lg border-0 bg-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)] px-[0.42rem] py-[0.3rem] font-[inherit] text-[0.72rem] text-muted max-sm:hidden">
+        <Kbd className="profile-shortcut mr-[0.35rem] h-auto gap-[0.14rem] rounded-lg border-0 bg-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)] px-[0.42rem] py-[0.3rem] font-[inherit] text-[0.72rem] text-muted-foreground max-sm:hidden">
           <span className="text-[0.8rem] leading-none">⌘</span>K
-        </kbd>
+        </Kbd>
         <Menu
-          className="profile-menu-mobile-icon mr-[0.45rem] hidden size-[1.2rem] text-muted max-sm:block"
+          className="profile-menu-mobile-icon mr-[0.45rem] hidden size-[1.2rem] text-muted-foreground max-sm:block"
           aria-hidden="true"
         />
-      </button>
+      </Button>
 
       {open ? (
         <div
@@ -261,8 +263,9 @@ export function ProfileMenu() {
           id="profile-menu-panel"
           className="profile-menu-panel animate-panel-enter px-[0.45rem] pb-[0.55rem] motion-reduce:animate-none"
         >
-          <div className="menu-group border-t border-border pt-[0.45rem]">
-            <p className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted">
+          <div className="menu-group pt-[0.45rem]">
+            <Separator className="mb-[0.45rem] bg-border" />
+            <p className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted-foreground">
               Sections
             </p>
             <nav
@@ -276,13 +279,13 @@ export function ProfileMenu() {
                   <a
                     key={item.href}
                     href={item.href}
-                    className="menu-item flex min-h-[2.45rem] items-center gap-[0.65rem] rounded-xl px-[0.65rem] py-[0.45rem] text-[0.86rem] transition-colors duration-[140ms] hover:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)]"
+                    className="menu-item flex min-h-[2.45rem] items-center gap-[0.65rem] rounded-xl px-[0.65rem] py-[0.45rem] text-[0.86rem] transition-colors duration-instant hover:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)]"
                     data-menu-item
                     onClick={() => closeMenu()}
                   >
                     <Icon
                       aria-hidden="true"
-                      className="size-4 shrink-0 text-muted"
+                      className="size-4 shrink-0 text-muted-foreground"
                     />
                     <span>{item.label}</span>
                   </a>
@@ -291,9 +294,10 @@ export function ProfileMenu() {
             </nav>
           </div>
 
-          <div className="menu-group mt-[0.45rem] border-t border-border pt-[0.45rem]">
+          <div className="menu-group mt-[0.45rem] pt-[0.45rem]">
+            <Separator className="mb-[0.45rem] bg-border" />
             <p
-              className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted"
+              className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted-foreground"
               id="theme-label"
             >
               Theme
@@ -309,7 +313,7 @@ export function ProfileMenu() {
                 return (
                   <label
                     key={option.value}
-                    className="theme-option relative flex min-h-[2.65rem] items-center justify-center gap-[0.4rem] rounded-xl border border-transparent bg-[color-mix(in_srgb,var(--color-foreground)_4%,transparent)] text-[0.78rem] transition-[border-color,background-color] duration-[140ms] hover:bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus data-[active=true]:border-border-strong data-[active=true]:bg-surface"
+                    className="theme-option relative flex min-h-[2.65rem] items-center justify-center gap-[0.4rem] rounded-xl border border-transparent bg-[color-mix(in_srgb,var(--color-foreground)_4%,transparent)] text-[0.78rem] transition-[border-color,background-color] duration-instant hover:bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus data-[active=true]:border-border-strong data-[active=true]:bg-surface"
                     data-active={theme === option.value}
                   >
                     <input
@@ -323,7 +327,7 @@ export function ProfileMenu() {
                     />
                     <Icon
                       aria-hidden="true"
-                      className="size-4 shrink-0 text-muted"
+                      className="size-4 shrink-0 text-muted-foreground"
                     />
                     <span>{option.label}</span>
                   </label>

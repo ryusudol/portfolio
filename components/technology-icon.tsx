@@ -29,25 +29,35 @@ export function TechnologyIcon({
   let icon: ReactNode = null;
 
   if (name === "Responsive UI") {
-    icon = <Devices style={{ color: "#4f8cff" }} />;
+    icon = <Devices className="size-full" style={{ color: "#4f8cff" }} />;
   } else if (name === "Design systems") {
-    icon = <Palette style={{ color: "#e265a7" }} />;
+    icon = <Palette className="size-full" style={{ color: "#e265a7" }} />;
   } else {
     const src = iconPaths[name];
     if (src) {
       icon = (
         // biome-ignore lint/performance/noImgElement: these are tiny local SVG marks that do not benefit from image optimization
-        <img src={src} alt="" width="40" height="40" />
+        <img
+          src={src}
+          alt=""
+          width="40"
+          height="40"
+          className="size-full object-contain"
+        />
       );
     }
   }
 
   if (!icon) return null;
 
+  const nextJsStyles =
+    name === "Next.js" ? "rounded-full bg-white p-[0.06em]" : "";
+
   return (
     <span
-      className={`technology-logo ${className}`.trim()}
+      className={`inline-grid place-items-center ${nextJsStyles} ${className}`.trim()}
       data-technology-icon={name}
+      data-testid="technology-icon"
       aria-hidden="true"
     >
       {icon}

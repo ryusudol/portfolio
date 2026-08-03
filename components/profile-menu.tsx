@@ -28,7 +28,7 @@ const navigation = [
   { href: "/#home", label: "Home", icon: Home },
   { href: "/#experience", label: "Experience", icon: Briefcase },
   { href: "/#work", label: "Selected work", icon: Star },
-  { href: "/#credentials", label: "Credentials", icon: GraduationCap },
+  { href: "/#background", label: "Background", icon: GraduationCap },
   { href: "/#stack", label: "Tech stack", icon: Code },
 ] as const;
 
@@ -177,7 +177,7 @@ export function ProfileMenu() {
   return (
     <div
       ref={rootRef}
-      className="profile-menu"
+      className="profile-menu fixed top-12 left-1/2 z-50 w-[min(20rem,calc(100vw-2rem))] max-[420px]:w-[calc(100vw-2rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] border border-border bg-[color-mix(in_srgb,var(--color-surface)_91%,transparent)] shadow-[0_8px_28px_rgb(62_54_47/8%)] backdrop-blur-[18px] backdrop-saturate-150 transition-[width,border-radius,box-shadow] duration-[280ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] animate-profile-enter motion-reduce:animate-none motion-reduce:transition-none max-sm:top-4 dark:shadow-[0_12px_34px_rgb(0_0_0/24%)] data-[open=true]:w-[min(25rem,calc(100vw-2rem))] data-[open=true]:max-[420px]:w-[calc(100vw-2rem)] data-[open=true]:rounded-3xl data-[open=true]:shadow-portfolio"
       data-open={open}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -185,7 +185,7 @@ export function ProfileMenu() {
       <button
         ref={triggerRef}
         type="button"
-        className="profile-menu-trigger"
+        className="profile-menu-trigger flex min-h-[3.45rem] w-full items-center gap-[0.7rem] border-0 bg-transparent p-[0.4rem] text-left"
         data-testid="profile-menu-trigger"
         aria-expanded={open}
         aria-controls="profile-menu-panel"
@@ -200,69 +200,90 @@ export function ProfileMenu() {
         }}
         onKeyDown={handleTriggerKeyDown}
       >
-        <span className="profile-avatar-frame">
-          <Image
-            src="/images/portrait/suhyeon-mountain-profile.png"
-            alt="Suhyeon Yu"
-            width={160}
-            height={160}
-            className="profile-avatar"
-            priority
-          />
-        </span>
-        <span className="profile-menu-copy">
-          <strong>Suhyeon Yu</strong>
-          <span className="profile-menu-status" aria-hidden="true">
-            {profileStatuses.map((status, index) => (
-              <span
-                key={status.kind}
-                className="profile-menu-status-item"
-                data-state={
-                  index === statusIndex
-                    ? "current"
-                    : index === previousStatusIndex
-                      ? "previous"
-                      : "inactive"
-                }
-              >
-                {status.kind === "availability" ? (
-                  <span className="availability-light" />
-                ) : null}
-                {status.kind === "email" ? (
-                  <Envelope className="profile-status-icon" />
-                ) : null}
-                {status.label}
-              </span>
-            ))}
+        <span className="flex min-w-0 flex-1 items-center">
+          <span className="profile-avatar-frame relative size-[2.65rem] shrink-0 overflow-hidden rounded-full">
+            <Image
+              src="/images/portrait/suhyeon-mountain-profile.png"
+              alt="Suhyeon Yu's profile image"
+              width={160}
+              height={160}
+              className="profile-avatar size-full object-cover"
+              priority
+            />
           </span>
-          <span className="sr-only">Software Engineer</span>
+          <span className="profile-menu-copy ml-[0.6rem] flex min-w-0 flex-1 flex-col leading-[1.25]">
+            <span className="truncate text-[0.94rem]">Suhyeon Yu</span>
+            <span
+              className="profile-menu-status relative block h-[0.95rem] text-[0.76rem] whitespace-nowrap text-muted [clip-path:inset(0_-0.5rem)]"
+              aria-hidden="true"
+            >
+              {profileStatuses.map((status, index) => (
+                <span
+                  key={status.kind}
+                  className="profile-menu-status-item absolute inset-0 flex items-center gap-1 opacity-0 motion-reduce:animate-none data-[state=current]:animate-status-enter data-[state=current]:opacity-100 data-[state=previous]:animate-status-exit"
+                  data-status-item
+                  data-state={
+                    index === statusIndex
+                      ? "current"
+                      : index === previousStatusIndex
+                        ? "previous"
+                        : "inactive"
+                  }
+                >
+                  {status.kind === "availability" ? (
+                    <span className="availability-light relative size-1.5 shrink-0 blur-[1px] *:absolute *:inset-0 *:rounded-full *:bg-[#4ade80]">
+                      <span />
+                      <span className="animate-availability-ping motion-reduce:animate-none" />
+                    </span>
+                  ) : null}
+                  {status.kind === "email" ? (
+                    <Envelope className="profile-status-icon size-[0.78rem] shrink-0" />
+                  ) : null}
+                  <span className="min-w-0 truncate">{status.label}</span>
+                </span>
+              ))}
+            </span>
+            <span className="sr-only">Software Engineer</span>
+          </span>
         </span>
-        <kbd className="profile-shortcut">
-          <span>⌘</span>K
+        <kbd className="profile-shortcut mr-[0.35rem] flex items-center gap-[0.14rem] rounded-lg border-0 bg-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)] px-[0.42rem] py-[0.3rem] font-[inherit] text-[0.72rem] text-muted max-sm:hidden">
+          <span className="text-[0.8rem] leading-none">⌘</span>K
         </kbd>
-        <Menu className="profile-menu-mobile-icon" aria-hidden="true" />
+        <Menu
+          className="profile-menu-mobile-icon mr-[0.45rem] hidden size-[1.2rem] text-muted max-sm:block"
+          aria-hidden="true"
+        />
       </button>
 
       {open ? (
         <div
           ref={panelRef}
           id="profile-menu-panel"
-          className="profile-menu-panel"
+          className="profile-menu-panel animate-panel-enter px-[0.45rem] pb-[0.55rem] motion-reduce:animate-none"
         >
-          <div className="menu-group">
-            <p className="menu-label">Sections</p>
-            <nav aria-label="Portfolio sections" onKeyDown={handlePanelKeyDown}>
+          <div className="menu-group border-t border-border pt-[0.45rem]">
+            <p className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted">
+              Sections
+            </p>
+            <nav
+              className="grid gap-[0.1rem]"
+              aria-label="Portfolio sections"
+              onKeyDown={handlePanelKeyDown}
+            >
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
                   <a
                     key={item.href}
                     href={item.href}
-                    className="menu-item"
+                    className="menu-item flex min-h-[2.45rem] items-center gap-[0.65rem] rounded-xl px-[0.65rem] py-[0.45rem] text-[0.86rem] transition-colors duration-[140ms] hover:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)]"
                     data-menu-item
                     onClick={() => closeMenu()}
                   >
-                    <Icon aria-hidden="true" />
+                    <Icon
+                      aria-hidden="true"
+                      className="size-4 shrink-0 text-muted"
+                    />
                     <span>{item.label}</span>
                   </a>
                 );
@@ -270,12 +291,15 @@ export function ProfileMenu() {
             </nav>
           </div>
 
-          <div className="menu-group">
-            <p className="menu-label" id="theme-label">
+          <div className="menu-group mt-[0.45rem] border-t border-border pt-[0.45rem]">
+            <p
+              className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted"
+              id="theme-label"
+            >
               Theme
             </p>
             <div
-              className="theme-options"
+              className="theme-options grid grid-cols-3 gap-[0.35rem]"
               role="radiogroup"
               aria-labelledby="theme-label"
               onKeyDown={handlePanelKeyDown}
@@ -285,7 +309,7 @@ export function ProfileMenu() {
                 return (
                   <label
                     key={option.value}
-                    className="theme-option"
+                    className="theme-option relative flex min-h-[2.65rem] items-center justify-center gap-[0.4rem] rounded-xl border border-transparent bg-[color-mix(in_srgb,var(--color-foreground)_4%,transparent)] text-[0.78rem] transition-[border-color,background-color] duration-[140ms] hover:bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus data-[active=true]:border-border-strong data-[active=true]:bg-surface"
                     data-active={theme === option.value}
                   >
                     <input
@@ -293,10 +317,14 @@ export function ProfileMenu() {
                       name="portfolio-theme"
                       value={option.value}
                       checked={theme === option.value}
+                      className="absolute inset-0 m-0 size-full cursor-pointer opacity-0"
                       data-menu-item
                       onChange={() => setTheme(option.value)}
                     />
-                    <Icon aria-hidden="true" />
+                    <Icon
+                      aria-hidden="true"
+                      className="size-4 shrink-0 text-muted"
+                    />
                     <span>{option.label}</span>
                   </label>
                 );

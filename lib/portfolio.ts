@@ -64,7 +64,7 @@ export const experiences: readonly Experience[] = [
     technologies: ["React", "TypeScript", "Responsive UI", "Design systems"],
     confidential: true,
     logo: {
-      src: "/images/brands/abc-fitness.png",
+      src: "/images/brands/abc-fitness-logo.png",
       variant: "abc",
     },
   },

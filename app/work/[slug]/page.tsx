@@ -87,7 +87,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </ul>
         </header>
 
-        <div className="overflow-hidden rounded-[1.6rem] border border-border shadow-[0_24px_60px_rgb(62_54_47/10%)]">
+        <div className="w-full">
           <ProjectArtwork project={project} variant="detail" />
         </div>
 

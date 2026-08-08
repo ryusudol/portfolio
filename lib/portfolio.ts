@@ -76,7 +76,14 @@ export const experiences: readonly Experience[] = [
       "Cut React rerenders by about 30% by migrating shared state from Context API to selector-based Zustand subscriptions.",
       "Iterated on interaction workflows through three Figma user-study rounds and helped ship an IEEE TVCG-published open-source platform.",
     ],
-    technologies: ["React", "TypeScript", "D3.js", "Zustand", "Redux", "Figma"],
+    technologies: [
+      "React",
+      "TypeScript",
+      "D3.js",
+      "Zustand",
+      "Tailwind CSS",
+      "Figma",
+    ],
     logo: {
       src: "/images/brands/skku.png",
       variant: "skku",
@@ -123,7 +130,7 @@ export const projects: readonly Project[] = [
     ],
     metric: "Current",
     metricLabel: "product experience",
-    technologies: ["React", "TypeScript"],
+    technologies: ["React", "Redux", "RxJS"],
     links: [],
     confidentialityNote:
       "This case study stays intentionally high level. Visuals are reconstructed for the portfolio, and proprietary product details are not disclosed.",
@@ -132,12 +139,12 @@ export const projects: readonly Project[] = [
   {
     id: "unlearning-comparator",
     slug: "unlearning-comparator",
-    title: "Unlearning Comparator",
+    title: "Machine Unlearning Comparator",
     context: "Research · Visual analytics",
     description:
       "An interactive visual analytics system for comparing how machine-unlearning methods forget data while preserving model utility.",
     overview:
-      "Unlearning Comparator makes it easier to examine the tradeoffs between forgetting targeted data and preserving a model’s utility. Linked visualizations let researchers compare methods, inspect model behavior, and move between high-level outcomes and individual examples.",
+      "Machine Unlearning Comparator makes it easier to examine the tradeoffs between forgetting targeted data and preserving a model’s utility. Linked visualizations let researchers compare methods, inspect model behavior, and move between high-level outcomes and individual examples.",
     highlights: [
       "Reduced scatterplot interaction latency to p95 ≤ 11 ms at 2,000 points through imperative D3 updates and memoization.",
       "Reduced React rerenders by about 30% with selector-based Zustand subscriptions.",
@@ -163,7 +170,7 @@ export const projects: readonly Project[] = [
     visual: {
       kind: "image",
       src: "/images/projects/unlearning-comparator-teaser.gif",
-      alt: "The Unlearning Comparator interface with linked plots and model comparison panels.",
+      alt: "The Machine Unlearning Comparator interface with linked plots and model comparison panels.",
       unoptimized: true,
     },
   },
@@ -196,8 +203,9 @@ export const projects: readonly Project[] = [
     ],
     visual: {
       kind: "image",
-      src: "/images/projects/cka-self-heatmap.png",
+      src: "/images/projects/cka_identical_resnet18_black.png",
       alt: "A CKA heatmap showing layer-wise representation similarity within a neural network.",
+      unoptimized: true,
     },
   },
 ];

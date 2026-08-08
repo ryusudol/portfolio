@@ -26,15 +26,23 @@
    * motion  — spatial hover (lift, scale, card emphasis)
    * panel   — structural UI (menu expand, popover switch)
    * morph   — content state changes (label swap, status carousel)
+   *
+   * `--duration-*` is for raw `var()` usage in this file.
+   * `--transition-duration-*` is the Tailwind v4 namespace that
+   * generates `duration-*` utilities (e.g. `duration-panel`).
    */
   --duration-instant: 140ms;
   --duration-motion: 180ms;
-  --duration-panel: 300ms;
+  --duration-panel: 400ms;
   --duration-morph: 500ms;
+
+  --transition-duration-instant: 140ms;
+  --transition-duration-motion: 180ms;
+  --transition-duration-panel: 400ms;
+  --transition-duration-morph: 500ms;
 
   --animate-profile-enter: profile-enter 600ms 120ms
     cubic-bezier(0.2, 0.75, 0.2, 1) backwards;
-  --animate-panel-enter: panel-enter var(--duration-motion) ease-out;
   --animate-content-enter: content-enter var(--duration-morph) 80ms ease-out
     backwards;
   --animate-status-enter: status-enter var(--duration-morph)
@@ -248,14 +256,6 @@
     width: 3.5rem;
     transform: translateX(-50%) scale(1);
     opacity: 1;
-  }
-}
-
-@keyframes panel-enter {
-  from {
-    transform: translateY(-0.35rem);
-    opacity: 0;
-    filter: blur(3px);
   }
 }
 

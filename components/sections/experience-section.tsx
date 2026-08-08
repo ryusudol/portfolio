@@ -39,7 +39,7 @@ export function ExperienceSection() {
                 className={`grid size-[2.55rem] min-w-[2.55rem] place-items-center overflow-hidden rounded-[0.8rem] border border-border shadow-[0_6px_18px_rgb(62_54_47/6%)] max-[420px]:size-[2.3rem] max-[420px]:min-w-[2.3rem] ${
                   experience.logo.variant === "abc"
                     ? "bg-black p-0"
-                    : "bg-white p-[0.3rem]"
+                    : "bg-white p-0"
                 }`}
                 aria-hidden="true"
               >
@@ -52,7 +52,7 @@ export function ExperienceSection() {
                   className={
                     experience.logo.variant === "abc"
                       ? "size-full object-cover"
-                      : "size-full object-contain"
+                      : "size-full scale-[1.3] object-contain"
                   }
                 />
               </span>

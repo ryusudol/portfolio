@@ -24,14 +24,12 @@ export function HomeSection({ contributions }: HomeSectionProps) {
         <p>
           👋 Hey! I&apos;m a{" "}
           <span className="text-black dark:text-white">frontend-focused software engineer</span>{" "}
-          crafting web experiences for both{" "}
-          <span className="text-black dark:text-white">humans and agents</span>.
+          crafting web experiences for both humans and agents.
         </p>
         <p>
-          I obsess over engaging, polished user interactions. I&apos;ve
-          built production web applications, optimized complex
-          interactive visualizations, and shipped open-source machine
-          learning tooling.
+          I care about the details that make interactions engaging and polished.
+          I&apos;ve built production product surfaces, optimized complex
+          interactive visualizations, and shipped open-source ML tooling.
         </p>
         <p>
           I&apos;m currently pursuing my Master&apos;s in Computer Science at{" "}

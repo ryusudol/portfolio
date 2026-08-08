@@ -30,12 +30,12 @@ export function WorkSection() {
             key={project.id}
             href={`/work/${project.slug}`}
             data-testid="project-card"
-            className="group block min-w-0 transition-[transform,border-color,box-shadow,opacity,filter] duration-motion ease-in-out hover:-translate-y-[3px] motion-reduce:transition-none [@media(hover:hover)]:group-has-[:hover]/projects:not-hover:opacity-[0.34] [@media(hover:hover)]:group-has-[:hover]/projects:not-hover:saturate-[0.2] [@media(hover:hover)]:group-has-[:hover]/projects:not-hover:grayscale-[0.9]"
+            className="group block min-w-0 transition-[filter,transform] duration-panel ease-in-out active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 [@media(hover:hover)]:group-hover/projects:grayscale [@media(hover:hover)]:hover:!grayscale-0"
             aria-label={`View ${project.title} project`}
           >
-            <Card className="h-full gap-0 overflow-hidden rounded-portfolio border border-border bg-surface py-0 ring-0 transition-[border-color,box-shadow] duration-motion group-hover:border-border-strong group-hover:shadow-[0_18px_40px_rgb(62_54_47/9%)] dark:group-hover:shadow-[0_20px_45px_rgb(0_0_0/22%)]">
+            <Card className="h-full gap-0 overflow-hidden rounded-portfolio bg-[#F4F6F8] py-0 ring-0 dark:bg-surface">
               <ProjectArtwork project={project} />
-              <CardContent className="flex flex-1 flex-col border-0 p-5">
+              <CardContent className="relative z-[1] flex flex-1 flex-col border-0 bg-transparent px-5 pt-7 pb-5">
                 <CardTitle className="m-0 text-base font-[610]">
                   {project.title}
                 </CardTitle>
@@ -57,13 +57,13 @@ export function WorkSection() {
           </Link>
         ))}
         <a
-          className="flex min-h-64 max-sm:min-h-44 flex-col items-center justify-center gap-[0.8rem] overflow-hidden rounded-portfolio border border-border bg-surface p-8 text-center text-muted-foreground transition-[transform,background-color,color,opacity,filter] duration-motion ease-in-out hover:-translate-y-[3px] hover:bg-surface-hover hover:text-foreground motion-reduce:transition-none [@media(hover:hover)]:group-has-[:hover]/projects:not-hover:opacity-[0.34] [@media(hover:hover)]:group-has-[:hover]/projects:not-hover:saturate-[0.2] [@media(hover:hover)]:group-has-[:hover]/projects:not-hover:grayscale-[0.9]"
+          className="flex min-h-64 max-sm:min-h-44 items-center justify-center gap-[0.4rem] overflow-hidden rounded-portfolio bg-[#F4F6F8] p-8 text-center text-muted-foreground transition-[color,filter,transform] duration-panel ease-in-out hover:text-foreground active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 dark:bg-surface"
           href={contact.github}
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className="max-w-48 text-[0.8rem] leading-normal">
-            See the source code of more experiments and open-source work on
+          <span className="max-w-48 leading-normal">
+            See it all on
           </span>
           <strong className="inline-flex items-center gap-[0.35rem] text-[0.92rem] font-[580] underline decoration-border-strong underline-offset-[0.28rem] [&>svg]:size-[1.1rem]">
             <GitHubIcon aria-hidden="true" /> GitHub

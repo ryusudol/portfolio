@@ -66,7 +66,7 @@ export function CredentialsSection() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <strong>Unlearning Comparator</strong>
+              <strong>Machine Unlearning Comparator</strong>
               <span>
                 IEEE Transactions on Visualization and Computer Graphics, 2026
               </span>

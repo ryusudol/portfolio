@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { ShieldCheck } from "reicon-react";
+import { Temporal } from "temporal-polyfill";
 
 import { GitHubIcon, LinkedInIcon } from "@/components/brand-icons";
 import { PortraitAvatar } from "@/components/portrait-avatar";
@@ -50,13 +51,13 @@ type ContributionTooltip = {
   top: number;
 };
 
-/** Matches colinlienard.com GithubGraph levels, with higher opacity for clearer greens. */
+/** GitHub contribution greens; empty cells use foreground tint. */
 const contributionLevels = [
   "bg-foreground/10",
-  "bg-green-500/45 dark:bg-green-400/45",
-  "bg-green-500/65 dark:bg-green-400/65",
-  "bg-green-500/85 dark:bg-green-400/85",
-  "bg-green-500 dark:bg-green-400",
+  "bg-[#9be9a8] dark:bg-[#0e4429]",
+  "bg-[#40c463] dark:bg-[#006d32]",
+  "bg-[#30a14e] dark:bg-[#26a641]",
+  "bg-[#216e39] dark:bg-[#39d353]",
 ] as const;
 
 function ContributionGraph({
@@ -76,18 +77,11 @@ function ContributionGraph({
     day: ContributionDay,
     event: ReactPointerEvent<HTMLElement>,
   ) => {
-    const graph = graphRef.current;
-    if (!graph) return;
-
     const cell = event.currentTarget;
-    const graphRect = graph.getBoundingClientRect();
-    const cellRect = cell.getBoundingClientRect();
-    const center = cellRect.left - graphRect.left + cellRect.width / 2;
-
     setTooltip({
       day,
-      left: center,
-      top: cellRect.top - graphRect.top - 5,
+      left: cell.offsetLeft + cell.offsetWidth / 2,
+      top: cell.offsetTop,
     });
     setTooltipVisible(true);
   };
@@ -106,78 +100,68 @@ function ContributionGraph({
     : 0;
 
   return (
-    <div className="contribution-preview grid">
+    <div
+      ref={graphRef}
+      className="contribution-graph relative flex w-[min(22rem,calc(100vw-6rem))] flex-col gap-2"
+      onPointerLeave={() => setTooltipVisible(false)}
+      role="presentation"
+    >
       <div
-        ref={graphRef}
-        className="contribution-graph relative w-[min(22rem,calc(100vw-6rem))]"
-        onPointerLeave={() => setTooltipVisible(false)}
-        role="presentation"
+        className="contribution-grid grid grid-flow-col grid-rows-7 gap-[1.5px]"
+        data-testid="contribution-grid"
+        style={
+          {
+            gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))`,
+          } as CSSProperties
+        }
       >
-        <div
-          className="contribution-grid grid grid-flow-col grid-rows-[repeat(7,minmax(0,1fr))] gap-[1.5px]"
-          data-testid="contribution-grid"
-          style={
-            {
-              "--contribution-weeks": weeks.length,
-              gridTemplateColumns:
-                "repeat(var(--contribution-weeks), minmax(0, 1fr))",
-            } as CSSProperties
-          }
-        >
-          {weeks.flatMap((week, weekIndex) =>
-            week.map((day, dayIndex) =>
-              day ? (
-                <i
-                  key={day.date}
-                  className={`aspect-square w-full rounded-[1.5px] ${contributionLevels[day.level] ?? contributionLevels[0]}`}
-                  data-count={day.count}
-                  data-date={day.date}
-                  data-level={day.level}
-                  onPointerEnter={(event) => showTooltip(day, event)}
-                />
-              ) : (
-                <i
-                  // biome-ignore lint/suspicious/noArrayIndexKey: Calendar placeholders are fixed positional slots and never reorder.
-                  key={`empty-${weekIndex}-${dayIndex}`}
-                  className="contribution-cell--empty aspect-square rounded-[1.5px] bg-transparent"
-                />
-              ),
-            ),
-          )}
-        </div>
-        <span
-          ref={tooltipRef}
-          className="contribution-tooltip pointer-events-none absolute z-[2] w-max -translate-x-1/2 -translate-y-[calc(100%+0.25rem)] rounded-lg bg-[#24292f] px-2 py-1 text-center text-xs leading-normal whitespace-nowrap text-white opacity-0 shadow-[0_10px_24px_rgb(0_0_0/30%)] transition-[left,top,opacity] duration-instant ease-out data-[visible=true]:opacity-100 motion-reduce:transition-none [&_strong]:font-[650]"
-          data-visible={tooltipVisible}
-          role="tooltip"
-          style={
-            tooltip
-              ? {
-                  left: tooltipLeft,
-                  top: tooltip.top,
-                }
-              : undefined
-          }
-        >
-          {tooltip ? (
-            <>
-              <strong className="font-[650]">
-                {tooltip.day.count} contribution
-                {tooltip.day.count > 1 ? "s" : ""}
-              </strong>{" "}
-              ·{" "}
-              {new Date(`${tooltip.day.date}T00:00:00Z`).toLocaleDateString(
-                "en-US",
-                {
-                  day: "numeric",
-                  month: "long",
-                  timeZone: "UTC",
-                },
+        {weeks.flatMap((week, weekIndex) =>
+          week.map((day, dayIndex) => (
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: Calendar slots are fixed positional cells and never reorder.
+              key={day?.date ?? `empty-${weekIndex}-${dayIndex}`}
+              className={cn(
+                "aspect-square w-full rounded-[1.5px]",
+                day && (contributionLevels[day.level] ?? contributionLevels[0]),
               )}
-            </>
-          ) : null}
-        </span>
+              data-count={day?.count}
+              data-date={day?.date}
+              data-level={day?.level}
+              onPointerEnter={
+                day ? (event) => showTooltip(day, event) : undefined
+              }
+            />
+          )),
+        )}
       </div>
+      <span
+        ref={tooltipRef}
+        className="contribution-tooltip pointer-events-none absolute z-[2] w-max -translate-x-1/2 -translate-y-[calc(100%+0.25rem)] rounded-lg bg-stone-900 px-2 py-1 text-center text-xs leading-normal whitespace-nowrap text-stone-100 opacity-0 shadow-xl transition-[left,top,opacity] duration-instant ease-out data-[visible=true]:opacity-100 motion-reduce:transition-none dark:bg-stone-950 [&_strong]:font-[650]"
+        data-visible={tooltipVisible}
+        role="tooltip"
+        style={
+          tooltip
+            ? {
+              left: tooltipLeft,
+              top: tooltip.top,
+            }
+            : undefined
+        }
+      >
+        {tooltip ? (
+          <>
+            <strong className="font-[650]">
+              {tooltip.day.count} contribution
+              {tooltip.day.count > 1 ? "s" : ""}
+            </strong>{" "}
+            ·{" "}
+            {Temporal.PlainDate.from(tooltip.day.date).toLocaleString("en-US", {
+              day: "numeric",
+              month: "long",
+            })}
+          </>
+        ) : null}
+      </span>
     </div>
   );
 }

@@ -27,6 +27,8 @@ import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import { Separator } from "@/components/ui/separator";
 
+const TRANSITION_DURATION = 400;
+
 const navigation = [
   { href: "/#home", label: "Home", icon: Home },
   { href: "/#experience", label: "Experience", icon: Briefcase },
@@ -65,6 +67,8 @@ export function ProfileMenu() {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const hoverOpenedRef = useRef(false);
+  const transitioningRef = useRef(false);
+  const transitionTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (open) return;
@@ -88,6 +92,17 @@ export function ProfileMenu() {
     });
   }, []);
 
+  const beginTransitionGuard = useCallback(() => {
+    transitioningRef.current = true;
+    if (transitionTimeoutRef.current !== null) {
+      window.clearTimeout(transitionTimeoutRef.current);
+    }
+    transitionTimeoutRef.current = window.setTimeout(() => {
+      transitioningRef.current = false;
+      transitionTimeoutRef.current = null;
+    }, TRANSITION_DURATION);
+  }, []);
+
   const closeMenu = useCallback((restoreFocus = false) => {
     hoverOpenedRef.current = false;
     setOpen(false);
@@ -101,6 +116,7 @@ export function ProfileMenu() {
       if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
         event.preventDefault();
         hoverOpenedRef.current = false;
+        beginTransitionGuard();
         setOpen((current) => {
           const next = !current;
           if (next) {
@@ -128,18 +144,25 @@ export function ProfileMenu() {
     return () => {
       window.removeEventListener("keydown", handleShortcut);
       window.removeEventListener("pointerdown", handleOutsidePointer);
+      if (transitionTimeoutRef.current !== null) {
+        window.clearTimeout(transitionTimeoutRef.current);
+      }
     };
-  }, [closeMenu, focusMenuItem]);
+  }, [beginTransitionGuard, closeMenu, focusMenuItem]);
 
   function handlePointerEnter(event: PointerEvent<HTMLDivElement>) {
-    if (event.pointerType === "mouse" && !open) {
+    if (
+      event.pointerType === "mouse" &&
+      !open &&
+      !transitioningRef.current
+    ) {
       hoverOpenedRef.current = true;
       setOpen(true);
     }
   }
 
   function handlePointerLeave(event: PointerEvent<HTMLDivElement>) {
-    if (event.pointerType === "mouse") {
+    if (event.pointerType === "mouse" && !transitioningRef.current) {
       closeMenu();
     }
   }
@@ -180,7 +203,7 @@ export function ProfileMenu() {
   return (
     <div
       ref={rootRef}
-      className="profile-menu fixed top-12 left-1/2 z-50 w-[min(20rem,calc(100vw-2rem))] max-[420px]:w-[calc(100vw-2rem)] -translate-x-1/2 overflow-hidden rounded-[1.75rem] border border-border bg-[color-mix(in_srgb,var(--color-surface)_91%,transparent)] shadow-[0_8px_28px_rgb(62_54_47/8%)] backdrop-blur-[18px] backdrop-saturate-150 transition-[width,border-radius,box-shadow] duration-panel ease-[cubic-bezier(0.2,0.7,0.2,1)] animate-profile-enter motion-reduce:animate-none motion-reduce:transition-none max-sm:top-4 dark:shadow-[0_12px_34px_rgb(0_0_0/24%)] data-[open=true]:w-[min(25rem,calc(100vw-2rem))] data-[open=true]:max-[420px]:w-[calc(100vw-2rem)] data-[open=true]:rounded-3xl data-[open=true]:shadow-portfolio"
+      className="profile-menu fixed top-12 left-1/2 z-50 w-[min(20rem,calc(100vw-2rem))] max-[420px]:w-[calc(100vw-2rem)] -translate-x-1/2 rounded-[1.6rem] border border-border bg-[color-mix(in_srgb,var(--color-surface)_90%,transparent)] shadow-[0_10px_15px_-3px_rgb(62_54_47/6%),0_4px_6px_-4px_rgb(62_54_47/6%)] backdrop-blur-sm transition-[width,border-radius,box-shadow] duration-panel ease-out animate-profile-enter motion-reduce:animate-none motion-reduce:transition-none max-sm:top-4 dark:shadow-[0_10px_15px_-3px_rgb(0_0_0/20%),0_4px_6px_-4px_rgb(0_0_0/20%)] data-[open=true]:w-[min(25rem,calc(100vw-4rem))] data-[open=true]:max-[420px]:w-[calc(100vw-2rem)] data-[open=true]:rounded-b-xl data-[open=true]:shadow-[0_25px_50px_-12px_rgb(62_54_47/25%)] data-[open=true]:dark:shadow-[0_25px_50px_-12px_rgb(0_0_0/50%)]"
       data-open={open}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
@@ -200,6 +223,7 @@ export function ProfileMenu() {
             setOpen(true);
             return;
           }
+          beginTransitionGuard();
           setOpen((current) => !current);
         }}
         onKeyDown={handleTriggerKeyDown}
@@ -257,86 +281,104 @@ export function ProfileMenu() {
         />
       </Button>
 
-      {open ? (
-        <div
-          ref={panelRef}
-          id="profile-menu-panel"
-          className="profile-menu-panel animate-panel-enter px-[0.45rem] pb-[0.55rem] motion-reduce:animate-none"
-        >
-          <div className="menu-group pt-[0.45rem]">
-            <Separator className="mb-[0.45rem] bg-border" />
-            <p className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted-foreground">
-              Sections
-            </p>
-            <nav
-              className="grid gap-[0.1rem]"
-              aria-label="Portfolio sections"
-              onKeyDown={handlePanelKeyDown}
-            >
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    className="menu-item flex min-h-[2.45rem] items-center gap-[0.65rem] rounded-xl px-[0.65rem] py-[0.45rem] text-[0.86rem] transition-colors duration-instant hover:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)]"
-                    data-menu-item
-                    onClick={() => closeMenu()}
-                  >
-                    <Icon
-                      aria-hidden="true"
-                      className="size-4 shrink-0 text-muted-foreground"
-                    />
-                    <span>{item.label}</span>
-                  </a>
-                );
-              })}
-            </nav>
-          </div>
-
-          <div className="menu-group mt-[0.45rem] pt-[0.45rem]">
-            <Separator className="mb-[0.45rem] bg-border" />
-            <p
-              className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted-foreground"
-              id="theme-label"
-            >
-              Theme
-            </p>
-            <div
-              className="theme-options grid grid-cols-3 gap-[0.35rem]"
-              role="radiogroup"
-              aria-labelledby="theme-label"
-              onKeyDown={handlePanelKeyDown}
-            >
-              {themes.map((option) => {
-                const Icon = option.icon;
-                return (
-                  <label
-                    key={option.value}
-                    className="theme-option relative flex min-h-[2.65rem] items-center justify-center gap-[0.4rem] rounded-xl border border-transparent bg-[color-mix(in_srgb,var(--color-foreground)_4%,transparent)] text-[0.78rem] transition-[border-color,background-color] duration-instant hover:bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus data-[active=true]:border-border-strong data-[active=true]:bg-surface"
-                    data-active={theme === option.value}
-                  >
-                    <input
-                      type="radio"
-                      name="portfolio-theme"
-                      value={option.value}
-                      checked={theme === option.value}
-                      className="absolute inset-0 m-0 size-full cursor-pointer opacity-0"
+      <div
+        className="grid transition-[grid-template-rows] duration-panel ease-out motion-reduce:transition-none data-[open=true]:grid-rows-[1fr] data-[open=false]:grid-rows-[0fr]"
+        data-open={open}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div
+            ref={panelRef}
+            id="profile-menu-panel"
+            className="profile-menu-panel relative px-[0.45rem] pb-[0.55rem] transition-opacity duration-panel ease-out motion-reduce:transition-none data-[open=true]:opacity-100 data-[open=true]:delay-100 data-[open=false]:opacity-0 data-[open=false]:delay-0"
+            data-open={open}
+            inert={!open ? true : undefined}
+            aria-hidden={!open}
+          >
+            <div className="menu-group pt-[0.45rem]">
+              <Separator className="mb-[0.45rem] bg-border" />
+              <p className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted-foreground">
+                Sections
+              </p>
+              <nav
+                className="grid gap-[0.1rem]"
+                aria-label="Portfolio sections"
+                onKeyDown={handlePanelKeyDown}
+              >
+                {navigation.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className="menu-item flex min-h-[2.45rem] items-center gap-[0.65rem] rounded-xl px-[0.65rem] py-[0.45rem] text-[0.86rem] transition-colors duration-instant hover:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)] focus-visible:bg-[color-mix(in_srgb,var(--color-foreground)_6%,transparent)]"
                       data-menu-item
-                      onChange={() => setTheme(option.value)}
-                    />
-                    <Icon
-                      aria-hidden="true"
-                      className="size-4 shrink-0 text-muted-foreground"
-                    />
-                    <span>{option.label}</span>
-                  </label>
-                );
-              })}
+                      tabIndex={open ? 0 : -1}
+                      onClick={() => closeMenu()}
+                    >
+                      <Icon
+                        aria-hidden="true"
+                        className="size-4 shrink-0 text-muted-foreground"
+                      />
+                      <span>{item.label}</span>
+                    </a>
+                  );
+                })}
+              </nav>
             </div>
+
+            <div className="menu-group mt-[0.45rem] pt-[0.45rem]">
+              <Separator className="mb-[0.45rem] bg-border" />
+              <p
+                className="menu-label m-0 px-[0.65rem] pt-[0.35rem] pb-[0.25rem] text-[0.72rem] text-muted-foreground"
+                id="theme-label"
+              >
+                Theme
+              </p>
+              <div
+                className="theme-options grid grid-cols-3 gap-[0.35rem]"
+                role="radiogroup"
+                aria-labelledby="theme-label"
+                onKeyDown={handlePanelKeyDown}
+              >
+                {themes.map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <label
+                      key={option.value}
+                      className="theme-option relative flex min-h-[2.65rem] items-center justify-center gap-[0.4rem] rounded-xl border border-transparent bg-[color-mix(in_srgb,var(--color-foreground)_4%,transparent)] text-[0.78rem] transition-[border-color,background-color] duration-instant hover:bg-[color-mix(in_srgb,var(--color-foreground)_8%,transparent)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus data-[active=true]:border-border-strong data-[active=true]:bg-surface"
+                      data-active={theme === option.value}
+                    >
+                      <input
+                        type="radio"
+                        name="portfolio-theme"
+                        value={option.value}
+                        checked={theme === option.value}
+                        className="absolute inset-0 m-0 size-full cursor-pointer opacity-0"
+                        data-menu-item
+                        tabIndex={open ? 0 : -1}
+                        onChange={() => setTheme(option.value)}
+                      />
+                      <Icon
+                        aria-hidden="true"
+                        className="size-4 shrink-0 text-muted-foreground"
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
           </div>
         </div>
-      ) : null}
+      </div>
+
+      {/* Extends the hover hit area so the menu stays open while moving the pointer. */}
+      <div
+        className="pointer-events-none absolute top-0 -right-12 -bottom-16 -left-12 -z-10 max-sm:hidden data-[open=true]:pointer-events-auto"
+        data-open={open}
+        aria-hidden="true"
+      />
     </div>
   );
 }

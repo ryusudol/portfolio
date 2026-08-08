@@ -26,7 +26,8 @@ export type Project = {
   title: string;
   context: string;
   description: string;
-  overview: string;
+  overviewTitle: string;
+  overview: readonly string[];
   highlights: readonly string[];
   metric: string;
   metricLabel: string;
@@ -121,8 +122,11 @@ export const projects: readonly Project[] = [
     context: "ABC Fitness · Product engineering",
     description:
       "A portfolio-safe look at modernizing a profile surface for coaches and clients across responsive web experiences.",
-    overview:
+    overviewTitle:
+      "Turning dense coaching information into a clearer profile experience.",
+    overview: [
       "At ABC Fitness, I contribute to a modernized Trainerize profile experience. The work focuses on turning dense account, progress, and coaching information into a clearer interface that behaves consistently across screen sizes.",
+    ],
     highlights: [
       "Build responsive interface patterns for a production product surface.",
       "Organize complex profile information into a clearer visual and interaction hierarchy.",
@@ -143,12 +147,18 @@ export const projects: readonly Project[] = [
     context: "Research · Visual analytics",
     description:
       "An interactive visual analytics system for comparing how machine-unlearning methods forget data while preserving model utility.",
-    overview:
-      "Machine Unlearning Comparator makes it easier to examine the tradeoffs between forgetting targeted data and preserving a model’s utility. Linked visualizations let researchers compare methods, inspect model behavior, and move between high-level outcomes and individual examples.",
+    overviewTitle:
+      "Making unlearning tradeoffs visible across accuracy, efficiency, and privacy.",
+    overview: [
+      "Machine unlearning aims to remove the influence of specific training data without retraining a model from scratch. In practice, that goal is hard to evaluate: a method can forget targeted samples, damage retain-set utility, leak membership signal under attack, or simply cost too much to run. Comparing methods therefore means reading tradeoffs across accuracy, efficiency, and privacy rather than ranking a single score.",
+      "Machine Unlearning Comparator is a web-based visual analytics system designed for that comparative workflow. Researchers move through four stages—Build, Screen, Contrast, and Attack—to configure experiments, scan high-level outcomes, inspect model behavior in detail, and audit residual privacy risk. Linked views connect class-level metrics, prediction matrices, embedding spaces, and layer-wise similarity so analysts can jump from overall method performance to individual samples and representation changes.",
+      "The system ships with common unlearning baselines such as Fine-Tuning, Gradient Ascent, Random Labeling, SCRUB, and SalUn, and supports custom methods through a Python registration hook. Interactive Membership Inference Attack views help verify whether forgotten data still leaves detectable traces. The project was developed at the Intelligent Data Computing Lab at SKKU and published in IEEE TVCG 2026.",
+    ],
     highlights: [
-      "Reduced scatterplot interaction latency to p95 ≤ 11 ms at 2,000 points through imperative D3 updates and memoization.",
-      "Reduced React rerenders by about 30% with selector-based Zustand subscriptions.",
-      "Iterated through three Figma user-study rounds and contributed to the IEEE TVCG publication.",
+      "Built interactive comparison surfaces that let researchers move between method-level outcomes and instance-level evidence without breaking context.",
+      "Reduced scatterplot interaction latency to p95 ≤ 11 ms at 2,000 points with imperative D3 updates and careful memoization for dense embedding exploration.",
+      "Cut React rerenders by about 30% by migrating shared state from Context API to selector-based Zustand subscriptions across linked views.",
+      "Iterated interaction workflows through three Figma user-study rounds and contributed to the open-source platform published in IEEE TVCG.",
     ],
     metric: "≤11 ms",
     metricLabel: "p95 interaction latency",
@@ -181,12 +191,18 @@ export const projects: readonly Project[] = [
     context: "Open source · Machine learning",
     description:
       "A one-call PyTorch toolkit for measuring and visualizing representation similarity across models, layers, and checkpoints.",
-    overview:
-      "PyTorch-CKA packages Centered Kernel Alignment into a practical workflow for comparing learned representations. It helps researchers inspect similarity across models, layers, and training checkpoints without rebuilding the analysis pipeline for every experiment.",
+    overviewTitle:
+      "Turning representation similarity analysis into a reusable research workflow.",
+    overview: [
+      "Centered Kernel Alignment (CKA) is a standard way to measure how similar neural network representations are across layers, models, or training stages. Despite that, many research pipelines still re-implement feature extraction, batching, kernel computation, and plotting for every experiment. That friction slows iteration and makes it harder to compare runs under consistent conditions.",
+      "PyTorch-CKA packages the full workflow into a practical library: pass models, dataloaders, and target layers to a single compute call, or feed pre-extracted features directly when activations already exist. The core path is built on vectorized PyTorch operations with GPU acceleration and explicit memory deallocation so larger layer-wise comparisons stay practical. It also supports common research setups such as Hugging Face models, DataParallel, and Distributed Data Parallel.",
+      "Beyond the matrix itself, the library includes reusable visualizations—heatmaps for layer-to-layer similarity and trend plots for checkpoint or epoch comparisons—so results can be inspected without bolting on a separate analysis stack. The package is published on PyPI as pytorch-cka and is designed for researchers who want reliable CKA measurements without rebuilding the scaffolding around them.",
+    ],
     highlights: [
-      "Designed a one-call API for common representation-similarity workflows.",
-      "Accelerated the core computation by up to 44× with vectorized PyTorch operations.",
-      "Added reusable visualizations for layer-wise and checkpoint-level comparisons.",
+      "Designed a one-call API that covers model-and-dataloader workflows and feature-only comparison paths.",
+      "Accelerated core CKA computation by up to 44× on ResNet-18 layer-wise comparisons through vectorized PyTorch ops and GPU execution.",
+      "Added memory-conscious activation handling and support for Hugging Face models, DataParallel, and DDP.",
+      "Shipped reusable heatmap and trend visualizations for layer-wise and checkpoint-level analysis, and released the toolkit on PyPI.",
     ],
     metric: "44×",
     metricLabel: "faster computation",

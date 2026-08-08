@@ -96,12 +96,19 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted-foreground uppercase">
               Overview
             </p>
-            <h2 className="m-0 max-w-[30rem] text-[1.18rem] font-[610] tracking-[-0.015em]">
-              Making a complex system easier to understand.
+            <h2 className="m-0 max-w-[34rem] text-[1.18rem] font-[610] tracking-[-0.015em]">
+              {project.overviewTitle}
             </h2>
-            <p className="m-0 text-[0.94rem] leading-[1.72] text-pretty text-muted-foreground">
-              {project.overview}
-            </p>
+            <div className="grid gap-[0.9rem]">
+              {project.overview.map((paragraph) => (
+                <p
+                  key={paragraph}
+                  className="m-0 text-[0.94rem] leading-[1.72] text-pretty text-muted-foreground"
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </section>
 
           <section className="grid gap-[0.8rem]">

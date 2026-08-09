@@ -54,7 +54,7 @@ export function ProjectArtwork({
   }
 
   const isPytorchCka = project.id === "pytorch-cka";
-  const isUnlearningComparator = project.id === "unlearning-comparator";
+  const isUnlearningComparator = project.id === "machine-unlearning-comparator";
 
   const imageSizeClass = isDetail
     ? "h-auto w-full object-contain"
@@ -119,7 +119,11 @@ export function ProjectArtwork({
             alt={project.visual.alt}
             width={imageWidth}
             height={imageHeight}
-            sizes={isDetail ? "(max-width: 680px) 100vw, 40rem" : "(max-width: 680px) 86vw, 600px"}
+            sizes={
+              isDetail
+                ? "(max-width: 680px) 100vw, 40rem"
+                : "(max-width: 680px) 86vw, 600px"
+            }
             className={`relative z-[2] rounded-[0.9rem] border-0 shadow-none transition-transform duration-panel ease-in-out group-hover:scale-[1.04] motion-reduce:transition-none dark:hidden ${imageSizeClass}`}
             unoptimized
           />
@@ -128,7 +132,11 @@ export function ProjectArtwork({
             alt={project.visual.alt}
             width={imageWidth}
             height={imageHeight}
-            sizes={isDetail ? "(max-width: 680px) 100vw, 40rem" : "(max-width: 680px) 86vw, 600px"}
+            sizes={
+              isDetail
+                ? "(max-width: 680px) 100vw, 40rem"
+                : "(max-width: 680px) 86vw, 600px"
+            }
             className={`relative z-[2] hidden rounded-[0.9rem] border-0 shadow-none transition-transform duration-panel ease-in-out group-hover:scale-[1.04] motion-reduce:transition-none dark:block ${imageSizeClass}`}
             unoptimized
           />
@@ -155,7 +163,11 @@ export function ProjectArtwork({
             alt={project.visual.alt}
             width={imageWidth}
             height={imageHeight}
-            sizes={isDetail ? "(max-width: 680px) 100vw, 40rem" : "(max-width: 680px) 86vw, 600px"}
+            sizes={
+              isDetail
+                ? "(max-width: 680px) 100vw, 40rem"
+                : "(max-width: 680px) 86vw, 600px"
+            }
             className={`relative z-[2] rounded-[0.9rem] transition-transform duration-panel ease-in-out group-hover:scale-[1.04] motion-reduce:transition-none ${
               isUnlearningComparator
                 ? unlearningShadow

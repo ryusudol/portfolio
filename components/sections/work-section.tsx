@@ -62,9 +62,7 @@ export function WorkSection() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className="max-w-48 leading-normal">
-            See it all on
-          </span>
+          <span className="max-w-48 leading-normal">See it all on</span>
           <strong className="inline-flex items-center gap-[0.35rem] text-[0.92rem] font-[580] underline decoration-border-strong underline-offset-[0.28rem] [&>svg]:size-[1.1rem]">
             <GitHubIcon aria-hidden="true" /> GitHub
           </strong>

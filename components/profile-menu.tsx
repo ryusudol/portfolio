@@ -151,11 +151,7 @@ export function ProfileMenu() {
   }, [beginTransitionGuard, closeMenu, focusMenuItem]);
 
   function handlePointerEnter(event: PointerEvent<HTMLDivElement>) {
-    if (
-      event.pointerType === "mouse" &&
-      !open &&
-      !transitioningRef.current
-    ) {
+    if (event.pointerType === "mouse" && !open && !transitioningRef.current) {
       hoverOpenedRef.current = true;
       setOpen(true);
     }
@@ -368,7 +364,6 @@ export function ProfileMenu() {
                 })}
               </div>
             </div>
-
           </div>
         </div>
       </div>

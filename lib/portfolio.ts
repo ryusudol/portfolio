@@ -18,11 +18,11 @@ export type ProjectLink = {
 };
 
 export type Project = {
-  id: "trainerize" | "unlearning-comparator" | "pytorch-cka";
+  id: "trainerize" | "machine-unlearning-comparator" | "pytorch-cka";
   slug:
-  | "trainerize-profile-experience"
-  | "unlearning-comparator"
-  | "pytorch-cka";
+    | "trainerize-profile-experience"
+    | "machine-unlearning-comparator"
+    | "pytorch-cka";
   title: string;
   context: string;
   description: string;
@@ -35,8 +35,8 @@ export type Project = {
   links: readonly ProjectLink[];
   confidentialityNote?: string;
   visual:
-  | { kind: "trainerize" }
-  | { kind: "image"; src: string; alt: string; unoptimized?: boolean };
+    | { kind: "trainerize" }
+    | { kind: "image"; src: string; alt: string; unoptimized?: boolean };
 };
 
 export type Technology = {
@@ -141,8 +141,8 @@ export const projects: readonly Project[] = [
     visual: { kind: "trainerize" },
   },
   {
-    id: "unlearning-comparator",
-    slug: "unlearning-comparator",
+    id: "machine-unlearning-comparator",
+    slug: "machine-unlearning-comparator",
     title: "Machine Unlearning Comparator",
     context: "Research · Visual analytics",
     description:
@@ -179,7 +179,7 @@ export const projects: readonly Project[] = [
     ],
     visual: {
       kind: "image",
-      src: "/images/projects/unlearning-comparator-teaser.gif",
+      src: "/images/projects/machine-unlearning-comparator-teaser.gif",
       alt: "The Machine Unlearning Comparator interface with linked plots and model comparison panels.",
       unoptimized: true,
     },

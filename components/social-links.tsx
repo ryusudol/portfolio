@@ -94,9 +94,9 @@ function ContributionGraph({
 
   const tooltipLeft = tooltip
     ? Math.min(
-      Math.max(tooltip.left, tooltipWidth / 2),
-      graphWidth - tooltipWidth / 2,
-    )
+        Math.max(tooltip.left, tooltipWidth / 2),
+        graphWidth - tooltipWidth / 2,
+      )
     : 0;
 
   return (
@@ -118,7 +118,6 @@ function ContributionGraph({
         {weeks.flatMap((week, weekIndex) =>
           week.map((day, dayIndex) => (
             <div
-              // biome-ignore lint/suspicious/noArrayIndexKey: Calendar slots are fixed positional cells and never reorder.
               key={day?.date ?? `empty-${weekIndex}-${dayIndex}`}
               className={cn(
                 "aspect-square w-full rounded-[1.5px]",
@@ -142,9 +141,9 @@ function ContributionGraph({
         style={
           tooltip
             ? {
-              left: tooltipLeft,
-              top: tooltip.top,
-            }
+                left: tooltipLeft,
+                top: tooltip.top,
+              }
             : undefined
         }
       >

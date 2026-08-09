@@ -17,6 +17,7 @@ import {
   Menu,
   Monitor,
   Moon,
+  Puzzle,
   Star,
   Sun,
 } from "reicon-react";
@@ -35,6 +36,7 @@ const navigation = [
   { href: "/#work", label: "Selected work", icon: Star },
   { href: "/#background", label: "Background", icon: GraduationCap },
   { href: "/#stack", label: "Tech stack", icon: Code },
+  { href: "/#playground", label: "Playground", icon: Puzzle },
 ] as const;
 
 const themes = [

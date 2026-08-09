@@ -37,4 +37,30 @@ test.describe("portfolio smoke", () => {
       page.getByRole("heading", { name: "PyTorch-CKA" }),
     ).toBeVisible();
   });
+
+  test("home page renders playground section", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.getByTestId("playground-section")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Playground" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /explore ui craft/i }),
+    ).toBeVisible();
+  });
+
+  test("playground routes render ui craft workspace", async ({ page }) => {
+    await page.goto("/playground");
+    await expect(page).toHaveURL(/\/playground\/ui$/);
+    await expect(page.getByRole("heading", { name: "UI Craft" })).toBeVisible();
+    await expect(page.getByTestId("ui-craft-workspace")).toBeVisible();
+    await expect(page.getByTestId("ui-craft-nav")).toBeVisible();
+    await expect(page.getByText("Components", { exact: true })).toBeVisible();
+    await expect(page.getByTestId("ui-craft-demo")).toBeVisible();
+    await expect(page.getByTestId("ui-craft-brief-rationale")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Accordion", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+  });
 });

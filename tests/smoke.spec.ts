@@ -51,6 +51,8 @@ test.describe("portfolio smoke", () => {
   });
 
   test("playground routes render ui craft workspace", async ({ page }) => {
+    // Settled layout (demo shrunk + copy visible) without scroll scrubbing.
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/playground");
     await expect(page).toHaveURL(/\/playground\/ui$/);
     await expect(page.getByRole("heading", { name: "UI Craft" })).toBeVisible();
@@ -60,7 +62,7 @@ test.describe("portfolio smoke", () => {
     await expect(page.getByTestId("ui-craft-demo")).toBeVisible();
     await expect(page.getByTestId("ui-craft-brief-rationale")).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Accordion", exact: true }),
+      page.getByRole("button", { name: "Testimonial Card", exact: true }),
     ).toHaveAttribute("aria-current", "page");
   });
 });

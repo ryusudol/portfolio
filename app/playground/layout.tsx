@@ -16,7 +16,7 @@ export default function PlaygroundLayout({
       <ProfileMenu />
       <main
         id="content"
-        className="mx-auto flex w-[min(56rem,calc(100vw-2.5rem))] max-[420px]:w-[min(calc(100%-2rem),56rem)] flex-col gap-14 max-sm:gap-11 pt-44 max-sm:pt-[8.75rem] pb-20 animate-content-enter motion-reduce:animate-none"
+        className="mx-auto flex w-full max-w-[90rem] flex-col gap-10 max-sm:gap-8 px-4 sm:px-6 lg:px-10 pt-44 max-sm:pt-[8.75rem] pb-20 animate-content-enter motion-reduce:animate-none"
       >
         {children}
       </main>

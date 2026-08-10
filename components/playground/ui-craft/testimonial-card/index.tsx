@@ -1,11 +1,13 @@
 import Image from "next/image";
 
+import { DemoCanvas } from "@/components/playground/demo-canvas";
+
 import profileThumbnail from "./assets/profile-thumbnail.png";
 
 export function TestimonialCard() {
   return (
-    <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-[#F9FAFB] to-[#D2D6DB] p-6">
-      <figure className="flex max-h-70 w-85 flex-col gap-4 overflow-hidden rounded-md bg-white p-6 text-ellipsis shadow-md">
+    <DemoCanvas className="bg-linear-to-br from-[#F9FAFB] to-[#D2D6DB] dark:from-[#1c1b19] dark:to-[#2a2825]">
+      <figure className="flex max-h-70 w-full max-w-85 flex-col gap-4 rounded-md bg-white p-6 shadow-md dark:bg-surface">
         <figcaption className="flex items-center gap-4">
           <Image
             src={profileThumbnail}
@@ -16,17 +18,19 @@ export function TestimonialCard() {
           />
           <div className="flex flex-col justify-center gap-px">
             <span className="text-lg font-semibold">Sarah Dole</span>
-            <span className="text-sm text-neutral-600">@sarahdole</span>
+            <span className="text-sm text-neutral-600 dark:text-muted-foreground">
+              @sarahdole
+            </span>
           </div>
         </figcaption>
         <blockquote>
-          <p className="text-neutral-600">
+          <p className="line-clamp-6 text-neutral-600 dark:text-muted-foreground">
             I've been searching for high-quality abstract images for my design
             projects, and I'm thrilled to have found this platform. The variety
             and depth of creativity are astounding!
           </p>
         </blockquote>
       </figure>
-    </div>
+    </DemoCanvas>
   );
 }

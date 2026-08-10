@@ -7,14 +7,6 @@ export type UICraftEntry = {
 
 export const uiCraftEntries: readonly UICraftEntry[] = [
   {
-    slug: "accordion",
-    title: "Accordion",
-    description:
-      "A collapsible disclosure pattern with keyboard support and motion that respects user preferences.",
-    briefRationale:
-      "I default to a single-open model for FAQ-style content so focus stays on one answer at a time. Triggers are native buttons with aria-expanded and aria-controls, and panel motion falls back to instant toggles when prefers-reduced-motion is set.",
-  },
-  {
     slug: "testimonial-card",
     title: "Testimonial Card",
     description:

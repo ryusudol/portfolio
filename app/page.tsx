@@ -4,6 +4,7 @@ import { ProfileMenu } from "@/components/profile-menu";
 import { CredentialsSection } from "@/components/sections/credentials-section";
 import { ExperienceSection } from "@/components/sections/experience-section";
 import { HomeSection } from "@/components/sections/home-section";
+import { PlaygroundSection } from "@/components/sections/playground-section";
 import { StackSection } from "@/components/sections/stack-section";
 import { WorkSection } from "@/components/sections/work-section";
 import { SkipToContent } from "@/components/skip-to-content";
@@ -37,6 +38,7 @@ export default async function HomePage() {
         <WaveSeparator />
         <StackSection />
         <WaveSeparator />
+        <PlaygroundSection />
       </main>
 
       <footer className="mx-auto flex w-[min(40rem,calc(100vw-2.5rem))] max-[420px]:w-[min(calc(100%-2rem),40rem)] items-center justify-between gap-4 px-0 pt-20 pb-9 text-[0.72rem] text-muted-foreground max-sm:flex-col max-sm:items-start [&_a]:inline-flex [&_a]:items-center [&_a]:gap-[0.4rem] [&_a]:underline [&_a]:decoration-border-strong [&_a]:underline-offset-[0.23rem] [&_a]:transition-colors [&_a]:duration-instant [&_a]:ease-in-out [&_a]:hover:text-foreground [&_a]:motion-reduce:transition-none [&_p]:m-0 [&_p]:text-right [&_p]:max-sm:text-left [&_svg]:size-4">

@@ -11,3 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Icons
 
 Use **`reicon-react` only**. Do not install or import Lucide, Tabler, Phosphor, Remix, Hugeicons, Radix Icons, react-icons, or any other icon library. If `shadcn add` injects another icon package, replace those icons with `reicon-react` and remove the extra dependency.
+
+# UI Craft demos
+
+Each playground component demo must use **`DemoCanvas`** as its outermost root (default or custom stage background via `className`). Do not paint stage backgrounds on `DemoPanel`. See `components/playground/README.md`.

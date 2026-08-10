@@ -20,13 +20,13 @@ const education = [
 export function CredentialsSection() {
   return (
     <section
-      id="credentials"
+      id="background"
       className="flex scroll-mt-36 flex-col gap-[2.8rem] max-sm:gap-[2.25rem]"
     >
       <div className="flex items-center gap-[0.65rem] [&>svg]:size-[1.15rem] [&>svg]:text-muted-foreground">
         <GraduationCap aria-hidden="true" />
         <h2 className="m-0 text-base font-[570] tracking-[-0.01em]">
-          Education & Recognition
+          Background
         </h2>
       </div>
       <div className="grid grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] gap-12 max-sm:grid-cols-1 max-sm:gap-10">

@@ -47,9 +47,7 @@ function parseGithubContributionsHtml(html: string): ContributionDay[] | null {
     const td = tag[0];
     const date = td.match(/data-date="(\d{4}-\d{2}-\d{2})"/)?.[1];
     const levelRaw = td.match(/data-level="(\d)"/)?.[1];
-    const id = td.match(
-      /id="contribution-day-component-(\d+)-(\d+)"/,
-    );
+    const id = td.match(/id="contribution-day-component-(\d+)-(\d+)"/);
     if (!date || levelRaw === undefined || !id) continue;
     cells.push({
       row: Number(id[1]),
@@ -76,9 +74,7 @@ function parseGithubContributionsHtml(html: string): ContributionDay[] | null {
     .map((cell) => ({
       date: cell.date,
       count:
-        counts.get(
-          `contribution-day-component-${cell.row}-${cell.week}`,
-        ) ?? 0,
+        counts.get(`contribution-day-component-${cell.row}-${cell.week}`) ?? 0,
       level: cell.level,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));

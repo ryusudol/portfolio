@@ -23,7 +23,9 @@ export function HomeSection({ contributions }: HomeSectionProps) {
       >
         <p>
           👋 Hey! I&apos;m a{" "}
-          <span className="text-black dark:text-white">frontend-focused software engineer</span>{" "}
+          <span className="text-black dark:text-white">
+            frontend-focused software engineer
+          </span>{" "}
           crafting web experiences for both humans and agents.
         </p>
         <p>

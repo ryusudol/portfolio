@@ -17,6 +17,7 @@ import {
   Menu,
   Monitor,
   Moon,
+  Puzzle,
   Star,
   Sun,
 } from "reicon-react";
@@ -35,6 +36,7 @@ const navigation = [
   { href: "/#work", label: "Selected work", icon: Star },
   { href: "/#background", label: "Background", icon: GraduationCap },
   { href: "/#stack", label: "Tech stack", icon: Code },
+  { href: "/#playground", label: "Playground", icon: Puzzle },
 ] as const;
 
 const themes = [
@@ -151,11 +153,7 @@ export function ProfileMenu() {
   }, [beginTransitionGuard, closeMenu, focusMenuItem]);
 
   function handlePointerEnter(event: PointerEvent<HTMLDivElement>) {
-    if (
-      event.pointerType === "mouse" &&
-      !open &&
-      !transitioningRef.current
-    ) {
+    if (event.pointerType === "mouse" && !open && !transitioningRef.current) {
       hoverOpenedRef.current = true;
       setOpen(true);
     }
@@ -368,7 +366,6 @@ export function ProfileMenu() {
                 })}
               </div>
             </div>
-
           </div>
         </div>
       </div>

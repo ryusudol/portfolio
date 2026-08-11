@@ -27,7 +27,7 @@ export function DemoPanel({
       data-testid="ui-craft-demo"
       data-slug={slug}
       className={cn(
-        "flex w-full overflow-hidden rounded-[1.2rem] border border-border",
+        "flex h-full w-full min-h-0 flex-col overflow-hidden border border-border",
         className,
       )}
       style={style}

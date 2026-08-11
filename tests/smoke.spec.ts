@@ -55,14 +55,22 @@ test.describe("portfolio smoke", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/playground");
     await expect(page).toHaveURL(/\/playground\/ui$/);
-    await expect(page.getByRole("heading", { name: "UI Craft" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "UI Craft" }),
+    ).toBeVisible();
     await expect(page.getByTestId("ui-craft-workspace")).toBeVisible();
     await expect(page.getByTestId("ui-craft-nav")).toBeVisible();
     await expect(page.getByText("Components", { exact: true })).toBeVisible();
     await expect(page.getByTestId("ui-craft-demo")).toBeVisible();
     await expect(page.getByTestId("ui-craft-brief-rationale")).toBeVisible();
     await expect(
+      page.getByRole("heading", { name: "Testimonial Card", exact: true }),
+    ).toBeVisible();
+    await expect(
       page.getByRole("button", { name: "Testimonial Card", exact: true }),
-    ).toHaveAttribute("aria-current", "page");
+    ).toHaveAttribute("aria-current", "true");
+    await expect(
+      page.getByRole("link", { name: /back to playground/i }),
+    ).toBeVisible();
   });
 });

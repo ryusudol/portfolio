@@ -23,6 +23,7 @@ function lerp(from: number, to: number, t: number) {
   return from + (to - from) * t;
 }
 
+/** Public UI Craft workspace for `/playground/ui` (in-page component tabs). */
 export function UICraftWorkspace() {
   const [selectedSlug, setSelectedSlug] = useState(
     uiCraftEntries[0]?.slug ?? "",
@@ -81,7 +82,7 @@ export function UICraftWorkspace() {
                   <button
                     key={item.slug}
                     type="button"
-                    aria-current={isSelected ? "page" : undefined}
+                    aria-current={isSelected ? "true" : undefined}
                     className={cn(
                       "border-b py-1 text-[0.86rem] transition-colors duration-instant ease-in-out motion-reduce:transition-none",
                       isSelected
@@ -107,6 +108,7 @@ export function UICraftWorkspace() {
             >
               <DemoPanel
                 slug={entry.slug}
+                className="rounded-[1.2rem]"
                 style={{ minHeight: demoMinHeight }}
               />
             </div>

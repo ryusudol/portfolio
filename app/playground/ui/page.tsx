@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function UICraftPage() {
   return (
-    <>
+    <div className="mx-auto flex w-full max-w-360 flex-col gap-10 max-sm:gap-8 px-4 pt-44 pb-20 sm:px-6 max-sm:pt-35 lg:px-10">
       <div className="grid gap-6">
         <Link
           className={cn(
@@ -41,6 +41,6 @@ export default function UICraftPage() {
       </div>
 
       <UICraftWorkspace />
-    </>
+    </div>
   );
 }

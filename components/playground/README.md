@@ -14,6 +14,13 @@
 3. Register the component in `components/playground/ui-craft/index.ts`.
 4. Add entry metadata in `lib/playground/ui.ts`.
 
+Public entry point: **`/playground/ui`** — the UI Craft workspace with in-page
+component tabs (not routed by slug).
+
+Personal stages live at **`/playground/ui/<slug>`** (not linked from the public
+index). These routes render only `DemoCanvas` and the component — no site chrome,
+nav, or copy.
+
 ### Default stage background
 
 ```tsx

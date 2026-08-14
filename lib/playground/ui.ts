@@ -22,7 +22,7 @@ export const uiCraftEntries: readonly UICraftEntry[] = [
     briefRationale:
       "I keep the media as the primary surface so the visual hierarchy is immediate. A figure wraps the image so the composition stays semantic while the canvas controls padding and stage contrast around the card.",
   },
-];
+].toSorted((a, b) => a.title.localeCompare(b.title));
 
 export const uiCraftCategory = {
   slug: "ui",

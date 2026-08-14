@@ -62,10 +62,10 @@ test.describe("portfolio smoke", () => {
     await expect(page.getByTestId("ui-craft-demo")).toBeVisible();
     await expect(page.getByTestId("ui-craft-brief-rationale")).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Testimonial Card", exact: true }),
+      page.getByRole("heading", { name: "Blog Card", exact: true }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Testimonial Card", exact: true }),
+      page.getByRole("button", { name: "Blog Card", exact: true }),
     ).toHaveAttribute("aria-current", "true");
     await expect(
       page.getByRole("link", { name: /back to playground/i }),

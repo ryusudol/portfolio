@@ -22,6 +22,14 @@ export const uiCraftEntries: readonly UICraftEntry[] = [
     briefRationale:
       "I keep the media as the primary surface so the visual hierarchy is immediate. A figure wraps the image so the composition stays semantic while the canvas controls padding and stage contrast around the card.",
   },
+  {
+    slug: "profile-card",
+    title: "Profile Card",
+    description:
+      "A compact identity card that presents a person, their role, and ways to reach them.",
+    briefRationale:
+      "I treat the card as a figure so the portrait and identity stay linked. Name and role sit as the caption, with contact actions as the supporting layer rather than competing with the person.",
+  },
 ].toSorted((a, b) => a.title.localeCompare(b.title));
 
 export const uiCraftCategory = {

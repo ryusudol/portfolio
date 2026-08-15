@@ -37,14 +37,14 @@ export function MyComponent() {
 
 ### Custom stage background
 
-Pass Tailwind classes via `className` on `DemoCanvas` (overrides the default fill):
+Pass Tailwind classes via `className` on `DemoCanvas` (overrides the default fill; include `bg-none` when replacing the gradient):
 
 ```tsx
 import { DemoCanvas } from "@/components/playground/demo-canvas";
 
 export function TestimonialCard() {
   return (
-    <DemoCanvas className="bg-linear-to-br from-[#F9FAFB] to-[#D2D6DB] dark:from-[#1c1b19] dark:to-[#2a2825]">
+    <DemoCanvas className="bg-[#F4F6F8] bg-none dark:bg-surface-alt">
       {/* demo UI */}
     </DemoCanvas>
   );

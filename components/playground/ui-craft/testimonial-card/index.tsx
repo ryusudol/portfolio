@@ -5,7 +5,7 @@ import profileThumbnail from "./assets/profile-thumbnail.png";
 
 export default function TestimonialCard() {
   return (
-    <DemoCanvas className="bg-linear-to-br from-[#F9FAFB] to-[#D2D6DB] dark:from-[#1A1C1F] dark:to-[#2F343A]">
+    <DemoCanvas>
       <figure className="flex max-h-70 w-full max-w-85 flex-col gap-4 rounded-md p-6 shadow-md bg-surface">
         <figcaption className="flex items-center gap-4">
           <Image

@@ -5,7 +5,7 @@ import blogImage from "./assets/spacejoy.jpg";
 
 export default function BlogCard() {
   return (
-    <DemoCanvas className="bg-linear-to-br from-[#F9FAFB] to-[#D2D6DB] dark:from-[#1A1C1F] dark:to-[#2F343A]">
+    <DemoCanvas>
       <figure className="w-85 rounded-lg bg-surface overflow-hidden">
         <Image
           src={blogImage}

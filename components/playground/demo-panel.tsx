@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Stage chrome for a UI Craft demo (border, radius, scroll-driven size).
- * Background lives on each demo via {@link DemoCanvas} (or a custom full-bleed root).
+ * Background lives on {@link DemoCanvas} (override per demo via `className`).
  */
 export function DemoPanel({
   slug,

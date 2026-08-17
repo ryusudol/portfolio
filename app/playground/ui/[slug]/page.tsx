@@ -51,11 +51,12 @@ export default async function UICraftComponentPage({
       data-slug={slug}
       className="relative flex h-svh w-full flex-col"
     >
+      <h1 className="sr-only">{entry.title}</h1>
       <Link
         href={uiCraftCategory.href}
         className={cn(
           buttonVariants({ variant: "link" }),
-          "absolute top-5 left-5 z-10 h-auto w-fit items-center gap-[0.45rem] p-0 text-[0.8rem] text-muted-foreground no-underline transition-colors duration-instant ease-in-out hover:text-foreground hover:no-underline motion-reduce:transition-none sm:top-6 sm:left-6 [&>svg]:size-4",
+          "absolute top-36 left-5 z-10 h-auto w-fit items-center gap-[0.45rem] p-0 text-[0.8rem] text-muted-foreground no-underline transition-colors duration-instant ease-in-out hover:text-foreground hover:no-underline motion-reduce:transition-none max-sm:top-28 sm:left-6 [&>svg]:size-4",
         )}
       >
         <ArrowLeft aria-hidden="true" />

@@ -42,3 +42,7 @@ export const uiCraftCategory = {
 export function getUICraftEntry(slug: string) {
   return uiCraftEntries.find((entry) => entry.slug === slug);
 }
+
+export function getUICraftEntryHref(slug: string) {
+  return `${uiCraftCategory.href}/${slug}`;
+}

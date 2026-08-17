@@ -14,12 +14,13 @@
 3. Register the component in `components/playground/ui-craft/index.ts`.
 4. Add entry metadata in `lib/playground/ui.ts`.
 
-Public entry point: **`/playground/ui`** — the UI Craft workspace with in-page
-component tabs (not routed by slug).
+Public entry point: **`/playground/ui`** — a card grid of live component demos.
+Index tiles render each demo in preview mode (`DemoPanel preview`): `DemoCanvas`
+drops its stage fill so the component sits on the tile with a drop shadow.
 
-Personal stages live at **`/playground/ui/<slug>`** (not linked from the public
-index). These routes render only `DemoCanvas` and the component — no site chrome,
-nav, or copy.
+Each card links to **`/playground/ui/<slug>`**, a dedicated page for that
+component. Those routes keep the playground chrome (profile menu included) and
+render `DemoCanvas` with the component.
 
 ### Default stage background
 

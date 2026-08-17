@@ -51,24 +51,46 @@ test.describe("portfolio smoke", () => {
   });
 
   test("playground routes render ui craft workspace", async ({ page }) => {
-    // Settled layout (demo shrunk + copy visible) without scroll scrubbing.
-    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/playground");
     await expect(page).toHaveURL(/\/playground\/ui$/);
     await expect(page.getByRole("heading", { name: "UI Craft" })).toBeVisible();
     await expect(page.getByTestId("ui-craft-workspace")).toBeVisible();
-    await expect(page.getByTestId("ui-craft-nav")).toBeVisible();
-    await expect(page.getByText("Components", { exact: true })).toBeVisible();
-    await expect(page.getByTestId("ui-craft-demo")).toBeVisible();
-    await expect(page.getByTestId("ui-craft-brief-rationale")).toBeVisible();
+    await expect(page.getByTestId("ui-craft-card")).toHaveCount(3);
+    await expect(page.getByTestId("ui-craft-demo")).toHaveCount(3);
+    await expect(page.getByTestId("profile-menu-trigger")).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: "Blog Card", exact: true }),
+      page.getByRole("link", { name: "View Blog Card" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "Blog Card", exact: true }),
-    ).toHaveAttribute("aria-current", "true");
+      page.getByRole("link", { name: "View Profile Card" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "View Testimonial Card" }),
+    ).toBeVisible();
     await expect(
       page.getByRole("link", { name: /back to playground/i }),
     ).toBeVisible();
+  });
+
+  test("ui craft cards open dedicated component pages", async ({ page }) => {
+    await page.goto("/playground/ui");
+
+    await page.getByRole("link", { name: "View Blog Card" }).click();
+    await expect(page).toHaveURL(/\/playground\/ui\/blog-card$/);
+    await expect(page.getByTestId("ui-craft-stage")).toHaveAttribute(
+      "data-slug",
+      "blog-card",
+    );
+    await expect(page.getByTestId("profile-menu-trigger")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Blog Card", exact: true }),
+    ).toBeAttached();
+    await expect(
+      page.getByRole("link", { name: /back to ui craft/i }),
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: /back to ui craft/i }).click();
+    await expect(page).toHaveURL(/\/playground\/ui$/);
+    await expect(page.getByTestId("ui-craft-workspace")).toBeVisible();
   });
 });

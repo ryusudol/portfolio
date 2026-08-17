@@ -1,22 +1,7 @@
-"use client";
-
-import { usePathname } from "next/navigation";
-
 import { ProfileMenu } from "@/components/profile-menu";
 import { SkipToContent } from "@/components/skip-to-content";
 
-/** Personal `/playground/ui/<slug>` stages render the demo alone — no chrome. */
-function isPersonalStage(pathname: string) {
-  return /^\/playground\/ui\/[^/]+\/?$/.test(pathname);
-}
-
 export function PlaygroundShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
-  if (isPersonalStage(pathname)) {
-    return children;
-  }
-
   return (
     <>
       <SkipToContent />

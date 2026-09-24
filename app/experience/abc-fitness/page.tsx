@@ -30,7 +30,6 @@ export default function AbcFitnessCaseStudy() {
         <CaseStudyResults study={abcFitness} />
 
         <Chapter
-          index={1}
           id="async"
           scene="async"
           topic="Async"
@@ -55,7 +54,6 @@ export default function AbcFitnessCaseStudy() {
         </Chapter>
 
         <Chapter
-          index={2}
           id="interface"
           scene="interface"
           topic="Interface"
@@ -70,10 +68,6 @@ export default function AbcFitnessCaseStudy() {
             </>
           }
           chips={["Grouped cards", "Modal editing", "Drag-and-drop"]}
-          stat={{
-            value: "1.6M+",
-            caption: "clients reached through Trainerize",
-          }}
           tag={<span className="hint">[ the card is live — try it ]</span>}
           visualClassName="chapter__visual--split"
           visual={
@@ -87,7 +81,6 @@ export default function AbcFitnessCaseStudy() {
         />
 
         <Chapter
-          index={3}
           id="orchestration"
           scene="orchestration"
           topic="Orchestration"
@@ -104,7 +97,7 @@ export default function AbcFitnessCaseStudy() {
           tag={<span className="hint">[ scroll to merge ]</span>}
         />
 
-        <CaseStudyMore study={abcFitness} index={4} />
+        <CaseStudyMore study={abcFitness} />
       </main>
     </>
   );

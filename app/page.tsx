@@ -36,49 +36,62 @@ export default function Home() {
           aria-label="Introduction"
         >
           <div className="hero__sticky">
-            <p className="kicker kicker--center">
-              {profile.role} · Rice MCS ’26
-            </p>
-            <h1 className="hero__name" data-dots-text>
-              {profile.name}
-            </h1>
-            <p className="hero__tagline">{profile.tagline}</p>
+            <div className="hero__copy">
+              <p className="kicker hero__kicker">
+                {profile.role} · Rice MCS ’26
+              </p>
+              <h1 className="hero__name" data-dots-text>
+                {profile.name}
+              </h1>
+              <div className="hero__focus">
+                <p className="hero__focus-label">Focused on</p>
+                <ul>
+                  {profile.focus.map((area) => (
+                    <li key={area}>{area}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div
+              className="hero__portrait"
+              role="img"
+              aria-label={`Portrait of ${profile.name}, drawn in dots`}
+              data-dots-portrait="/portrait/dots.bin"
+            />
           </div>
         </section>
 
         <Chapter
-          index={1}
           id="experience"
           scene="profile"
           topic="Experience"
           source="ABC Fitness"
-          title={["One profile page,", "rebuilt end to end."]}
+          title={["A jQuery profile page,", "rewritten in React."]}
           body={
             <>
-              As a Software Engineering Intern at ABC Fitness, I rewrote the ABC
-              Trainerize profile page from jQuery to React — RxJS data flows,
-              tested permissions, a redesigned layout, and a flag-gated rollout.
+              Software Engineering Intern at ABC Fitness. Rebuilt the ABC
+              Trainerize profile page from scratch for a platform serving 1.6M+
+              clients and 400,000+ fitness professionals — carrying over its
+              business logic with care and covering it with unit tests so it
+              could roll out safely.
             </>
           }
-          stat={{
-            value: "400K+",
-            caption: "fitness professionals on Trainerize",
-          }}
+          tools={["React", "TypeScript", "RxJS", "Redux", "Jest"]}
           tag={
-            <Link className="pill" href="/experience/abc-fitness">
-              Read the case study
+            <Link
+              className="pill"
+              href="/experience/abc-fitness"
+              aria-label="ABC Fitness details"
+            >
+              Details
               <ArrowRight size={12} aria-hidden />
             </Link>
           }
           visual={<ProfileSketch />}
         />
 
-        <UnlearningChapter
-          index={2}
-          id="unlearning-comparator"
-          linkToCaseStudy
-        />
-        <CkaChapter index={3} id="pytorch-cka" linkToCaseStudy />
+        <UnlearningChapter id="unlearning-comparator" linkToCaseStudy />
+        <CkaChapter id="pytorch-cka" linkToCaseStudy />
 
         <section
           id="contact"
@@ -87,15 +100,13 @@ export default function Home() {
           aria-labelledby="contact-title"
         >
           <div className="contact__stage">
-            <p className="kicker kicker--center">
-              <span className="kicker__rule" aria-hidden />
-              04 — Contact
-            </p>
+            <p className="kicker kicker--center">Contact</p>
             <h2 id="contact-title" className="contact__title">
-              Have something in mind?
+              Let’s work together.
             </h2>
             <p className="contact__lede">
-              Send a note — it lands straight in my inbox.
+              Hiring, collaborating, or just curious? Send a note — it lands
+              straight in my inbox.
             </p>
             <ContactForm />
             <p className="contact__hint">
@@ -143,7 +154,9 @@ export default function Home() {
                 <h3>Also built</h3>
                 {alsoBuilt.map((item) => (
                   <p key={item.title}>
-                    <strong>{item.title}</strong>
+                    <a href={item.href} target="_blank" rel="noreferrer">
+                      <strong>{item.title}</strong>
+                    </a>
                     <span>{item.note}</span>
                   </p>
                 ))}

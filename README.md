@@ -8,10 +8,10 @@ so scrolling hands the same dots from one formation to the next.
 
 | #   | Chapter               | What the dots do                                                                 |
 | --- | --------------------- | -------------------------------------------------------------------------------- |
-| 00  | Intro                 | Form the name; the cursor pushes through it, a click sends a shockwave.          |
+| 00  | Intro                 | A stippled portrait beside the name; the cursor pushes through, a click pulses.  |
 | 01  | Experience            | Assemble a wireframe of the rebuilt Trainerize profile, section by section.     |
-| 02  | Unlearning Comparator | A 10-class UMAP-like embedding; scrolling unlearns one class into a singularity. |
-| 03  | PyTorch-CKA           | An O(B³) cube collapses into an O(B²) plane, then releases its memory.           |
+| 02  | Unlearning Comparator | A 10-class UMAP-like embedding; scrolling scatters one class into the others.     |
+| 03  | PyTorch-CKA           | A layer-by-layer CKA heatmap of two ResNet-18s fills in, pair by pair.          |
 | 04  | Contact               | Outline a message form that emails me directly.                                  |
 
 **Case studies** open with results (not a hero): title, role, summary, and
@@ -21,10 +21,26 @@ dot-outlined result cards.
   `merge/concat/switch/exhaustMap` picker, a code-to-card interface rewrite, and
   parallel AI agents merging into one flag-gated rollout.
 - `/projects/unlearning-comparator`, `/projects/pytorch-cka` — then the
-  interactive walkthrough and what I built. Content lives in
-  `lib/case-studies.ts`.
+  interactive walkthrough (PyTorch-CKA's O(B³) cube collapsing into an O(B²)
+  plane) and what I built. Content lives in `lib/case-studies.ts`.
+
+**Playground (`/playground`)** — side interests outside the main work
+(`playground` in `lib/content.ts`).
 
 The logo is a live particle black hole (`components/logo.tsx`).
+
+### Portrait
+
+The hero portrait is ~7k stippled dots in `public/portrait/dots.bin` (28 KB);
+the source photo is never committed. To regenerate it from a new photo:
+
+```bash
+python -m venv .venv && .venv/bin/pip install "rembg[cpu]" opencv-python-headless scipy
+.venv/bin/python scripts/portrait.py path/to/photo.png --cut "x,y x,y …"
+```
+
+`--cut` is a polyline along the jaw (in photo pixels); everything below it is
+removed so only the head remains. Add `--preview out.png` to check the result.
 
 Inspired by the dot-motion "describe yourself" site shown in
 [this video](https://www.youtube.com/watch?v=nQw17ND2-fA) (10:02–11:46).

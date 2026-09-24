@@ -8,49 +8,48 @@ import { Chapter } from "./chapter";
 import { ExternalLink } from "./external-link";
 
 type Props = {
-  index: number;
   id: string;
   /** Home shows a link to the full case study; the case study itself doesn't. */
   linkToCaseStudy?: boolean;
   topic?: string;
 };
 
-function CaseStudyLink({ href }: { href: string }) {
+function DetailsLink({ href, name }: { href: string; name: string }) {
   return (
-    <Link className="pill" href={href}>
-      Case study
+    <Link className="pill" href={href} aria-label={`${name} details`}>
+      Details
       <ArrowRight size={12} aria-hidden />
     </Link>
   );
 }
 
 export function UnlearningChapter({
-  index,
   id,
   linkToCaseStudy,
   topic = "Featured project",
 }: Props) {
   return (
     <Chapter
-      index={index}
       id={id}
       scene="visualization"
       topic={topic}
-      source="Unlearning Comparator"
-      title={["Two thousand points,", "one class forgotten."]}
+      source="Machine Unlearning Comparator"
+      title={["A visualization dashboard", "for machine unlearning."]}
       body={
         <>
-          A visual analytics system for comparing how machine-unlearning methods
-          change a model’s accuracy, efficiency, and privacy — published in IEEE
-          TVCG. I built the frontend end to end with React, D3, and Zustand.
+          Built an interactive visualization dashboard for evaluating machine
+          unlearning methods on accuracy, efficiency, and privacy — published in
+          IEEE TVCG.
         </>
       }
-      chips={["UMAP · 2,000 pts", "DOM ops per hover −99%"]}
-      stat={{ value: "100+", caption: "GitHub stars" }}
+      tools={["React", "TypeScript", "D3", "Zustand"]}
       tag={
         linkToCaseStudy ? (
           <>
-            <CaseStudyLink href={unlearningComparator.href} />
+            <DetailsLink
+              href={unlearningComparator.href}
+              name={unlearningComparator.title}
+            />
             <ExternalLink href={links.unlearningDemo}>Demo</ExternalLink>
           </>
         ) : (
@@ -58,11 +57,11 @@ export function UnlearningChapter({
         )
       }
       visual={
-        <p className="singularity" aria-live="off">
-          <span className="singularity__value" data-counter="forget">
+        <p className="forgetting" aria-live="off">
+          <span className="forgetting__value" data-counter="forget">
             200
           </span>
-          <span className="singularity__caption">forget-class points</span>
+          <span className="forgetting__caption">“cat” points left</span>
         </p>
       }
     />
@@ -70,35 +69,36 @@ export function UnlearningChapter({
 }
 
 export function CkaChapter({
-  index,
   id,
   linkToCaseStudy,
   topic = "Featured project",
 }: Props) {
   return (
     <Chapter
-      index={index}
       id={id}
-      scene="performance"
+      scene={linkToCaseStudy ? "similarity" : "performance"}
       topic={topic}
       source="PyTorch-CKA"
-      title={["Cubic,", "made quadratic."]}
+      title={
+        linkToCaseStudy
+          ? ["How similarly ML models", "see the same things."]
+          : ["Cubic,", "made quadratic."]
+      }
       body={
         <>
-          An open-source library for comparing representations across CNN and
-          LLM layers. Frobenius inner products replaced full matrix products,
-          taking HSIC from O(B³) to O(B²) per layer pair.
+          Developed an open-source Python library that compares internal
+          representations across CNN and LLM layers with Centered Kernel
+          Alignment (CKA). Replaced full matrix products with Frobenius inner
+          products, taking HSIC from O(B³) to O(B²) per layer pair — 5.7× faster
+          than an existing CKA library (all 18 layers of ResNet-18 on CIFAR-10,
+          H100).
         </>
       }
-      chips={["~400 PyPI downloads / mo", "CI · Python 3.10–3.14"]}
-      stat={{
-        value: "5.7×",
-        caption: "faster than an existing library on H100",
-      }}
+      tools={["Python", "PyTorch"]}
       tag={
         linkToCaseStudy ? (
           <>
-            <CaseStudyLink href={pytorchCka.href} />
+            <DetailsLink href={pytorchCka.href} name={pytorchCka.title} />
             <ExternalLink href={links.ckaPypi}>PyPI</ExternalLink>
           </>
         ) : (
@@ -106,20 +106,29 @@ export function CkaChapter({
         )
       }
       visual={
-        <dl className="readout">
-          <div>
-            <dt>complexity</dt>
-            <dd data-counter="order">O(B³)</dd>
-          </div>
-          <div>
-            <dt>speed-up</dt>
-            <dd data-counter="speed">1.0×</dd>
-          </div>
-          <div>
-            <dt>retained GPU memory</dt>
-            <dd data-counter="memory">100.0%</dd>
-          </div>
-        </dl>
+        linkToCaseStudy ? (
+          <dl className="readout">
+            <div>
+              <dt>layer pairs compared</dt>
+              <dd data-counter="pairs">0 / 324</dd>
+            </div>
+          </dl>
+        ) : (
+          <dl className="readout">
+            <div>
+              <dt>complexity</dt>
+              <dd data-counter="order">O(B³)</dd>
+            </div>
+            <div>
+              <dt>speed-up</dt>
+              <dd data-counter="speed">1.0×</dd>
+            </div>
+            <div>
+              <dt>retained GPU memory</dt>
+              <dd data-counter="memory">100.0%</dd>
+            </div>
+          </dl>
+        )
       }
     />
   );

@@ -30,9 +30,9 @@ export default function UnlearningCaseStudy() {
 
       <main id="chapters">
         <CaseStudyResults study={unlearningComparator} />
-        <UnlearningChapter index={1} id="walkthrough" topic="Walkthrough" />
-        <CaseStudyHighlights study={unlearningComparator} index={2} />
-        <CaseStudyMore study={unlearningComparator} index={3} />
+        <UnlearningChapter id="walkthrough" topic="Walkthrough" />
+        <CaseStudyHighlights study={unlearningComparator} />
+        <CaseStudyMore study={unlearningComparator} />
       </main>
     </>
   );

@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-import { type Chapter, pad } from "@/lib/content";
+import type { Chapter } from "@/lib/content";
 import { dots } from "@/lib/dots/runtime";
 
 export function ChapterNav({ chapters }: { chapters: Chapter[] }) {
@@ -20,10 +20,9 @@ export function ChapterNav({ chapters }: { chapters: Chapter[] }) {
             <a
               href={`#${chapter.id}`}
               aria-current={active === i ? "step" : undefined}
-              aria-label={`${pad(i)} ${chapter.label}`}
+              aria-label={chapter.label}
             >
               <span className="chapter-nav__label">{chapter.label}</span>
-              <span className="chapter-nav__index">{pad(i)}</span>
               <span className="chapter-nav__tick" />
             </a>
           </li>

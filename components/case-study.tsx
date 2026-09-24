@@ -18,7 +18,6 @@ export function CaseStudyResults({ study }: { study: CaseStudy }) {
     >
       <div className="results__inner">
         <p className="kicker">
-          <span className="kicker__rule" aria-hidden />
           <span>
             {study.kind}
             <span className="kicker__source"> · {study.when}</span>
@@ -67,13 +66,7 @@ export function CaseStudyResults({ study }: { study: CaseStudy }) {
 }
 
 /** Numbered cards for the work behind the results. */
-export function CaseStudyHighlights({
-  study,
-  index,
-}: {
-  study: CaseStudy;
-  index: number;
-}) {
+export function CaseStudyHighlights({ study }: { study: CaseStudy }) {
   return (
     <section
       id="highlights"
@@ -82,10 +75,7 @@ export function CaseStudyHighlights({
       aria-labelledby="highlights-title"
     >
       <div className="results__inner">
-        <p className="kicker">
-          <span className="kicker__rule" aria-hidden />
-          {pad(index)} — What I built
-        </p>
+        <p className="kicker">What I built</p>
         <h2 id="highlights-title" className="chapter__title">
           The work behind the numbers.
         </h2>
@@ -110,13 +100,7 @@ export function CaseStudyHighlights({
 }
 
 /** Closing section: the other case studies and a way to get in touch. */
-export function CaseStudyMore({
-  study,
-  index,
-}: {
-  study: CaseStudy;
-  index: number;
-}) {
+export function CaseStudyMore({ study }: { study: CaseStudy }) {
   const others = caseStudies.filter((s) => s.slug !== study.slug);
   return (
     <section
@@ -126,10 +110,7 @@ export function CaseStudyMore({
       aria-labelledby="more-title"
     >
       <div className="outro__stage">
-        <p className="kicker kicker--center">
-          <span className="kicker__rule" aria-hidden />
-          {pad(index)} — More
-        </p>
+        <p className="kicker kicker--center">More</p>
         <h2 id="more-title" className="contact__title">
           Keep exploring.
         </h2>

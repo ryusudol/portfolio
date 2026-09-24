@@ -33,29 +33,37 @@ export const abcFitness: CaseStudy = {
   role: "Software Engineering Intern",
   when: "Jun – Aug 2026 · Austin, TX",
   summary:
-    "Rewrote the ABC Trainerize profile page from jQuery to React as part of a company-wide modernization — then redesigned it beyond the migration’s original scope.",
-  stack: ["React", "TypeScript", "RxJS", "Jest", "LaunchDarkly", "Figma MCP"],
+    "Rebuilt the ABC Trainerize profile page from scratch, from jQuery to React. The platform serves 1.6M+ clients and 400,000+ fitness professionals, so the existing business logic was carried over carefully and backed by unit tests to roll out safely.",
+  stack: [
+    "React",
+    "TypeScript",
+    "RxJS",
+    "Redux",
+    "Jest",
+    "LaunchDarkly",
+    "Figma MCP",
+  ],
   links: [],
   results: [
+    {
+      value: "React",
+      label: "rewritten from scratch",
+      note: "The whole jQuery profile page, rebuilt with its existing business logic carried over intact.",
+    },
+    {
+      value: "Flagged",
+      label: "gradual rollout",
+      note: "Landed as independently reviewable stacked PRs behind a LaunchDarkly feature flag.",
+    },
+    {
+      value: "Beyond",
+      label: "the migration scope",
+      note: "Redesigned the hierarchy: a streamlined header, grouped cards, modal editing, and drag-and-drop certification reordering.",
+    },
     {
       value: "97%",
       label: "branch coverage",
       note: "Jest tests for permissions, role-based access, conditional rendering, and overlapping upload and update requests.",
-    },
-    {
-      value: "400K+",
-      label: "fitness professionals",
-      note: "use the rewritten profile page on ABC Trainerize.",
-    },
-    {
-      value: "1.6M+",
-      label: "clients worldwide",
-      note: "are served by the trainers on the platform.",
-    },
-    {
-      value: "React",
-      label: "rewritten from jQuery",
-      note: "shipped as stacked PRs and rolled out gradually behind a LaunchDarkly flag.",
     },
   ],
   highlights: [],
@@ -65,7 +73,7 @@ export const unlearningComparator: CaseStudy = {
   slug: "unlearning-comparator",
   href: "/projects/unlearning-comparator",
   kind: "Project",
-  title: "Unlearning Comparator",
+  title: "Machine Unlearning Comparator",
   role: "Frontend, end to end",
   when: "Published in IEEE TVCG · Mar 2026",
   summary:
@@ -144,7 +152,7 @@ export const pytorchCka: CaseStudy = {
     {
       value: "5.7×",
       label: "faster overall",
-      note: "than an existing CKA library, measured on an H100.",
+      note: "than an existing CKA library — all 18 layers of ResNet-18 on CIFAR-10, on an H100.",
     },
     {
       value: "−95.7%",

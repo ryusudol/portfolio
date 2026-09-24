@@ -1,10 +1,8 @@
 import { clamp, mulberry32, rgba, smoothstep, TAU } from "../math";
 import { dust } from "../shapes";
-import type { Field, Frame, Palette, Scene } from "../types";
+import type { Field, Frame, Palette, RGB, Scene } from "../types";
 
 type Cluster = {
-  u: number;
-  v: number;
   label: string;
   x: number;
   y: number;
@@ -14,36 +12,39 @@ type Cluster = {
   sin: number;
 };
 
-const CLASSES: [number, number, string][] = [
-  [0.14, 0.2, "airplane"],
-  [0.4, 0.1, "automobile"],
-  [0.7, 0.14, "bird"],
-  [0.9, 0.36, "deer"],
-  [0.16, 0.56, "dog"],
-  [0.52, 0.47, "cat"],
-  [0.86, 0.7, "frog"],
-  [0.34, 0.86, "horse"],
-  [0.66, 0.88, "ship"],
-  [0.08, 0.88, "truck"],
+/** CIFAR-10, alphabetical, each with its Tableau 10 colour. */
+const CLASSES: [number, number, string, RGB][] = [
+  [0.14, 0.2, "airplane", [78, 121, 167]],
+  [0.4, 0.1, "automobile", [242, 142, 43]],
+  [0.7, 0.14, "bird", [225, 87, 89]],
+  [0.52, 0.47, "cat", [118, 183, 178]],
+  [0.9, 0.36, "deer", [89, 161, 79]],
+  [0.2, 0.56, "dog", [237, 201, 72]],
+  [0.86, 0.7, "frog", [176, 122, 161]],
+  [0.34, 0.86, "horse", [255, 157, 167]],
+  [0.66, 0.88, "ship", [156, 117, 95]],
+  [0.08, 0.88, "truck", [186, 176, 172]],
 ];
-const FORGET = 5;
+const FORGET = 3;
 const FORGET_POINTS = 200;
 const START = 0.2;
 
 /**
- * A UMAP-like embedding of 2,000 activations across ten classes. Scrolling
- * unlearns one class: its points spiral into a singularity while the rest of
- * the embedding barely moves — the question the Unlearning Comparator answers.
+ * A UMAP-like embedding of 2,000 activations across ten classes, coloured by
+ * label. Scrolling unlearns one class: its points leave their cluster,
+ * scatter into the others, and take on their colours, while the rest of the
+ * embedding stays put — the
+ * question the Machine Unlearning Comparator answers.
  */
 export class UnlearningScene implements Scene {
   private clusters: Cluster[] = [];
   private clusterN = 0;
-  private phase = new Float32Array(0);
+  /** Where each forgotten point ends up, weighted toward nearby classes. */
+  private destinations: number[] = [];
   private hover = -1;
   private remaining = -1;
-  private core = { x: 0, y: 0 };
   private counter: HTMLElement | null = null;
-  private collapse = 0;
+  private progress = 0;
 
   layout(f: Field, fr: Frame) {
     const { w, h } = fr.visual;
@@ -52,8 +53,6 @@ export class UnlearningScene implements Scene {
     this.clusters = CLASSES.map(([u, v, label]) => {
       const angle = rand() * Math.PI;
       return {
-        u,
-        v,
         label,
         x: u * w,
         y: v * h,
@@ -63,18 +62,32 @@ export class UnlearningScene implements Scene {
         sin: Math.sin(angle),
       };
     });
+    const [fu, fv] = CLASSES[FORGET];
+    this.destinations = [];
+    CLASSES.forEach(([u, v], k) => {
+      if (k === FORGET) return;
+      const share = Math.round(6 / (Math.hypot(u - fu, v - fv) + 0.2));
+      for (let s = 0; s < share; s++) this.destinations.push(k);
+    });
+    f.classColors = CLASSES.map((c) => c[3]);
     this.clusterN = Math.round(f.n * 0.86);
-    if (this.phase.length !== f.n) this.phase = new Float32Array(f.n);
     this.counter = fr.section.querySelector<HTMLElement>(
       '[data-counter="forget"]',
     );
     this.remaining = -1;
   }
 
-  private position(f: Field, i: number, c: Cluster, out: [number, number]) {
+  private position(
+    f: Field,
+    i: number,
+    c: Cluster,
+    out: [number, number],
+    spread = 1,
+  ) {
     // Independent 2-D Gaussian (Box–Muller pair) so blobs aren't streaked.
     const outlier = f.r3[i] < 0.08 ? 2.2 : 1;
-    const radius = Math.sqrt(-2 * Math.log(Math.max(f.r1[i], 1e-6))) * outlier;
+    const radius =
+      Math.sqrt(-2 * Math.log(Math.max(f.r1[i], 1e-6))) * outlier * spread;
     const gx = radius * Math.cos(TAU * f.r2[i]) * c.sx;
     const gy = radius * Math.sin(TAU * f.r2[i]) * c.sy;
     out[0] = c.x + gx * c.cos - gy * c.sin;
@@ -88,13 +101,8 @@ export class UnlearningScene implements Scene {
     const clusters = this.clusters;
     if (clusters.length === 0) return;
     const p = fr.progress;
-    const s = smoothstep(START, 0.92, p);
-    this.collapse = s;
+    this.progress = smoothstep(START, 0.92, p);
     const forget = clusters[FORGET];
-    const cx = forget.x;
-    const cy = forget.y;
-    this.core.x = vx + cx;
-    this.core.y = vy + cy;
 
     // Hovered cluster (like a D3 hover, but on 8,000 dots).
     const ptr = fr.pointer;
@@ -111,7 +119,8 @@ export class UnlearningScene implements Scene {
     }
 
     const pos: [number, number] = [0, 0];
-    let alive = 0;
+    const to: [number, number] = [0, 0];
+    let stayed = 0;
     let total = 0;
     for (let i = 0; i < f.n; i++) {
       if (i >= this.clusterN) {
@@ -119,89 +128,72 @@ export class UnlearningScene implements Scene {
         continue;
       }
       const k = i % clusters.length;
-      const c = clusters[k];
-      this.position(f, i, c, pos);
-      const hovered = this.hover === k;
+      this.position(f, i, clusters[k], pos);
+      f.gc[i] = k + 1;
+      f.gh[i] = 0;
+      const lift = this.hover === k ? 1.35 : 1;
 
       if (k !== FORGET) {
-        // Everything else only feels a faint gravitational tug.
-        const pull = s * 0.06;
-        f.gx[i] = vx + pos[0] + (cx - pos[0]) * pull;
-        f.gy[i] = vy + pos[1] + (cy - pos[1]) * pull;
-        f.ga[i] = (0.32 + f.r3[i] * 0.4) * (hovered ? 1.6 : 1) * (1 - s * 0.2);
-        f.gh[i] = 0;
+        f.gx[i] = vx + pos[0];
+        f.gy[i] = vy + pos[1];
+        f.ga[i] = Math.min(1, (0.42 + f.r3[i] * 0.4) * lift);
         continue;
       }
 
+      // A few points resist unlearning and stay behind.
       total++;
-      const survivor = f.r2[i] < 0.07;
-      const absorbAt = 0.36 + f.r3[i] * 0.54;
-      const e = clamp((p - START) / (absorbAt - START));
-      const dx = pos[0] - cx;
-      const dy = pos[1] - cy;
-      const r0 = Math.hypot(dx, dy) + 18;
-      const eased = e * e * (3 - 2 * e);
-      const ring = survivor ? 16 + f.r1[i] * 5 : 0;
-      const radius = r0 + (ring - r0) * eased;
-      if (p > START && !fr.reduced) {
-        this.phase[i] += fr.dt * (0.35 + 70 / (radius + 14));
+      const f0 = f.r0[i];
+      // (r1 near 1 = a small Gaussian radius, so they hold the cluster's core.)
+      if (f.r1[i] > 0.94) {
+        f.gx[i] = vx + pos[0];
+        f.gy[i] = vy + pos[1];
+        f.ga[i] = 0.55 + 0.4 * f.r3[i];
+        stayed++;
+        continue;
       }
-      const base = Math.atan2(dy, dx);
-      const angle = base + this.phase[i];
-      const tilt = 0.36 + (1 - eased) * 0.64;
-      const orbitX = cx + Math.cos(angle) * radius;
-      const orbitY = cy + Math.sin(angle) * radius * tilt;
-      const mixIn = smoothstep(0, 0.12, e);
-      f.gx[i] = vx + pos[0] + (orbitX - pos[0]) * mixIn;
-      f.gy[i] = vy + pos[1] + (orbitY - pos[1]) * mixIn;
-      const absorbed = !survivor && e >= 1;
-      f.ga[i] = absorbed ? 0 : 0.5 + 0.5 * f.r3[i];
-      f.gh[i] = 0.55 + 0.45 * eased;
-      if (e < 1) alive++;
+      const dest = this.destinations[Math.floor(f0 * this.destinations.length)];
+      this.position(f, i, clusters[dest], to, 1.25);
+      const leaveAt = 0.36 + f.r3[i] * 0.54;
+      const e = clamp((p - START) / (leaveAt - START));
+      const eased = e * e * (3 - 2 * e);
+      // Travel on a gentle arc rather than a straight line.
+      const dx = to[0] - pos[0];
+      const dy = to[1] - pos[1];
+      const bend = Math.sin(Math.PI * eased) * (f.r1[i] - 0.5) * 0.5;
+      f.gx[i] = vx + pos[0] + dx * eased - dy * bend;
+      f.gy[i] = vy + pos[1] + dy * eased + dx * bend;
+      // Once past halfway, the point takes on the class it now sits in.
+      if (eased > 0.5) f.gc[i] = dest + 1;
+      f.ga[i] = 0.6 + 0.35 * f.r3[i];
+      if (e < 0.5) stayed++;
     }
 
-    const remaining = Math.round((FORGET_POINTS * alive) / Math.max(1, total));
+    const remaining = Math.round((FORGET_POINTS * stayed) / Math.max(1, total));
     if (remaining !== this.remaining && this.counter) {
       this.remaining = remaining;
       this.counter.textContent = remaining.toLocaleString("en-US");
     }
-    fr.section.style.setProperty("--cx", `${cx.toFixed(1)}px`);
-    fr.section.style.setProperty("--cy", `${cy.toFixed(1)}px`);
-    fr.section.style.setProperty("--collapse", s.toFixed(3));
+    fr.section.style.setProperty("--cx", `${forget.x.toFixed(1)}px`);
+    fr.section.style.setProperty("--cy", `${forget.y.toFixed(1)}px`);
+    fr.section.style.setProperty("--collapse", this.progress.toFixed(3));
   }
 
   draw(ctx: CanvasRenderingContext2D, fr: Frame, palette: Palette) {
     const vx = fr.visual.x;
     const vy = fr.visual.y;
-    const s = this.collapse;
+    const s = this.progress;
     ctx.font = `10px ${palette.mono}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     this.clusters.forEach((c, k) => {
       const forget = k === FORGET;
-      let alpha = this.hover === k ? 0.95 : 0.42;
-      if (forget) alpha = 0.9 * (1 - smoothstep(0.05, 0.25, s));
+      let alpha = this.hover === k ? 1 : 0.7;
+      if (forget) alpha *= 1 - smoothstep(0.05, 0.25, s);
       if (alpha <= 0.01) return;
-      ctx.fillStyle = rgba(forget ? palette.accent : palette.muted, alpha);
+      ctx.fillStyle = rgba(CLASSES[k][3], alpha);
       const label = forget ? `${c.label} · forget` : c.label;
       ctx.fillText(label, vx + c.x, vy + c.y + c.sy * 2.4 + 6);
     });
     ctx.textAlign = "start";
-
-    if (s > 0.001) {
-      const { x, y } = this.core;
-      const radius = 10 + 34 * s;
-      const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
-      g.addColorStop(
-        0,
-        rgba(palette.ink ? [255, 246, 236] : palette.accent, 0.95 * s),
-      );
-      g.addColorStop(0.25, rgba(palette.accent, 0.55 * s));
-      g.addColorStop(1, rgba(palette.accent, 0));
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, TAU);
-      ctx.fill();
-    }
   }
 }

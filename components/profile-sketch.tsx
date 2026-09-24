@@ -111,9 +111,8 @@ function PhotoFeed() {
             className="sk-sun"
             data-dots="disc"
             data-dots-tint="1"
-            data-dots-weight="5"
+            data-dots-weight="3"
           />
-          <span className="sk-ridge" data-dots="rule" data-dots-spread="0.9" />
         </div>
         <div className="sk-photo-list">
           {Array.from({ length: THUMBS }, (_, k) => (
@@ -168,7 +167,7 @@ export function ProfileSketch() {
           <span className="sk-avatar" data-dots="disc" data-dots-weight="0.7" />
           <div className="sk-id">
             <div className="sk-line">
-              <span className="sk-name">Trainerize ABC</span>
+              <span className="sk-name">Suhyeon Yu</span>
               <span
                 className="sk-pill"
                 data-dots="outline"

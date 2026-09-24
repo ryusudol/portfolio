@@ -13,10 +13,10 @@ test.describe("portfolio smoke", () => {
     await expect(page.locator("html")).toHaveClass(/dots-ready/);
 
     for (const name of [
-      /rebuilt end to end/i,
-      /one class forgotten/i,
-      /made quadratic/i,
-      /have something in mind/i,
+      /rewritten in React/i,
+      /for machine unlearning/i,
+      /see the same things/i,
+      /let’s work together/i,
     ]) {
       const heading = page.getByRole("heading", { level: 2, name });
       await heading.scrollIntoViewIfNeeded();
@@ -28,7 +28,7 @@ test.describe("portfolio smoke", () => {
     page,
   }) => {
     await page.goto("/#experience");
-    await page.getByRole("link", { name: /read the case study/i }).click();
+    await page.getByRole("link", { name: "ABC Fitness details" }).click();
 
     await expect(page).toHaveURL(/\/experience\/abc-fitness$/);
     await expect(
@@ -87,17 +87,26 @@ test.describe("portfolio smoke", () => {
     await expect(message).toHaveValue("Hello!\nSecond line");
   });
 
+  test("header links to the playground", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Playground" }).click();
+    await expect(page).toHaveURL(/\/playground$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Playground" }),
+    ).toBeVisible();
+  });
+
   test("featured projects open results-first case studies", async ({
     page,
   }) => {
     for (const [section, title] of [
-      ["#unlearning-comparator", "Unlearning Comparator"],
+      ["#unlearning-comparator", "Machine Unlearning Comparator"],
       ["#pytorch-cka", "PyTorch-CKA"],
     ]) {
       await page.goto(`/${section}`);
       await page
         .locator(section)
-        .getByRole("link", { name: /case study/i })
+        .getByRole("link", { name: `${title} details` })
         .click();
       await expect(
         page.getByRole("heading", { level: 1, name: title }),
@@ -111,6 +120,7 @@ test.describe("portfolio smoke", () => {
     "/experience/abc-fitness",
     "/projects/unlearning-comparator",
     "/projects/pytorch-cka",
+    "/playground",
   ]) {
     test(`has no serious accessibility violations on ${path}`, async ({
       page,

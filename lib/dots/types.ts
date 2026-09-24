@@ -40,6 +40,25 @@ export type Field = {
   r2: Float32Array;
   r3: Float32Array;
   size: Float32Array;
+  /**
+   * Per-frame overrides a scene may set (reset every frame): a fixed dot
+   * size (0 = the particle's own) and a drift multiplier (1 = normal). Used
+   * where exact placement matters, like a stippled portrait.
+   */
+  gz: Float32Array;
+  gj: Float32Array;
+  sz: Float32Array;
+  sj: Float32Array;
+  /**
+   * Categorical colour: a scene sets `gc` (1-based index into `classColors`,
+   * 0 = none; reset every frame). `c` is the class being shown and `cw` its
+   * strength, so colours fade out, and cross-fade when a particle changes class.
+   */
+  gc: Uint8Array;
+  tc: Uint8Array;
+  c: Uint8Array;
+  cw: Float32Array;
+  classColors: RGB[];
   k: Float32Array;
   release: Float32Array;
 };

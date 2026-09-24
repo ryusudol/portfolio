@@ -30,9 +30,9 @@ export default function CkaCaseStudy() {
 
       <main id="chapters">
         <CaseStudyResults study={pytorchCka} />
-        <CkaChapter index={1} id="walkthrough" topic="Walkthrough" />
-        <CaseStudyHighlights study={pytorchCka} index={2} />
-        <CaseStudyMore study={pytorchCka} index={3} />
+        <CkaChapter id="walkthrough" topic="Walkthrough" />
+        <CaseStudyHighlights study={pytorchCka} />
+        <CaseStudyMore study={pytorchCka} />
       </main>
     </>
   );

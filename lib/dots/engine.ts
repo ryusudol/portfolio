@@ -1,10 +1,14 @@
 import { clamp, mix, parseColor, rgba, TAU } from "./math";
 import { dots } from "./runtime";
-import type { Field, Frame, Palette, Pointer, Rect, Scene } from "./types";
+import type { Field, Frame, Palette, Pointer, Rect, RGB, Scene } from "./types";
 
 const TINT_LEVELS = 6;
 const ALPHA_LEVELS = 8;
 const BUCKETS = TINT_LEVELS * ALPHA_LEVELS;
+const CLASS_LEVELS = 4;
+const MAX_CLASSES = 10;
+const ALL_BUCKETS = BUCKETS + MAX_CLASSES * CLASS_LEVELS * ALPHA_LEVELS;
+const SKIP = 0xffff;
 const COMPACT_BREAKPOINT = 900;
 
 type Chapter = {
@@ -43,6 +47,15 @@ function createField(n: number, vw: number, vh: number): Field {
     size: f32(),
     k: f32(),
     release: f32(),
+    gz: f32(),
+    gj: f32().fill(1),
+    sz: f32(),
+    sj: f32().fill(1),
+    gc: new Uint8Array(n),
+    tc: new Uint8Array(n),
+    c: new Uint8Array(n),
+    cw: f32(),
+    classColors: [],
   };
   for (let i = 0; i < n; i++) {
     field.r0[i] = Math.random();
@@ -60,7 +73,7 @@ function createField(n: number, vw: number, vh: number): Field {
 
 function particleBudget(vw: number, vh: number) {
   const area = vw * vh;
-  return Math.round(clamp(area / 150, 2800, 9000));
+  return Math.round(clamp(area / 125, 5000, 11000));
 }
 
 /**
@@ -86,9 +99,9 @@ export class DotEngine {
   private reduced = false;
   private needsLayout = true;
   private order: Int32Array;
-  private bucketStart = new Int32Array(BUCKETS + 1);
-  private bucketFill = new Int32Array(BUCKETS);
-  private bucketOf: Uint8Array;
+  private bucketStart = new Int32Array(ALL_BUCKETS + 1);
+  private bucketFill = new Int32Array(ALL_BUCKETS);
+  private bucketOf: Uint16Array;
   private disposers: (() => void)[] = [];
 
   constructor(
@@ -106,7 +119,7 @@ export class DotEngine {
       this.vh,
     );
     this.order = new Int32Array(this.field.n);
-    this.bucketOf = new Uint8Array(this.field.n);
+    this.bucketOf = new Uint16Array(this.field.n);
     this.palette = this.readPalette();
 
     for (const el of root.querySelectorAll<HTMLElement>("[data-scene]")) {
@@ -124,6 +137,8 @@ export class DotEngine {
 
     this.listen();
     dots.engine = this;
+    // Dots now draw the outlines and covers that CSS drew until this point.
+    document.documentElement.classList.add("dots-ready");
     dots.set({ particles: this.field.n });
   }
 
@@ -324,6 +339,9 @@ export class DotEngine {
       this.needsLayout = false;
       scene.layout(this.field, fr);
     }
+    this.field.gz.fill(0);
+    this.field.gj.fill(1);
+    this.field.gc.fill(0);
     scene.update(this.field, fr);
     this.commit();
     this.step(fr);
@@ -339,6 +357,9 @@ export class DotEngine {
       f.ty[i] = f.gy[i];
       f.ta[i] = f.ga[i];
       f.th[i] = f.gh[i];
+      f.sz[i] = f.gz[i];
+      f.sj[i] = f.gj[i];
+      f.tc[i] = f.gc[i];
     }
   }
 
@@ -367,8 +388,9 @@ export class DotEngine {
       let tx = f.tx[i];
       let ty = f.ty[i];
       if (jitter > 0) {
-        tx += Math.sin(time * (0.6 + r0 * 1.4) + r1 * TAU) * jitter;
-        ty += Math.cos(time * (0.5 + f.r2[i] * 1.2) + f.r3[i] * TAU) * jitter;
+        const j = jitter * f.sj[i];
+        tx += Math.sin(time * (0.6 + r0 * 1.4) + r1 * TAU) * j;
+        ty += Math.cos(time * (0.5 + f.r2[i] * 1.2) + f.r3[i] * TAU) * j;
       }
       const x = f.x[i];
       const y = f.y[i];
@@ -418,6 +440,10 @@ export class DotEngine {
       f.y[i] = y + vy * scale;
       f.a[i] += (f.ta[i] - f.a[i]) * ease;
       f.h[i] += (f.th[i] - f.h[i]) * ease;
+      // Changing class fades the old colour out before the new one fades in.
+      const tc = f.tc[i];
+      if (tc > 0 && (f.c[i] === 0 || f.cw[i] < 0.2)) f.c[i] = tc;
+      f.cw[i] += ((tc > 0 && tc === f.c[i] ? 1 : 0) - f.cw[i]) * ease;
     }
   }
 
@@ -444,41 +470,58 @@ export class DotEngine {
         f.x[i] > fr.vw + 4 ||
         f.y[i] > fr.vh + 4
       ) {
-        this.bucketOf[i] = 255;
+        this.bucketOf[i] = SKIP;
         continue;
       }
-      const tint = Math.min(1, f.h[i] + heat * f.r0[i]);
-      const tl = Math.round(tint * (TINT_LEVELS - 1));
       const al = Math.min(ALPHA_LEVELS - 1, Math.floor(a * ALPHA_LEVELS));
-      const b = tl * ALPHA_LEVELS + al;
+      const cl = Math.round(f.cw[i] * (CLASS_LEVELS - 1));
+      let b: number;
+      if (cl > 0 && f.c[i] > 0 && f.c[i] <= f.classColors.length) {
+        b = BUCKETS + ((f.c[i] - 1) * CLASS_LEVELS + cl) * ALPHA_LEVELS + al;
+      } else {
+        const tint = Math.min(1, f.h[i] + heat * f.r0[i]);
+        const tl = Math.round(tint * (TINT_LEVELS - 1));
+        b = tl * ALPHA_LEVELS + al;
+      }
       this.bucketOf[i] = b;
       counts[b]++;
     }
     const start = this.bucketStart;
     start[0] = 0;
-    for (let b = 0; b < BUCKETS; b++) start[b + 1] = start[b] + counts[b];
+    for (let b = 0; b < ALL_BUCKETS; b++) start[b + 1] = start[b] + counts[b];
     counts.fill(0);
     for (let i = 0; i < f.n; i++) {
       const b = this.bucketOf[i];
-      if (b === 255) continue;
+      if (b === SKIP) continue;
       this.order[start[b] + counts[b]++] = i;
     }
 
     const hotShift = T * T * 0.45;
-    for (let b = 0; b < BUCKETS; b++) {
+    for (let b = 0; b < ALL_BUCKETS; b++) {
       const from = start[b];
       const to = start[b + 1];
       if (from === to) continue;
-      const tl = Math.floor(b / ALPHA_LEVELS);
       const al = b % ALPHA_LEVELS;
-      let color = mix(palette.dot, palette.accent, tl / (TINT_LEVELS - 1));
-      if (hotShift > 0.01)
-        color = mix(color, palette.hot, hotShift * (tl / (TINT_LEVELS - 1)));
+      let color: RGB;
+      if (b >= BUCKETS) {
+        const slot = Math.floor((b - BUCKETS) / ALPHA_LEVELS);
+        const cls = f.classColors[Math.floor(slot / CLASS_LEVELS)];
+        color = mix(
+          palette.dot,
+          cls,
+          (slot % CLASS_LEVELS) / (CLASS_LEVELS - 1),
+        );
+      } else {
+        const tl = Math.floor(b / ALPHA_LEVELS);
+        color = mix(palette.dot, palette.accent, tl / (TINT_LEVELS - 1));
+        if (hotShift > 0.01)
+          color = mix(color, palette.hot, hotShift * (tl / (TINT_LEVELS - 1)));
+      }
       ctx.fillStyle = rgba(color, (al + 0.6) / ALPHA_LEVELS);
       ctx.beginPath();
       for (let o = from; o < to; o++) {
         const i = this.order[o];
-        const s = f.size[i];
+        const s = f.sz[i] || f.size[i];
         ctx.rect(f.x[i] - s / 2, f.y[i] - s / 2, s, s);
       }
       ctx.fill();

@@ -23,7 +23,7 @@ const mono = JetBrains_Mono({
 
 const title = `${profile.name} — ${profile.role}`;
 const description =
-  "Software engineer and Rice MCS student building software that makes complex systems easy to see and use — React rewrites, RxJS data flows, D3 visual analytics, and fast Python tooling.";
+  "Software engineer and Rice MCS student working across frontend engineering, data visualization, and machine learning.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(

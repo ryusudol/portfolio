@@ -12,6 +12,9 @@ export function SiteHeader() {
         <Logo />
       </Link>
       <div className="site-header__actions">
+        <Link className="pill pill--quiet hide-compact" href="/playground">
+          Playground
+        </Link>
         <Link className="pill pill--quiet hide-compact" href="/#contact">
           Contact
         </Link>

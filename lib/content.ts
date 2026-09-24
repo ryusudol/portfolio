@@ -1,12 +1,42 @@
 export const profile = {
   name: "Suhyeon Yu",
   role: "Software Engineer",
-  tagline: "Software that makes complex systems easy to see and use.",
+  tagline: "Frontend engineering, data visualization, and machine learning.",
+  focus: ["Frontend engineering", "Data visualization", "Machine learning"],
   location: "Houston, TX",
   email: "suhyeon.yu.2789@gmail.com",
   github: "https://github.com/ryusudol",
   linkedin: "https://www.linkedin.com/in/suhyeon-yu",
 } as const;
+
+/** Side interests, shown on /playground rather than the home page. */
+export const playground = [
+  {
+    title: "Systems programming",
+    tools: "C++ · Rust",
+    body: "Memory, concurrency, and performance, close to the metal.",
+  },
+  {
+    title: "Robotics",
+    tools: "Perception · Control",
+    body: "Software that senses and acts in the physical world.",
+  },
+  {
+    title: "AI tooling",
+    tools: "Agents · Data viz",
+    body: "Tools that make models easier to build, inspect, and trust.",
+  },
+  {
+    title: "Full-stack web",
+    tools: "APIs · Databases",
+    body: "Whole products, from the database to the interface.",
+  },
+  {
+    title: "Infrastructure",
+    tools: "Docker · Kubernetes",
+    body: "Packaging, shipping, and running software reliably.",
+  },
+];
 
 export type Chapter = {
   id: string;
@@ -19,7 +49,7 @@ export const pad = (n: number) => String(n).padStart(2, "0");
 export const homeChapters: Chapter[] = [
   { id: "intro", label: "Intro" },
   { id: "experience", label: "Experience" },
-  { id: "unlearning-comparator", label: "Unlearning Comparator" },
+  { id: "unlearning-comparator", label: "Machine Unlearning Comparator" },
   { id: "pytorch-cka", label: "PyTorch-CKA" },
   { id: "contact", label: "Contact" },
 ];
@@ -93,6 +123,7 @@ export const education = [
 export const alsoBuilt = [
   {
     title: "Online MyeongNyunDang",
+    href: "https://mrdang.cs.skku.edu/",
     note: "Next.js education platform for 5,000+ students — homepage load cut ~40% with SSR and lazy images.",
   },
 ];

@@ -1,11 +1,8 @@
 import type { ReactNode } from "react";
 
-import { pad } from "@/lib/content";
-
 import { CountUp } from "./count-up";
 
 type ChapterProps = {
-  index: number;
   id: string;
   scene: string;
   topic: string;
@@ -14,6 +11,8 @@ type ChapterProps = {
   body: ReactNode;
   children?: ReactNode;
   chips?: ReactNode[];
+  /** Technologies used, listed under the body. */
+  tools?: string[];
   stat?: { value: string; caption: string };
   tag?: ReactNode;
   visual?: ReactNode;
@@ -25,7 +24,6 @@ type ChapterProps = {
  * The section is taller than the viewport; its scroll progress drives the scene.
  */
 export function Chapter({
-  index,
   id,
   scene,
   topic,
@@ -34,6 +32,7 @@ export function Chapter({
   body,
   children,
   chips,
+  tools,
   stat,
   tag,
   visual,
@@ -49,9 +48,8 @@ export function Chapter({
       <div className="chapter__sticky">
         <div className="chapter__copy">
           <p className="kicker">
-            <span className="kicker__rule" aria-hidden />
             <span>
-              {pad(index)} — {topic}
+              {topic}
               <span className="kicker__source"> · {source}</span>
             </span>
           </p>
@@ -61,6 +59,13 @@ export function Chapter({
             {title[1]}
           </h2>
           <p className="chapter__body">{body}</p>
+          {tools && (
+            <ul className="tools" aria-label="Built with">
+              {tools.map((tool) => (
+                <li key={tool}>{tool}</li>
+              ))}
+            </ul>
+          )}
           {chips && (
             <ul className="chips">
               {chips.map((chip, i) => (

@@ -155,7 +155,7 @@ main {
   display: inline-flex;
   padding: 4px;
   margin: -4px;
-  border-radius: 50%;
+  border-radius: 999px;
   color: var(--fg);
 }
 
@@ -303,13 +303,6 @@ main {
   justify-content: center;
 }
 
-.kicker__rule {
-  flex: none;
-  width: 22px;
-  height: 1px;
-  background: var(--accent);
-}
-
 .kicker__source {
   color: var(--faint);
 }
@@ -337,19 +330,35 @@ code {
   position: sticky;
   top: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: clamp(24px, 5vw, 96px);
   height: 100vh;
   height: 100svh;
-  padding: 0 16px;
-  text-align: center;
+  padding: 72px var(--nav-space) 24px var(--gutter);
+}
+
+.hero__copy {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.hero__kicker {
+  margin-bottom: 14px;
+}
+
+/* The portrait faces left, toward the name. Dots are drawn by the canvas. */
+.hero__portrait {
+  flex: none;
+  height: min(68vh, 640px);
+  aspect-ratio: 520 / 587;
 }
 
 .hero__name {
-  margin: 0;
+  width: fit-content;
+  margin: 0 0 0 -0.1em;
   padding: 0 0.1em;
-  font-size: clamp(64px, 14.5vw, 236px);
+  font-size: clamp(56px, 8.2vw, 150px);
   font-style: italic;
   font-weight: 400;
   line-height: 1.08;
@@ -361,14 +370,43 @@ code {
   color: transparent;
 }
 
-.hero__tagline {
-  margin: 10px 0 0;
-  font-size: clamp(16px, 1.7vw, 21px);
+.hero__focus {
+  max-width: 34em;
+  margin-top: 18px;
+  overflow: hidden;
   opacity: calc(1 - var(--p, 0) * 2.4);
 }
 
-.hero__tagline--wide {
-  max-width: 44ch;
+.hero__focus-label {
+  margin: 0 0 8px;
+  color: var(--faint);
+  font: 500 10.5px / 1.3 var(--mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Each item leads with its separator; the ul's negative margin pushes the
+   ones that start a line outside .hero__focus, which clips them. */
+.hero__focus ul {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 0 -1.2em;
+  padding: 0;
+  font-size: clamp(16px, 1.5vw, 20px);
+  line-height: 1.5;
+  list-style: none;
+}
+
+.hero__focus li {
+  white-space: nowrap;
+}
+
+.hero__focus li::before {
+  content: "·";
+  display: inline-block;
+  width: 1.2em;
+  color: var(--faint);
+  text-align: center;
 }
 
 /* ---------------------------------------------------------------- chapters */
@@ -436,10 +474,32 @@ code {
 }
 
 .stat {
-  max-width: 330px;
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px dashed var(--line-strong);
+  max-width: 40ch;
+  margin-top: 26px;
+  font-size: 16.5px;
+}
+
+/* Link buttons sit at the right edge of the copy, where their arrows point. */
+.stat__row:has(> a) {
+  justify-content: flex-end;
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin: 16px 0 0;
+  padding: 0;
+  color: var(--muted);
+  font: 500 10.5px / 1.4 var(--mono);
+  letter-spacing: 0.06em;
+  list-style: none;
+}
+
+.tools li:not(:last-child)::after {
+  content: "·";
+  margin: 0 8px;
+  color: var(--faint);
 }
 
 .stat__caption {
@@ -1098,22 +1158,13 @@ code {
 
 .sk-sun {
   position: absolute;
-  top: 18%;
-  left: calc(16% + var(--sel, 0) * 26%);
-  width: 22px;
-  height: 22px;
+  bottom: 12%;
+  left: calc(14% + var(--sel, 0) * 30%);
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--accent);
   transition: left 0.9s var(--ease);
-}
-
-.sk-ridge {
-  position: absolute;
-  top: 74%;
-  right: 6%;
-  left: 6%;
-  height: 1px;
-  background: var(--line-strong);
 }
 
 /* With particles running, the dots draw every line; CSS keeps only the text. */
@@ -1124,7 +1175,7 @@ code {
 
 /* 03 · visualization */
 
-.singularity {
+.forgetting {
   position: absolute;
   top: calc(var(--cy, 50%) + 48px);
   left: var(--cx, 50%);
@@ -1137,14 +1188,14 @@ code {
   transform: translateX(-50%);
 }
 
-.singularity__value {
+.forgetting__value {
   font-size: clamp(28px, 3vw, 42px);
   line-height: 1;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
-.singularity__caption,
+.forgetting__caption,
 .readout dt {
   color: var(--muted);
   font: 9.5px var(--mono);
@@ -1466,6 +1517,87 @@ code {
   margin-top: 36px;
 }
 
+.playground__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(36px, 7vh, 64px);
+}
+
+.construction {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2.4vw, 28px);
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 32px;
+  padding: clamp(18px, 2.4vw, 26px) clamp(22px, 3vw, 40px);
+  border: 2px dashed var(--accent);
+  border-radius: 24px;
+}
+
+.construction p {
+  margin: 0;
+}
+
+.construction__title {
+  font-size: clamp(30px, 4vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.construction .construction__note {
+  margin-top: 8px;
+  color: var(--muted);
+  font: 500 11px / 1.4 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.barrier-icon {
+  flex: none;
+}
+
+.results--curtain {
+  align-items: flex-start;
+  /* Room to scroll, so the curtain can open even on tall screens. */
+  padding-bottom: 42vh;
+}
+
+.curtain {
+  position: relative;
+}
+
+/* Behind the curtain until it opens; fully visible without the dot canvas. */
+.dots-ready .curtain .playground__grid {
+  opacity: clamp(0, var(--open, 0) * 1.6 - 0.35, 1);
+}
+
+.curtain__hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: none;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--muted);
+  font: 10.5px / 1.4 var(--mono);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  opacity: calc(1 - var(--open, 0) * 4);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.dots-ready .curtain__hint {
+  display: block;
+}
+
+.playground__back {
+  margin-top: 36px;
+}
+
+.highlight h2,
 .highlight h3 {
   margin: 10px 0 4px;
   font-size: 22px;
@@ -1600,7 +1732,8 @@ code {
 }
 
 @media (max-width: 1099px) {
-  .results__grid {
+  .results__grid,
+  .playground__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1654,7 +1787,11 @@ code {
 
   .stat {
     margin-top: 14px;
-    padding-top: 12px;
+    font-size: 14.5px;
+  }
+
+  .tools {
+    margin-top: 10px;
   }
 
   .stat__value {
@@ -1679,8 +1816,40 @@ code {
     display: none;
   }
 
+  .hero__sticky {
+    flex-direction: column;
+    gap: 4px;
+    padding: 72px 16px 24px;
+    text-align: center;
+  }
+
+  .hero__portrait {
+    order: -1;
+    height: min(46vh, 360px);
+  }
+
+  .hero__kicker {
+    justify-content: center;
+    margin-bottom: 6px;
+  }
+
   .hero__name {
-    font-size: 18.5vw;
+    margin: 0 auto;
+    font-size: 17vw;
+  }
+
+  .hero__focus {
+    margin-inline: auto;
+  }
+
+  .hero__focus ul {
+    justify-content: center;
+    gap: 2px 16px;
+    margin-left: 0;
+  }
+
+  .hero__focus li::before {
+    display: none;
   }
 
   .letter {

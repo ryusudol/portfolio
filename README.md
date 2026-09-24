@@ -1,18 +1,30 @@
 # Suhyeon Yu — Portfolio
 
-A single-page, scroll-told portfolio drawn entirely in dots. One full-viewport
+A scroll-told portfolio drawn entirely in dots. One full-viewport
 canvas holds ~3–9k particles; each chapter of the page tells them where to be,
 so scrolling hands the same dots from one formation to the next.
 
-| #   | Chapter       | What the dots do                                                                 |
-| --- | ------------- | -------------------------------------------------------------------------------- |
-| 00  | Intro         | Form the name; the cursor pushes through it, a click sends a shockwave.          |
-| 01  | Async         | A request tree. Hover fires requests; pick `merge/concat/switch/exhaustMap`.     |
-| 02  | Interface     | Rough out code lines, then trace a live card (theme, temperature, scatter).      |
-| 03  | Visualization | A 10-class UMAP-like embedding; scrolling unlearns one class into a singularity. |
-| 04  | Orchestration | One plan fans out to parallel agents that finish and merge.                      |
-| 05  | Performance   | An O(B³) cube collapses into an O(B²) plane, then releases its memory.           |
-| 06  | Contact       | Outline a real input that opens your mail app.                                   |
+**Home (`/`)**
+
+| #   | Chapter               | What the dots do                                                                 |
+| --- | --------------------- | -------------------------------------------------------------------------------- |
+| 00  | Intro                 | Form the name; the cursor pushes through it, a click sends a shockwave.          |
+| 01  | Experience            | Assemble a wireframe of the rebuilt Trainerize profile, section by section.     |
+| 02  | Unlearning Comparator | A 10-class UMAP-like embedding; scrolling unlearns one class into a singularity. |
+| 03  | PyTorch-CKA           | An O(B³) cube collapses into an O(B²) plane, then releases its memory.           |
+| 04  | Contact               | Outline a message form that emails me directly.                                  |
+
+**Case studies** open with results (not a hero): title, role, summary, and
+dot-outlined result cards.
+
+- `/experience/abc-fitness` — then an RxJS request tree with a live
+  `merge/concat/switch/exhaustMap` picker, a code-to-card interface rewrite, and
+  parallel AI agents merging into one flag-gated rollout.
+- `/projects/unlearning-comparator`, `/projects/pytorch-cka` — then the
+  interactive walkthrough and what I built. Content lives in
+  `lib/case-studies.ts`.
+
+The logo is a live particle black hole (`components/logo.tsx`).
 
 Inspired by the dot-motion "describe yourself" site shown in
 [this video](https://www.youtube.com/watch?v=nQw17ND2-fA) (10:02–11:46).
@@ -32,6 +44,10 @@ Inspired by the dot-motion "describe yourself" site shown in
 - Sections are ordinary server-rendered HTML; the canvas is decorative
   (`aria-hidden`) and the page still reads correctly without JavaScript.
   `prefers-reduced-motion` freezes ambient motion.
+
+The contact form posts to a Server Action (`app/actions/contact.ts`) that
+delivers through [Resend](https://resend.com) with the visitor as Reply-To.
+Copy `.env.example` to `.env.local` and set `RESEND_API_KEY`.
 
 Themes are **ink** (dark) and **paper** (light), switched with a circular
 View Transition and persisted in `localStorage`.

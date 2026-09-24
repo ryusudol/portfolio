@@ -1,18 +1,20 @@
+import Link from "next/link";
+
 import { profile } from "@/lib/content";
 
+import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 
 export function SiteHeader() {
   return (
     <header className="site-header">
-      <a className="brand" href="#intro">
-        <span className="brand__name">{profile.name}</span>
-        <span className="brand__role">{profile.role}</span>
-      </a>
+      <Link className="brand" href="/" aria-label={`${profile.name} — home`}>
+        <Logo />
+      </Link>
       <div className="site-header__actions">
-        <a className="pill pill--quiet hide-compact" href="#contact">
-          Say hello
-        </a>
+        <Link className="pill pill--quiet hide-compact" href="/#contact">
+          Contact
+        </Link>
         <ThemeToggle />
       </div>
     </header>

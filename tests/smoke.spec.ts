@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 test.describe("portfolio smoke", () => {
-  test("renders every chapter and starts the particle stage", async ({
+  test("home renders every chapter and starts the particle stage", async ({
     page,
   }) => {
     await page.goto("/");
@@ -13,16 +13,32 @@ test.describe("portfolio smoke", () => {
     await expect(page.locator("html")).toHaveClass(/dots-ready/);
 
     for (const name of [
-      /keep only the latest/i,
-      /redesigned beyond scope/i,
+      /rebuilt end to end/i,
       /one class forgotten/i,
-      /ship as one/i,
       /made quadratic/i,
-      /give your idea a shape/i,
+      /have something in mind/i,
     ]) {
       const heading = page.getByRole("heading", { level: 2, name });
       await heading.scrollIntoViewIfNeeded();
       await expect(heading).toBeVisible();
+    }
+  });
+
+  test("experience chapter links to the ABC Fitness case study", async ({
+    page,
+  }) => {
+    await page.goto("/#experience");
+    await page.getByRole("link", { name: /read the case study/i }).click();
+
+    await expect(page).toHaveURL(/\/experience\/abc-fitness$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "ABC Fitness" }),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+    for (const name of [/keep only the latest/i, /ship as one/i]) {
+      await expect(
+        page.getByRole("heading", { level: 2, name }),
+      ).toBeAttached();
     }
   });
 
@@ -40,7 +56,7 @@ test.describe("portfolio smoke", () => {
   });
 
   test("operator picker explains the selected strategy", async ({ page }) => {
-    await page.goto("/#async");
+    await page.goto("/experience/abc-fitness#async");
     const exhaust = page.getByRole("radio", { name: "exhaust" });
     await exhaust.check();
     await expect(exhaust).toBeChecked();
@@ -49,12 +65,62 @@ test.describe("portfolio smoke", () => {
     ).toBeVisible();
   });
 
-  test("has no serious accessibility violations", async ({ page }) => {
-    await page.goto("/");
-    const results = await new AxeBuilder({ page }).analyze();
-    const serious = results.violations.filter(
-      (v) => v.impact === "serious" || v.impact === "critical",
+  test("contact form submits on Enter and keeps the draft on errors", async ({
+    page,
+  }) => {
+    await page.goto("/#contact");
+    const message = page.getByRole("textbox", { name: "Message" });
+    await message.fill("Hello!");
+    await message.press("Shift+Enter");
+    await message.pressSequentially("Second line");
+    await expect(message).toHaveValue("Hello!\nSecond line");
+
+    // Passes browser validation but not the server's, so nothing is ever sent.
+    await page
+      .getByRole("textbox", { name: "Your email" })
+      .fill("visitor@localhost");
+    await message.press("Enter");
+
+    await expect(page.locator(".contact__status")).toHaveText(
+      "Please add an email I can reply to.",
     );
-    expect(serious.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+    await expect(message).toHaveValue("Hello!\nSecond line");
   });
+
+  test("featured projects open results-first case studies", async ({
+    page,
+  }) => {
+    for (const [section, title] of [
+      ["#unlearning-comparator", "Unlearning Comparator"],
+      ["#pytorch-cka", "PyTorch-CKA"],
+    ]) {
+      await page.goto(`/${section}`);
+      await page
+        .locator(section)
+        .getByRole("link", { name: /case study/i })
+        .click();
+      await expect(
+        page.getByRole("heading", { level: 1, name: title }),
+      ).toBeVisible();
+      await expect(page.locator(".result")).toHaveCount(4);
+    }
+  });
+
+  for (const path of [
+    "/",
+    "/experience/abc-fitness",
+    "/projects/unlearning-comparator",
+    "/projects/pytorch-cka",
+  ]) {
+    test(`has no serious accessibility violations on ${path}`, async ({
+      page,
+    }) => {
+      await page.goto(path);
+      const results = await new AxeBuilder({ page }).analyze();
+      const serious = results.violations.filter(
+        (v) => v.impact === "serious" || v.impact === "critical",
+      );
+      expect(serious.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+    });
+  }
 });

@@ -10,7 +10,7 @@ export function dust(f: Field, i: number, fr: Frame, alpha = 0.16) {
   f.gh[i] = 0;
 }
 
-export type ShapeKind = "outline" | "rule" | "disc" | "ring" | "bar";
+export type ShapeKind = "outline" | "rule" | "disc" | "ring" | "bar" | "fill";
 
 type Shape = {
   el: HTMLElement;
@@ -19,6 +19,10 @@ type Shape = {
   spread: number;
   radius: number;
   tint: number;
+  /** Fraction of a ring to draw, clockwise from 12 o'clock. */
+  arc: number;
+  /** Build order; shapes above `DomShapes.stage` stay unbuilt (dust). */
+  stage: number;
   rect: DOMRect | null;
 };
 
@@ -79,6 +83,8 @@ function inkLength(kind: ShapeKind, w: number, h: number, radius: number) {
     }
     case "ring":
       return TAU * R;
+    case "fill":
+      return w * h * 0.06;
     case "disc":
       return Math.PI * R * R * 0.18;
     case "rule":
@@ -89,7 +95,7 @@ function inkLength(kind: ShapeKind, w: number, h: number, radius: number) {
 
 /**
  * Lets markup decide where particles go. Elements tagged with
- * `data-dots="outline|rule|disc|ring|bar"` are traced every frame, so the dots
+ * `data-dots="outline|rule|disc|ring|bar|fill"` are traced every frame, so the dots
  * follow real, accessible controls as they move, scroll, and resize.
  */
 export class DomShapes {
@@ -97,6 +103,8 @@ export class DomShapes {
   owner = new Int16Array(0);
   start = 0;
   count = 0;
+  /** Highest build stage currently shown (see `data-stage`). */
+  stage = Number.POSITIVE_INFINITY;
 
   collect(root: ParentNode, selector = "[data-dots]") {
     this.shapes = Array.from(root.querySelectorAll<HTMLElement>(selector)).map(
@@ -106,6 +114,10 @@ export class DomShapes {
         weight: Number(el.dataset.dotsWeight ?? 1),
         spread: Number(el.dataset.dotsSpread ?? 1.1),
         tint: Number(el.dataset.dotsTint ?? 0),
+        arc: Number(el.dataset.dotsArc ?? 1),
+        stage: Number(
+          el.closest<HTMLElement>("[data-stage]")?.dataset.stage ?? 0,
+        ),
         radius: 0,
         rect: null,
       }),
@@ -141,7 +153,10 @@ export class DomShapes {
   }
 
   refresh() {
-    for (const s of this.shapes) s.rect = s.el.getBoundingClientRect();
+    for (const s of this.shapes) {
+      s.rect = s.el.getBoundingClientRect();
+      s.tint = Number(s.el.dataset.dotsTint ?? 0);
+    }
   }
 
   /** Writes a goal for particle i if it belongs to a shape. */
@@ -150,7 +165,7 @@ export class DomShapes {
     if (k < 0 || k >= this.count) return false;
     const s = this.shapes[this.owner[k]];
     const r = s?.rect;
-    if (!s || !r || r.width < 1) return false;
+    if (!s || !r || r.width < 1 || s.stage > this.stage) return false;
     const u = f.r0[i];
     const g = gauss(f.r1[i], f.r2[i]);
     let x = 0;
@@ -173,10 +188,15 @@ export class DomShapes {
       }
       case "ring": {
         const R = Math.min(r.width, r.height) / 2 + g * s.spread;
-        x = r.left + r.width / 2 + Math.cos(u * TAU) * R;
-        y = r.top + r.height / 2 + Math.sin(u * TAU) * R;
+        const a = -Math.PI / 2 + u * s.arc * TAU;
+        x = r.left + r.width / 2 + Math.cos(a) * R;
+        y = r.top + r.height / 2 + Math.sin(a) * R;
         break;
       }
+      case "fill":
+        x = r.left + u * r.width;
+        y = r.top + f.r1[i] * r.height;
+        break;
       case "disc": {
         const R = (Math.min(r.width, r.height) / 2) * Math.sqrt(f.r1[i]);
         x = r.left + r.width / 2 + Math.cos(u * TAU) * R;

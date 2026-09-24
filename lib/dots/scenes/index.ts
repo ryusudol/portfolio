@@ -1,10 +1,11 @@
 import type { Scene } from "../types";
 import { AgentsScene } from "./agents";
 import { CkaScene } from "./cka";
-import { ContactScene } from "./contact";
 import { HeroScene } from "./hero";
 import { InterfaceScene } from "./interface";
+import { OutroScene } from "./outro";
 import { RequestsScene } from "./requests";
+import { ShapesScene } from "./shapes";
 import { UnlearningScene } from "./unlearning";
 
 /** Keyed by each section's `data-scene` attribute. */
@@ -15,5 +16,8 @@ export const scenes: Record<string, () => Scene> = {
   visualization: () => new UnlearningScene(),
   orchestration: () => new AgentsScene(),
   performance: () => new CkaScene(),
-  contact: () => new ContactScene(),
+  contact: () => new ShapesScene({ share: 0.5 }),
+  results: () => new ShapesScene({ share: 0.5, alpha: 0.75 }),
+  profile: () => new ShapesScene({ share: 0.8, stages: 6 }),
+  outro: () => new OutroScene(),
 };

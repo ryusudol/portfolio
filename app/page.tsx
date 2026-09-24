@@ -1,31 +1,22 @@
-import { ArrowDown, ArrowUpRight } from "reicon-react";
+import Link from "next/link";
+import { ArrowRight } from "reicon-react";
 
-import { AsyncControls } from "@/components/async-controls";
 import { Chapter } from "@/components/chapter";
 import { ChapterNav } from "@/components/chapter-nav";
-import { CodeSample } from "@/components/code-sample";
-import { ContactPrompt } from "@/components/contact-prompt";
+import { ContactForm } from "@/components/contact-form";
 import { DotStage } from "@/components/dot-stage";
-import { MiniApp } from "@/components/mini-app";
+import { CkaChapter, UnlearningChapter } from "@/components/featured-chapters";
+import { ProfileSketch } from "@/components/profile-sketch";
 import { SiteHeader } from "@/components/site-header";
 import {
   alsoBuilt,
   education,
   experience,
-  links,
+  homeChapters,
   profile,
   publication,
   stack,
 } from "@/lib/content";
-
-function External({ href, children }: { href: string; children: string }) {
-  return (
-    <a className="pill" href={href} target="_blank" rel="noreferrer">
-      {children}
-      <ArrowUpRight size={12} aria-hidden />
-    </a>
-  );
-}
 
 export default function Home() {
   return (
@@ -34,7 +25,7 @@ export default function Home() {
         Skip to contact
       </a>
       <SiteHeader />
-      <ChapterNav />
+      <ChapterNav chapters={homeChapters} />
       <DotStage />
 
       <main id="chapters">
@@ -52,161 +43,42 @@ export default function Home() {
               {profile.name}
             </h1>
             <p className="hero__tagline">{profile.tagline}</p>
-            <p className="hero__hint">
-              <span>scroll</span>
-              <ArrowDown size={12} aria-hidden />
-              <span className="hide-compact">· click anywhere</span>
-            </p>
           </div>
         </section>
 
         <Chapter
           index={1}
-          id="async"
-          scene="async"
-          topic="Async"
+          id="experience"
+          scene="profile"
+          topic="Experience"
           source="ABC Fitness"
-          title={["Fire every request,", "keep only the latest."]}
+          title={["One profile page,", "rebuilt end to end."]}
           body={
             <>
-              At ABC Fitness I coordinated multi-endpoint profile requests with
-              RxJS — stale responses suppressed, overlapping uploads and edits
-              prevented.
+              As a Software Engineering Intern at ABC Fitness, I rewrote the ABC
+              Trainerize profile page from jQuery to React — RxJS data flows,
+              tested permissions, a redesigned layout, and a flag-gated rollout.
             </>
           }
           stat={{
-            value: "97%",
-            caption: "branch coverage of profile logic · Jest",
+            value: "400K+",
+            caption: "fitness professionals on Trainerize",
           }}
-          tag={<span className="pill pill--static">Jun – Aug 2026</span>}
-        >
-          <AsyncControls />
-        </Chapter>
+          tag={
+            <Link className="pill" href="/experience/abc-fitness">
+              Read the case study
+              <ArrowRight size={12} aria-hidden />
+            </Link>
+          }
+          visual={<ProfileSketch />}
+        />
 
-        <Chapter
+        <UnlearningChapter
           index={2}
-          id="interface"
-          scene="interface"
-          topic="Interface"
-          source="ABC Trainerize"
-          title={["Rebuilt in React,", "redesigned beyond scope."]}
-          body={
-            <>
-              I rewrote the Trainerize profile page from jQuery to React for a
-              platform serving 400,000+ fitness professionals — then reworked
-              its hierarchy with a streamlined header, grouped cards, and modal
-              editing.
-            </>
-          }
-          stat={{
-            value: "1.6M+",
-            caption: "clients reached through Trainerize",
-          }}
-          tag={<span className="hint">[ the card is live — try it ]</span>}
-          visualClassName="chapter__visual--split"
-          visual={
-            <>
-              <CodeSample />
-              <div className="mini-slot" data-dots-group="live">
-                <MiniApp />
-              </div>
-            </>
-          }
+          id="unlearning-comparator"
+          linkToCaseStudy
         />
-
-        <Chapter
-          index={3}
-          id="visualization"
-          scene="visualization"
-          topic="Visualization"
-          source="Unlearning Comparator"
-          title={["Two thousand points,", "one class forgotten."]}
-          body={
-            <>
-              A visual analytics system for comparing how machine-unlearning
-              methods change a model’s accuracy, efficiency, and privacy —
-              published in IEEE TVCG. I built the frontend end to end with
-              React, D3, and Zustand.
-            </>
-          }
-          chips={["UMAP · 2,000 pts", "DOM ops per hover −99%"]}
-          stat={{ value: "100+", caption: "GitHub stars" }}
-          tag={
-            <>
-              <External href={links.unlearningDemo}>Demo</External>
-              <External href={links.unlearningPaper}>Paper</External>
-            </>
-          }
-          visual={
-            <p className="singularity" aria-live="off">
-              <span className="singularity__value" data-counter="forget">
-                200
-              </span>
-              <span className="singularity__caption">forget-class points</span>
-            </p>
-          }
-        />
-
-        <Chapter
-          index={4}
-          id="orchestration"
-          scene="orchestration"
-          topic="Orchestration"
-          source="AI-assisted delivery"
-          title={["Split in parallel,", "ship as one."]}
-          body={
-            <>
-              I built profile sections with multiple AI agents working in
-              parallel Git worktrees, then landed the rewrite as independently
-              reviewable stacked PRs behind a LaunchDarkly flag.
-            </>
-          }
-          chips={["Git worktrees", "Figma MCP", "Stacked PRs", "LaunchDarkly"]}
-          tag={<span className="hint">[ scroll to merge ]</span>}
-        />
-
-        <Chapter
-          index={5}
-          id="performance"
-          scene="performance"
-          topic="Performance"
-          source="PyTorch-CKA"
-          title={["Cubic,", "made quadratic."]}
-          body={
-            <>
-              An open-source library for comparing representations across CNN
-              and LLM layers. Frobenius inner products replaced full matrix
-              products, taking HSIC from O(B³) to O(B²) per layer pair.
-            </>
-          }
-          chips={["~400 PyPI downloads / mo", "CI · Python 3.10–3.14"]}
-          stat={{
-            value: "5.7×",
-            caption: "faster than an existing library on H100",
-          }}
-          tag={
-            <>
-              <External href={links.ckaPypi}>PyPI</External>
-              <External href={links.ckaCode}>Code</External>
-            </>
-          }
-          visual={
-            <dl className="readout">
-              <div>
-                <dt>complexity</dt>
-                <dd data-counter="order">O(B³)</dd>
-              </div>
-              <div>
-                <dt>speed-up</dt>
-                <dd data-counter="speed">1.0×</dd>
-              </div>
-              <div>
-                <dt>retained GPU memory</dt>
-                <dd data-counter="memory">100.0%</dd>
-              </div>
-            </dl>
-          }
-        />
+        <CkaChapter index={3} id="pytorch-cka" linkToCaseStudy />
 
         <section
           id="contact"
@@ -217,15 +89,17 @@ export default function Home() {
           <div className="contact__stage">
             <p className="kicker kicker--center">
               <span className="kicker__rule" aria-hidden />
-              06 — Your turn
+              04 — Contact
             </p>
             <h2 id="contact-title" className="contact__title">
-              Let’s give your idea a shape.
+              Have something in mind?
             </h2>
-            <ContactPrompt />
+            <p className="contact__lede">
+              Send a note — it lands straight in my inbox.
+            </p>
+            <ContactForm />
             <p className="contact__hint">
-              <kbd>Enter ↵</kbd> opens your mail app ·{" "}
-              <a href={`mailto:${profile.email}`}>{profile.email}</a>
+              <kbd>Enter</kbd> to send · <kbd>Shift + Enter</kbd> for a new line
             </p>
           </div>
 
@@ -235,7 +109,10 @@ export default function Home() {
                 <h3>Experience</h3>
                 {experience.map((item) => (
                   <p key={item.org}>
-                    <strong>{item.org}</strong> — {item.title}
+                    <Link href={item.href}>
+                      <strong>{item.org}</strong>
+                    </Link>{" "}
+                    — {item.title}
                     <span>
                       {item.place} · {item.period}
                     </span>
@@ -294,7 +171,6 @@ export default function Home() {
             </div>
             <p className="colophon__base">
               <span>© 2026 {profile.name}</span>
-              <span>Drawn in dots with Next.js &amp; Canvas</span>
             </p>
           </footer>
         </section>

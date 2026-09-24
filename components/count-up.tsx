@@ -6,7 +6,13 @@ import { useEffect, useRef } from "react";
  * Renders the final value on the server, then replays the count from zero
  * the first time it scrolls into view.
  */
-export function CountUp({ value }: { value: string }) {
+export function CountUp({
+  value,
+  className = "stat__value",
+}: {
+  value: string;
+  className?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -49,7 +55,7 @@ export function CountUp({ value }: { value: string }) {
   }, [value]);
 
   return (
-    <span ref={ref} className="stat__value">
+    <span ref={ref} className={className}>
       {value}
     </span>
   );

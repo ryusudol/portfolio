@@ -2,10 +2,10 @@
 
 import { useSyncExternalStore } from "react";
 
-import { chapters, pad } from "@/lib/content";
+import { type Chapter, pad } from "@/lib/content";
 import { dots } from "@/lib/dots/runtime";
 
-export function ChapterNav() {
+export function ChapterNav({ chapters }: { chapters: Chapter[] }) {
   const { active } = useSyncExternalStore(
     dots.subscribe,
     dots.getSnapshot,

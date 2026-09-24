@@ -23,7 +23,7 @@ const mono = JetBrains_Mono({
 
 const title = `${profile.name} — ${profile.role}`;
 const description =
-  "Frontend engineer building interfaces where complex systems become legible — RxJS data flows, React rewrites, D3 visual analytics, and fast Python tooling.";
+  "Software engineer and Rice MCS student building software that makes complex systems easy to see and use — React rewrites, RxJS data flows, D3 visual analytics, and fast Python tooling.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   creator: profile.name,
   keywords: [
     profile.name,
-    "frontend engineer",
+    "software engineer",
     "React",
     "Next.js",
     "TypeScript",

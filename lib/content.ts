@@ -1,7 +1,7 @@
 export const profile = {
   name: "Suhyeon Yu",
-  role: "Frontend Engineer",
-  tagline: "Interfaces where complex systems become legible.",
+  role: "Software Engineer",
+  tagline: "Software that makes complex systems easy to see and use.",
   location: "Houston, TX",
   email: "suhyeon.yu.2789@gmail.com",
   github: "https://github.com/ryusudol",
@@ -16,14 +16,29 @@ export type Chapter = {
 export const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Order matches the `data-scene` sections rendered on the home page. */
-export const chapters: Chapter[] = [
+export const homeChapters: Chapter[] = [
   { id: "intro", label: "Intro" },
+  { id: "experience", label: "Experience" },
+  { id: "unlearning-comparator", label: "Unlearning Comparator" },
+  { id: "pytorch-cka", label: "PyTorch-CKA" },
+  { id: "contact", label: "Contact" },
+];
+
+/** Order matches the `data-scene` sections of the ABC Fitness case study. */
+export const abcChapters: Chapter[] = [
+  { id: "results", label: "Results" },
   { id: "async", label: "Async" },
   { id: "interface", label: "Interface" },
-  { id: "visualization", label: "Visualization" },
   { id: "orchestration", label: "Orchestration" },
-  { id: "performance", label: "Performance" },
-  { id: "contact", label: "Contact" },
+  { id: "more", label: "More" },
+];
+
+/** Order matches the `data-scene` sections of a featured-project case study. */
+export const projectChapters: Chapter[] = [
+  { id: "results", label: "Results" },
+  { id: "walkthrough", label: "Walkthrough" },
+  { id: "highlights", label: "What I built" },
+  { id: "more", label: "More" },
 ];
 
 export const operators = [
@@ -56,6 +71,7 @@ export const experience = [
     org: "ABC Fitness",
     place: "Austin, TX",
     period: "Jun – Aug 2026",
+    href: "/experience/abc-fitness",
   },
 ];
 

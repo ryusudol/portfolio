@@ -8,6 +8,13 @@ import { ProjectArtwork } from "@/components/project-artwork";
 import { SkipToContent } from "@/components/skip-to-content";
 import { TechnologyBadge } from "@/components/technology-badge";
 import { buttonVariants } from "@/components/ui/button";
+import {
+  CaseStudyBullets,
+  CaseStudyParagraphs,
+  CaseStudyPoints,
+  CaseStudySection,
+  ProjectLinks,
+} from "@/components/work-case-study";
 import { getProject, projects } from "@/lib/portfolio";
 import { cn } from "@/lib/utils";
 
@@ -41,6 +48,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   if (!project) notFound();
 
+  const { walkthrough } = project;
+  const snapshot = [
+    { label: "Role", value: project.role },
+    { label: "Time frame", value: project.period },
+    project.team ? { label: "Team", value: project.team } : null,
+  ].filter((item) => item !== null);
+
   return (
     <>
       <SkipToContent />
@@ -65,7 +79,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           Back to selected work
         </Link>
 
-        <header className="grid gap-4">
+        <header className="grid gap-5">
           <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted-foreground uppercase">
             {project.context}
           </p>
@@ -75,8 +89,23 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <span className="max-w-[35rem] text-base leading-[1.68] text-pretty text-muted-foreground">
             {project.description}
           </span>
+          <dl className="m-0 flex flex-wrap gap-x-8 gap-y-3">
+            {snapshot.map((item) => (
+              <div
+                key={item.label}
+                className="grid min-w-[7.5rem] gap-[0.28rem]"
+              >
+                <dt className="text-[0.68rem] font-[590] tracking-[0.1em] text-muted-foreground uppercase">
+                  {item.label}
+                </dt>
+                <dd className="m-0 text-[0.84rem] leading-[1.45] text-pretty">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
           <ul
-            className="mt-2 flex list-none flex-wrap gap-[0.4rem] p-0"
+            className="flex list-none flex-wrap gap-[0.4rem] p-0"
             aria-label={`${project.title} technologies`}
           >
             {project.technologies.map((technology) => (
@@ -85,6 +114,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </li>
             ))}
           </ul>
+          <ProjectLinks title={project.title} links={project.links} />
         </header>
 
         <div className="w-full">
@@ -92,50 +122,74 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
 
         <div className="grid gap-14">
-          <section className="grid gap-[0.8rem]">
-            <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted-foreground uppercase">
-              Overview
-            </p>
-            <h2 className="m-0 max-w-[34rem] text-[1.18rem] font-[610] tracking-[-0.015em]">
-              {project.overviewTitle}
-            </h2>
-            <div className="grid gap-[0.9rem]">
-              {project.overview.map((paragraph) => (
-                <p
-                  key={paragraph}
-                  className="m-0 text-[0.94rem] leading-[1.72] text-pretty text-muted-foreground"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </section>
-
-          <section className="grid gap-[0.8rem]">
-            <p className="m-0 text-[0.7rem] font-[590] tracking-[0.12em] text-muted-foreground uppercase">
-              Contribution
-            </p>
-            <h2 className="m-0 max-w-[30rem] text-[1.18rem] font-[610] tracking-[-0.015em]">
-              What I worked on
-            </h2>
-            <ul className="m-0 grid list-[circle] gap-[0.65rem] pl-[1.1rem] text-[0.9rem] leading-[1.65] text-muted-foreground">
-              {project.highlights.map((highlight) => (
-                <li key={highlight}>{highlight}</li>
-              ))}
-            </ul>
-          </section>
-
-          <aside
-            className="flex items-baseline justify-between gap-4 border-y border-border py-6"
-            aria-label="Project result"
+          <CaseStudySection
+            eyebrow="Why this project"
+            title={walkthrough.why.title}
           >
-            <strong className="font-display text-[2.2rem] font-semibold italic">
-              {project.metric}
-            </strong>
-            <span className="text-right text-[0.78rem] text-muted-foreground">
-              {project.metricLabel}
-            </span>
-          </aside>
+            {walkthrough.why.paragraphs ? (
+              <CaseStudyParagraphs paragraphs={walkthrough.why.paragraphs} />
+            ) : null}
+          </CaseStudySection>
+
+          <CaseStudySection
+            eyebrow="Goals & constraints"
+            title={walkthrough.goals.title}
+          >
+            {walkthrough.goals.bullets ? (
+              <CaseStudyBullets items={walkthrough.goals.bullets} />
+            ) : null}
+          </CaseStudySection>
+
+          <CaseStudySection
+            eyebrow="Approach"
+            title={walkthrough.approach.title}
+          >
+            {walkthrough.approach.paragraphs ? (
+              <CaseStudyParagraphs
+                paragraphs={walkthrough.approach.paragraphs}
+              />
+            ) : null}
+            <CaseStudyPoints items={walkthrough.approach.decisions} />
+          </CaseStudySection>
+
+          <CaseStudySection
+            eyebrow="Implementation"
+            title={walkthrough.highlights.title}
+          >
+            <CaseStudyPoints items={walkthrough.highlights.items} />
+          </CaseStudySection>
+
+          <CaseStudySection eyebrow="Outcome" title={walkthrough.outcome.title}>
+            {walkthrough.outcome.paragraphs ? (
+              <CaseStudyParagraphs
+                paragraphs={walkthrough.outcome.paragraphs}
+              />
+            ) : null}
+            <aside
+              className="flex items-baseline justify-between gap-4 border-y border-border py-6"
+              aria-label="Project result"
+            >
+              <strong className="font-display text-[2.2rem] font-semibold italic">
+                {project.metric}
+              </strong>
+              <span className="text-right text-[0.78rem] text-muted-foreground">
+                {project.metricLabel}
+              </span>
+            </aside>
+          </CaseStudySection>
+
+          {walkthrough.reflection ? (
+            <CaseStudySection
+              eyebrow="Reflection"
+              title={walkthrough.reflection.title}
+            >
+              {walkthrough.reflection.paragraphs ? (
+                <CaseStudyParagraphs
+                  paragraphs={walkthrough.reflection.paragraphs}
+                />
+              ) : null}
+            </CaseStudySection>
+          ) : null}
 
           {project.confidentialityNote ? (
             <aside className="border-l-2 border-border-strong pl-4">
@@ -146,29 +200,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 {project.confidentialityNote}
               </p>
             </aside>
-          ) : null}
-
-          {project.links.length > 0 ? (
-            <nav
-              className="flex flex-wrap gap-[0.65rem]"
-              aria-label={`${project.title} external links`}
-            >
-              {project.links.map((link) => (
-                <a
-                  key={link.href}
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "h-auto min-h-[2.7rem] gap-[0.4rem] rounded-[0.8rem] border-border bg-surface-alt px-[0.85rem] py-[0.65rem] text-[0.8rem] font-[560] transition-[transform,background-color] duration-instant ease-in-out hover:-translate-y-0.5 hover:bg-surface-hover focus-visible:ring-0 motion-reduce:transition-none [&>svg]:size-[0.9rem]",
-                  )}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {link.label}
-                  <ArrowUpRight aria-hidden="true" />
-                </a>
-              ))}
-            </nav>
           ) : null}
         </div>
 

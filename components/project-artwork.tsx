@@ -57,7 +57,7 @@ export function ProjectArtwork({
   const isUnlearningComparator = project.id === "machine-unlearning-comparator";
 
   const imageSizeClass = isDetail
-    ? "h-auto w-full object-contain"
+    ? "h-auto max-h-[22.5rem] w-auto max-w-full object-contain"
     : isPytorchCka
       ? "h-[78%] w-[68%] object-cover object-[center_18%]"
       : isUnlearningComparator

@@ -33,7 +33,7 @@ export function WorkSection() {
             className="group block min-w-0 transition-[filter,transform] duration-panel ease-in-out active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 [@media(hover:hover)]:group-hover/projects:grayscale [@media(hover:hover)]:hover:!grayscale-0"
             aria-label={`View ${project.title} project`}
           >
-            <Card className="h-full gap-0 overflow-hidden rounded-portfolio bg-[#F4F6F8] py-0 ring-0 dark:bg-surface">
+            <Card className="h-full gap-0 overflow-hidden rounded-portfolio bg-card py-0 ring-0">
               <ProjectArtwork project={project} />
               <CardContent className="relative z-[1] flex flex-1 flex-col border-0 bg-transparent px-5 pt-7 pb-5">
                 <CardTitle className="m-0 text-base font-[610]">
@@ -57,7 +57,7 @@ export function WorkSection() {
           </Link>
         ))}
         <a
-          className="flex min-h-64 max-sm:min-h-44 items-center justify-center gap-[0.4rem] overflow-hidden rounded-portfolio bg-[#F4F6F8] p-8 text-center text-muted-foreground transition-[color,filter,transform] duration-panel ease-in-out hover:text-foreground active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100 dark:bg-surface"
+          className="flex min-h-64 max-sm:min-h-44 items-center justify-center gap-[0.4rem] overflow-hidden rounded-portfolio bg-card p-8 text-center text-muted-foreground transition-[color,filter,transform] duration-panel ease-in-out hover:text-foreground active:scale-[0.98] motion-reduce:transition-none motion-reduce:active:scale-100"
           href={contact.github}
           target="_blank"
           rel="noopener noreferrer"

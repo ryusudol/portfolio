@@ -38,6 +38,82 @@ test.describe("portfolio smoke", () => {
     ).toBeVisible();
   });
 
+  test("selected work pages share a walkthrough structure", async ({
+    page,
+  }) => {
+    const slugs = [
+      "trainerize-profile-experience",
+      "machine-unlearning-comparator",
+      "pytorch-cka",
+    ];
+
+    for (const slug of slugs) {
+      await page.goto(`/work/${slug}`);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(
+        page.getByText("Why this project", { exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("Goals & constraints", { exact: true }),
+      ).toBeVisible();
+      await expect(page.getByText("Approach", { exact: true })).toBeVisible();
+      await expect(
+        page.getByText("Implementation", { exact: true }),
+      ).toBeVisible();
+      await expect(page.getByText("Outcome", { exact: true })).toBeVisible();
+      await expect(page.getByText("Reflection", { exact: true })).toBeVisible();
+    }
+  });
+
+  test("profile identity navigates to the home page", async ({ page }) => {
+    await page.goto("/work/pytorch-cka");
+    await expect(
+      page.getByRole("heading", { name: "PyTorch-CKA" }),
+    ).toBeVisible();
+
+    await page.getByTestId("profile-menu-home").click();
+
+    await expect(page).toHaveURL(/\/#home$/);
+    await expect(page.getByTestId("hero-copy")).toBeVisible();
+
+    await page.goto("/playground/ui");
+    await expect(page.getByRole("heading", { name: "UI Craft" })).toBeVisible();
+
+    await page.getByTestId("profile-menu-home").click();
+
+    await expect(page).toHaveURL(/\/#home$/);
+    await expect(page.getByTestId("hero-copy")).toBeVisible();
+  });
+
+  test("profile menu still opens from the shortcut control", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.getByTestId("profile-menu-trigger").click();
+
+    await expect(
+      page.getByRole("navigation", { name: "Portfolio sections" }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "Home" })).toBeVisible();
+  });
+
+  test("mobile profile name goes home and menu icon opens the panel", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/work/pytorch-cka");
+
+    await page.getByTestId("profile-menu-trigger").click();
+    await expect(
+      page.getByRole("navigation", { name: "Portfolio sections" }),
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/work\/pytorch-cka\/?$/);
+
+    await page.getByTestId("profile-menu-home").click();
+    await expect(page).toHaveURL(/\/#home$/);
+    await expect(page.getByTestId("hero-copy")).toBeVisible();
+  });
+
   test("home page renders playground section", async ({ page }) => {
     await page.goto("/");
 

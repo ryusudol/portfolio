@@ -33,7 +33,7 @@ export function UICraftWorkspace() {
             <Card
               data-testid="ui-craft-card"
               data-slug={entry.slug}
-              className="h-full gap-0 overflow-hidden rounded-portfolio bg-[color-mix(in_srgb,white_40%,var(--background))] py-0 ring-0 dark:bg-[color-mix(in_srgb,white_5%,var(--background))]"
+              className="h-full gap-0 overflow-hidden rounded-portfolio bg-[#FBFCFD] py-0 ring-0 dark:bg-[color-mix(in_srgb,white_5%,var(--background))]"
             >
               <div
                 aria-hidden="true"

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -206,27 +207,13 @@ export function ProfileMenu() {
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
     >
-      <Button
-        ref={triggerRef}
-        type="button"
-        variant="ghost"
-        className="profile-menu-trigger h-auto min-h-[3.45rem] w-full justify-start gap-[0.7rem] rounded-none border-0 bg-transparent p-[0.4rem] text-left hover:bg-transparent aria-expanded:bg-transparent dark:hover:bg-transparent dark:aria-expanded:bg-transparent focus-visible:border-transparent focus-visible:ring-0 active:translate-y-0"
-        data-testid="profile-menu-trigger"
-        aria-expanded={open}
-        aria-controls="profile-menu-panel"
-        aria-label={open ? "Close profile menu" : "Open profile menu"}
-        onClick={() => {
-          if (hoverOpenedRef.current) {
-            hoverOpenedRef.current = false;
-            setOpen(true);
-            return;
-          }
-          beginTransitionGuard();
-          setOpen((current) => !current);
-        }}
-        onKeyDown={handleTriggerKeyDown}
-      >
-        <span className="flex min-w-0 flex-1 items-center">
+      <div className="profile-menu-trigger flex min-h-[3.45rem] w-full items-center gap-[0.7rem] p-[0.4rem]">
+        <Link
+          href="/#home"
+          className="flex min-w-0 flex-1 items-center rounded-xl text-left outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          data-testid="profile-menu-home"
+          onClick={() => closeMenu()}
+        >
           <PortraitAvatar
             className="profile-avatar-frame size-[2.65rem] after:border-0"
             imageClassName="profile-avatar"
@@ -269,15 +256,36 @@ export function ProfileMenu() {
             </span>
             <span className="sr-only">Software Engineer</span>
           </span>
-        </span>
-        <Kbd className="profile-shortcut mr-[0.35rem] h-auto gap-[0.14rem] rounded-lg border-0 bg-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)] px-[0.42rem] py-[0.3rem] font-[inherit] text-[0.72rem] text-muted-foreground max-sm:hidden">
-          <span className="text-[0.8rem] leading-none">⌘</span>K
-        </Kbd>
-        <Menu
-          className="profile-menu-mobile-icon mr-[0.45rem] hidden size-[1.2rem] text-muted-foreground max-sm:block"
-          aria-hidden="true"
-        />
-      </Button>
+        </Link>
+        <Button
+          ref={triggerRef}
+          type="button"
+          variant="ghost"
+          className="h-auto shrink-0 rounded-lg border-0 bg-transparent p-0 hover:bg-transparent aria-expanded:bg-transparent dark:hover:bg-transparent dark:aria-expanded:bg-transparent focus-visible:border-transparent focus-visible:ring-0 active:translate-y-0"
+          data-testid="profile-menu-trigger"
+          aria-expanded={open}
+          aria-controls="profile-menu-panel"
+          aria-label={open ? "Close profile menu" : "Open profile menu"}
+          onClick={() => {
+            if (hoverOpenedRef.current) {
+              hoverOpenedRef.current = false;
+              setOpen(true);
+              return;
+            }
+            beginTransitionGuard();
+            setOpen((current) => !current);
+          }}
+          onKeyDown={handleTriggerKeyDown}
+        >
+          <Kbd className="profile-shortcut mr-[0.35rem] h-auto gap-[0.14rem] rounded-lg border-0 bg-[color-mix(in_srgb,var(--color-foreground)_5%,transparent)] px-[0.42rem] py-[0.3rem] font-[inherit] text-[0.72rem] text-muted-foreground max-sm:hidden">
+            <span className="text-[0.8rem] leading-none">⌘</span>K
+          </Kbd>
+          <Menu
+            className="profile-menu-mobile-icon mr-[0.45rem] hidden size-[1.2rem] text-muted-foreground max-sm:block"
+            aria-hidden="true"
+          />
+        </Button>
+      </div>
 
       <div
         className="grid transition-[grid-template-rows] duration-panel ease-out motion-reduce:transition-none data-[open=true]:grid-rows-[1fr] data-[open=false]:grid-rows-[0fr]"

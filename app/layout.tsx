@@ -1,78 +1,62 @@
-import "@fontsource-variable/cormorant-garamond";
 import "./globals.css";
 
-import { GeistSans } from "geist/font/sans";
 import type { Metadata, Viewport } from "next";
+import { JetBrains_Mono, Newsreader } from "next/font/google";
 
-import { ThemeProvider } from "@/components/theme-provider";
-import { cn } from "@/lib/utils";
+import { ThemeGuard } from "@/components/theme-guard";
+import { profile } from "@/lib/content";
+import { themeInitScript } from "@/lib/theme-script";
 
+const serif = Newsreader({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
+const title = `${profile.name} — ${profile.role}`;
 const description =
-  "Suhyeon Yu is a frontend-focused software engineer crafting web experiences for both humans and agents.";
-
-const themeInitScript = `
-  (() => {
-    try {
-      const saved = localStorage.getItem("suhyeon-theme");
-      const theme = saved === "light" || saved === "dark" || saved === "system"
-        ? saved
-        : "system";
-      const resolved = theme === "system"
-        ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-        : theme;
-      const root = document.documentElement;
-      root.classList.toggle("dark", resolved === "dark");
-      root.dataset.theme = theme;
-      root.dataset.resolvedTheme = resolved;
-      root.style.colorScheme = resolved;
-    } catch {
-      document.documentElement.dataset.theme = "system";
-      document.documentElement.dataset.resolvedTheme = "light";
-    }
-  })();
-`;
+  "Frontend engineer building interfaces where complex systems become legible — RxJS data flows, React rewrites, D3 visual analytics, and fast Python tooling.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
-  title: "Suhyeon Yu — Software Engineer",
+  title,
   description,
-  authors: [{ name: "Suhyeon Yu" }],
-  creator: "Suhyeon Yu",
-  category: "technology",
+  authors: [{ name: profile.name, url: profile.github }],
+  creator: profile.name,
   keywords: [
-    "Suhyeon Yu",
-    "software engineer",
+    profile.name,
     "frontend engineer",
-    "AI interfaces",
-    "Next.js",
     "React",
-    "PyTorch",
+    "Next.js",
+    "TypeScript",
+    "RxJS",
+    "D3",
     "data visualization",
   ],
   openGraph: {
     type: "website",
-    title: "Suhyeon Yu — Software Engineer",
+    title,
     description,
-    siteName: "Suhyeon Yu",
+    siteName: profile.name,
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Suhyeon Yu — Software Engineer",
-    description,
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  twitter: { card: "summary_large_image", title, description },
 };
 
 export const viewport: Viewport = {
-  colorScheme: "light dark",
+  colorScheme: "dark light",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f9fafc" },
-    { media: "(prefers-color-scheme: dark)", color: "#181715" },
+    { media: "(prefers-color-scheme: dark)", color: "#131312" },
+    { media: "(prefers-color-scheme: light)", color: "#ede8df" },
   ],
 };
 
@@ -80,21 +64,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn(GeistSans.variable, "font-sans")}
-      data-scroll-behavior="smooth"
+      className={`${serif.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <head>
-        <script>{themeInitScript}</script>
-        <link
-          rel="preload"
-          href="/images/portrait/suhyeon-mountain-profile.png"
-          as="image"
-          type="image/png"
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static, first-party theme bootstrap
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeGuard />
+        {children}
       </body>
     </html>
   );

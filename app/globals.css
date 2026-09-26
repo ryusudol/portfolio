@@ -5,7 +5,6 @@
   --bg: #131312;
   --fg: #ece8e1;
   --muted: #8f8b84;
-  --faint: #858179;
   --line: rgb(236 232 225 / 0.1);
   --line-strong: rgb(236 232 225 / 0.22);
   --dot: #ebe6dd;
@@ -19,7 +18,6 @@
   --bg: #ede8df;
   --fg: #1b1a18;
   --muted: #5d5952;
-  --faint: #69655d;
   --line: rgb(27 26 24 / 0.1);
   --line-strong: rgb(27 26 24 / 0.24);
   --dot: #1f1d1a;
@@ -35,6 +33,14 @@
   --gutter: clamp(18px, 3.4vw, 48px);
   --nav-space: clamp(76px, 7vw, 124px);
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Mono roles. Labels name things: small caps, muted, never accent.
+     Actions do things: sentence case, and only they turn accent on hover.
+     Mono sizes stay on 10.5 (labels, notes), 11 (actions), 12 (code). */
+  --label: 500 10.5px / 1.3 var(--mono);
+  --label-tracking: 0.12em;
+  --action: 500 11px / 1 var(--mono);
+  --text-tracking: 0.04em;
 }
 
 /* -------------------------------------------------------------------- base */
@@ -147,6 +153,21 @@ main {
   pointer-events: none;
 }
 
+/* A veil that fades out downward, so content scrolls under the header
+   without colliding with its text. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -24px;
+  z-index: -1;
+  background: var(--veil);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  -webkit-mask-image: linear-gradient(#000 55%, transparent);
+  mask-image: linear-gradient(#000 55%, transparent);
+  pointer-events: none;
+}
+
 .site-header > * {
   pointer-events: auto;
 }
@@ -168,49 +189,66 @@ main {
   gap: 8px;
 }
 
-.pill {
+/* Text actions: no chrome, the label turns accent on hover. */
+.action {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 30px;
-  padding: 0 13px;
-  border: 1px solid color-mix(in srgb, var(--accent) 72%, transparent);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--accent);
-  font: 500 11px / 1 var(--mono);
-  letter-spacing: 0.04em;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg);
+  font: var(--action);
+  letter-spacing: var(--text-tracking);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition:
-    background-color 0.2s var(--ease),
-    color 0.2s var(--ease),
-    border-color 0.2s var(--ease);
+  transition: color 0.2s var(--ease);
 }
 
-.pill:hover {
-  background: var(--accent);
-  color: var(--bg);
-}
-
-.pill--quiet {
-  border-color: var(--line-strong);
-  background: var(--veil);
-  color: var(--fg);
-  backdrop-filter: blur(8px);
-}
-
-.pill--quiet:hover {
-  background: var(--fg);
-  color: var(--bg);
-}
-
-.pill--static,
-.pill--static:hover {
-  background: transparent;
+.action:hover {
   color: var(--accent);
-  cursor: default;
+}
+
+/* Arrows nudge toward where the action goes, like the Back link's. */
+.action svg {
+  transition: transform 0.2s ease;
+}
+
+.action:not(.action--icon):hover svg {
+  transform: translateX(3px);
+}
+
+.action.action--external:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* Header actions keep a pill-sized hit area around the same text; a faint
+   pill fills it on hover so the whole area reads as the target. */
+.action--nav {
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 999px;
+  transition:
+    color 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+}
+
+@media (hover: hover) {
+  .action--nav:hover {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+}
+
+/* The page you're on. */
+.action--nav[aria-current="page"] {
+  color: var(--accent);
+}
+
+.action--icon {
+  justify-content: center;
+  width: 30px;
+  padding: 0;
 }
 
 .chapter-nav {
@@ -236,8 +274,8 @@ main {
   justify-content: flex-end;
   gap: 10px;
   padding: 3px 0;
-  color: var(--faint);
-  font: 500 10px / 1 var(--mono);
+  color: var(--muted);
+  font: var(--label);
   text-decoration: none;
   transition: color 0.3s var(--ease);
 }
@@ -252,7 +290,7 @@ main {
   color: var(--muted);
   white-space: nowrap;
   pointer-events: none;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   opacity: 0;
   transform: translateX(6px);
@@ -286,6 +324,89 @@ main {
   background: var(--accent);
 }
 
+/* A pill in the bottom-right corner; the label behaves like any action. */
+.site-audio {
+  position: fixed;
+  right: var(--gutter);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 20;
+}
+
+.site-audio__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 34px;
+  padding: 0 14px 0 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--veil);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--fg);
+  font: var(--action);
+  letter-spacing: var(--text-tracking);
+  cursor: pointer;
+  transition:
+    color 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+}
+
+.site-audio__button:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.site-audio__icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: currentColor;
+  transition: background-color 0.2s var(--ease);
+}
+
+.site-audio__icon svg {
+  color: var(--bg);
+}
+
+.site-audio__bars {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+}
+
+.site-audio__button[aria-pressed="true"] .site-audio__bars {
+  display: inline-flex;
+}
+
+.site-audio__bars span {
+  width: 2px;
+  height: 100%;
+  border-radius: 1px;
+  background: var(--accent);
+  animation: soundbar 0.9s var(--ease) infinite alternate;
+}
+
+.site-audio__bars span:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.site-audio__bars span:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+@keyframes soundbar {
+  from {
+    transform: scaleY(0.3);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
 /* -------------------------------------------------------------- typography */
 
 .kicker {
@@ -294,8 +415,8 @@ main {
   gap: 10px;
   margin: 0 0 18px;
   color: var(--muted);
-  font: 500 10.5px / 1.3 var(--mono);
-  letter-spacing: 0.14em;
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -304,19 +425,19 @@ main {
 }
 
 .kicker__source {
-  color: var(--faint);
+  color: var(--muted);
 }
 
 .hint {
   margin: 0;
-  color: var(--faint);
+  color: var(--muted);
   font: 10.5px / 1.5 var(--mono);
   letter-spacing: 0.04em;
 }
 
 code {
   color: var(--fg);
-  font: 11.5px var(--mono);
+  font: 12px var(--mono);
 }
 
 /* -------------------------------------------------------------------- hero */
@@ -379,9 +500,9 @@ code {
 
 .hero__focus-label {
   margin: 0 0 8px;
-  color: var(--faint);
-  font: 500 10.5px / 1.3 var(--mono);
-  letter-spacing: 0.14em;
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -405,7 +526,7 @@ code {
   content: "·";
   display: inline-block;
   width: 1.2em;
-  color: var(--faint);
+  color: var(--muted);
   text-align: center;
 }
 
@@ -456,32 +577,15 @@ code {
   height: min(74vh, 680px);
 }
 
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.chip {
-  padding: 6px 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  font: 500 10.5px / 1 var(--mono);
-  letter-spacing: 0.04em;
-}
-
 .stat {
   max-width: 40ch;
   margin-top: 26px;
   font-size: 16.5px;
 }
 
-/* Link buttons sit at the right edge of the copy, where their arrows point. */
+/* Text actions sit flush left, spaced apart since they have no chrome. */
 .stat__row:has(> a) {
-  justify-content: flex-end;
+  gap: 20px;
 }
 
 .tools {
@@ -492,19 +596,19 @@ code {
   padding: 0;
   color: var(--muted);
   font: 500 10.5px / 1.4 var(--mono);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--text-tracking);
   list-style: none;
 }
 
 .tools li:not(:last-child)::after {
   content: "·";
   margin: 0 8px;
-  color: var(--faint);
+  color: var(--muted);
 }
 
 .stat__caption {
   margin: 0 0 10px;
-  color: var(--faint);
+  color: var(--muted);
   font: 10.5px / 1.4 var(--mono);
 }
 
@@ -513,6 +617,13 @@ code {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
+}
+
+.stat__tag {
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
 }
 
 .stat__value {
@@ -544,9 +655,9 @@ code {
 
 .segmented__label {
   margin-right: 2px;
-  color: var(--faint);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -599,7 +710,7 @@ code {
   flex-wrap: wrap;
   gap: 4px 14px;
   margin: 0;
-  color: var(--faint);
+  color: var(--muted);
   font: 10.5px var(--mono);
   letter-spacing: 0.04em;
 }
@@ -633,7 +744,7 @@ code {
 
 .code__no {
   margin-right: 18px;
-  color: var(--faint);
+  color: var(--muted);
   user-select: none;
 }
 
@@ -685,7 +796,7 @@ code {
   gap: 8px;
   color: var(--muted);
   font-size: 10.5px;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--text-tracking);
 }
 
 .mini__led {
@@ -699,8 +810,8 @@ code {
 .mini__live {
   margin-left: auto;
   color: var(--accent);
-  font-size: 9px;
-  letter-spacing: 0.22em;
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -1173,33 +1284,10 @@ code {
   background: transparent;
 }
 
-/* 03 · visualization */
-
-.forgetting {
-  position: absolute;
-  top: calc(var(--cy, 50%) + 48px);
-  left: var(--cx, 50%);
-  display: grid;
-  gap: 4px;
-  margin: 0;
-  text-align: center;
-  pointer-events: none;
-  opacity: clamp(0, var(--collapse, 0) * 12, 1);
-  transform: translateX(-50%);
-}
-
-.forgetting__value {
-  font-size: clamp(28px, 3vw, 42px);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-
-.forgetting__caption,
 .readout dt {
   color: var(--muted);
-  font: 9.5px var(--mono);
-  letter-spacing: 0.16em;
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -1214,6 +1302,12 @@ code {
   margin: 0;
   transform: translateX(-50%);
   white-space: nowrap;
+}
+
+/* Sits under the scene's figure rather than at the stage's floor. */
+.readout--below {
+  top: var(--below, auto);
+  bottom: auto;
 }
 
 .readout div {
@@ -1317,7 +1411,7 @@ code {
   border-bottom: 1px dashed var(--line-strong);
   background: transparent;
   color: var(--fg);
-  font: 13px var(--mono);
+  font: 12px var(--mono);
   outline: none;
 }
 
@@ -1380,9 +1474,9 @@ code {
 
 .contact__hint {
   margin: 6px 0 0;
-  color: var(--faint);
+  color: var(--muted);
   font: 10.5px / 1.6 var(--mono);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--text-tracking);
 }
 
 .contact__hint kbd {
@@ -1423,11 +1517,10 @@ code {
 }
 
 .results__role {
-  margin: 18px 0 0;
-  color: var(--accent);
-  font: 500 11px / 1.4 var(--mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  margin: 14px 0 0;
+  color: var(--fg);
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-style: italic;
 }
 
 .results__summary {
@@ -1445,15 +1538,15 @@ code {
 .results__links {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 20px;
   margin-top: 18px;
 }
 
 .results__heading {
   margin: clamp(40px, 8vh, 72px) 0 18px;
   color: var(--muted);
-  font: 500 10.5px / 1.3 var(--mono);
-  letter-spacing: 0.14em;
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -1498,9 +1591,9 @@ code {
 
 .result__label,
 .highlight__index {
-  color: var(--accent);
-  font: 500 10.5px / 1.3 var(--mono);
-  letter-spacing: 0.1em;
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -1547,8 +1640,8 @@ code {
 .construction .construction__note {
   margin-top: 8px;
   color: var(--muted);
-  font: 500 11px / 1.4 var(--mono);
-  letter-spacing: 0.12em;
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -1582,7 +1675,7 @@ code {
   background: var(--bg);
   color: var(--muted);
   font: 10.5px / 1.4 var(--mono);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--text-tracking);
   white-space: nowrap;
   opacity: calc(1 - var(--open, 0) * 4);
   transform: translate(-50%, -50%);
@@ -1604,6 +1697,107 @@ code {
   font-weight: 400;
 }
 
+/* ------------------------------------------------------------------ /work */
+
+.results--index {
+  align-items: flex-start;
+}
+
+.work-index__grid {
+  margin-top: 0;
+}
+
+/* No label above the cards: keep the gap the label would have made. */
+.results__summary + div > .work-index__grid,
+.results__title + div > .work-index__grid {
+  margin-top: clamp(40px, 8vh, 72px);
+}
+
+.work-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.2s ease;
+}
+
+.work-card:hover,
+.work-card:has(.work-card__link:focus-visible) {
+  background: var(--line);
+}
+
+.work-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.work-card:hover .work-card__link {
+  color: var(--accent);
+}
+
+/* Stretch the title link over the whole card. */
+.work-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.work-card__link:focus-visible {
+  outline: none;
+}
+
+.work-card:has(.work-card__link:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* One quiet label above the title; the title is the only loud line. */
+.work-card__meta {
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.highlight .work-card__role {
+  margin: 4px 0 0;
+  color: var(--fg);
+  font-size: 15.5px;
+  font-style: italic;
+}
+
+.highlight .work-card__role + p {
+  margin-top: 12px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  color: var(--muted);
+  font: var(--action);
+  letter-spacing: var(--text-tracking);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+.back-link svg {
+  transition: transform 0.2s ease;
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
 .outro {
   position: relative;
 }
@@ -1623,7 +1817,7 @@ code {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 20px;
   margin-top: 36px;
 }
 
@@ -1648,9 +1842,9 @@ code {
 
 .colophon h3 {
   margin: 0 0 12px;
-  color: var(--faint);
-  font: 500 10px var(--mono);
-  letter-spacing: 0.18em;
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -1706,9 +1900,9 @@ code {
   gap: 8px;
   max-width: 1240px;
   margin: 56px 0 0;
-  color: var(--faint);
-  font: 10px var(--mono);
-  letter-spacing: 0.1em;
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -1757,7 +1951,8 @@ code {
     align-items: start;
     gap: 12px;
     padding-top: 72px;
-    padding-bottom: 20px;
+    /* Clear the fixed site-audio pill. */
+    padding-bottom: 68px;
   }
 
   .chapter__title {
@@ -1774,7 +1969,7 @@ code {
     margin-bottom: 12px;
   }
 
-  .chips,
+  .chapter__chips,
   .controls__note,
   .controls .hint {
     display: none;
@@ -1805,11 +2000,6 @@ code {
 
   .readout {
     gap: 18px;
-  }
-
-  .readout dt {
-    font-size: 8.5px;
-    letter-spacing: 0.1em;
   }
 
   .chapter-nav {
@@ -1957,5 +2147,10 @@ code {
   *::after {
     /* biome-ignore lint/complexity/noImportantStyles: reduced motion must win over component transitions */
     transition-duration: 0.01ms !important;
+  }
+
+  .site-audio__bars span {
+    animation: none;
+    transform: scaleY(0.6);
   }
 }

@@ -79,7 +79,7 @@ export default function Home() {
           tools={["React", "TypeScript", "RxJS", "Redux", "Jest"]}
           tag={
             <Link
-              className="pill"
+              className="action"
               href="/experience/abc-fitness"
               aria-label="ABC Fitness details"
             >

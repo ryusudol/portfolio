@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "reicon-react";
+import { ArrowLeft, ArrowRight } from "reicon-react";
 
 import { BarrierIcon } from "@/components/barrier-icon";
 import { DotStage } from "@/components/dot-stage";
@@ -30,6 +30,10 @@ export default function Playground() {
           aria-labelledby="playground-title"
         >
           <div className="results__inner">
+            <Link className="back-link" href="/">
+              <ArrowLeft size={16} strokeWidth={1} aria-hidden />
+              Back
+            </Link>
             <p className="kicker">Beyond the day job</p>
             <h1 id="playground-title" className="results__title">
               Playground
@@ -67,7 +71,7 @@ export default function Playground() {
               </p>
             </div>
             <div className="results__links playground__back">
-              <Link className="pill" href="/">
+              <Link className="action" href="/">
                 Back to selected work
                 <ArrowRight size={12} aria-hidden />
               </Link>

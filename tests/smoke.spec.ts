@@ -115,8 +115,28 @@ test.describe("portfolio smoke", () => {
     }
   });
 
+  test("/work lists experience and projects and opens a case study", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Work", exact: true }).click();
+    await expect(page).toHaveURL(/\/work$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Work" }),
+    ).toBeVisible();
+    for (const name of ["Experience", "Projects"]) {
+      await expect(
+        page.getByRole("heading", { level: 2, name, exact: true }),
+      ).toBeVisible();
+    }
+    await expect(page.locator(".work-card")).toHaveCount(4);
+    await page.getByRole("link", { name: "PyTorch-CKA" }).click();
+    await expect(page).toHaveURL(/\/projects\/pytorch-cka$/);
+  });
+
   for (const path of [
     "/",
+    "/work",
     "/experience/abc-fitness",
     "/projects/unlearning-comparator",
     "/projects/pytorch-cka",

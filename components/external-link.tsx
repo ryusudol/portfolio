@@ -8,7 +8,12 @@ export function ExternalLink({
   children: string;
 }) {
   return (
-    <a className="pill" href={href} target="_blank" rel="noreferrer">
+    <a
+      className="action action--external"
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+    >
       {children}
       <ArrowUpRight size={12} aria-hidden />
     </a>

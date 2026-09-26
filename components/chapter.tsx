@@ -67,12 +67,10 @@ export function Chapter({
             </ul>
           )}
           {chips && (
-            <ul className="chips">
+            <ul className="tools chapter__chips">
               {chips.map((chip, i) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: static list
-                <li key={i} className="chip">
-                  {chip}
-                </li>
+                <li key={i}>{chip}</li>
               ))}
             </ul>
           )}

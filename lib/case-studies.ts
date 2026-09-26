@@ -19,6 +19,8 @@ export type CaseStudy = {
   role: string;
   when: string;
   summary: string;
+  /** One line for the /work card; falls back to `summary`. */
+  blurb?: string;
   stack: string[];
   links: { label: string; href: string }[];
   results: Result[];
@@ -34,15 +36,9 @@ export const abcFitness: CaseStudy = {
   when: "Jun – Aug 2026 · Austin, TX",
   summary:
     "Rebuilt the ABC Trainerize profile page from scratch, from jQuery to React. The platform serves 1.6M+ clients and 400,000+ fitness professionals, so the existing business logic was carried over carefully and backed by unit tests to roll out safely.",
-  stack: [
-    "React",
-    "TypeScript",
-    "RxJS",
-    "Redux",
-    "Jest",
-    "LaunchDarkly",
-    "Figma MCP",
-  ],
+  blurb:
+    "Rebuilt the ABC Trainerize profile page from jQuery to React for 1.6M+ clients, shipped behind a feature flag with 97% branch coverage.",
+  stack: ["React", "TypeScript", "RxJS", "Redux", "Jest", "LaunchDarkly"],
   links: [],
   results: [
     {
@@ -74,19 +70,13 @@ export const unlearningComparator: CaseStudy = {
   href: "/projects/unlearning-comparator",
   kind: "Project",
   title: "Machine Unlearning Comparator",
-  role: "Frontend, end to end",
+  role: "Full stack, Data Visualization",
   when: "Published in IEEE TVCG · Mar 2026",
   summary:
     "An interactive visual analytics system for evaluating how machine-unlearning methods affect the accuracy, efficiency, and privacy of ML models.",
-  stack: [
-    "React",
-    "TypeScript",
-    "D3",
-    "Recharts",
-    "Zustand",
-    "FastAPI",
-    "PyTorch",
-  ],
+  blurb:
+    "An interactive system for comparing machine-unlearning methods on accuracy, efficiency, and privacy, with 100+ stars on GitHub.",
+  stack: ["React", "TypeScript", "D3", "Zustand", "FastAPI", "PyTorch"],
   links: [
     { label: "Live demo", href: links.unlearningDemo },
     { label: "Code", href: links.unlearningCode },
@@ -143,6 +133,8 @@ export const pytorchCka: CaseStudy = {
   when: "Open source · on PyPI",
   summary:
     "A Python library that compares internal representations across layers of CNNs and LLMs — without the slow computation and memory buildup of existing CKA tools.",
+  blurb:
+    "Compares layer representations in CNNs and LLMs, 5.7× faster than an existing CKA library with 95.7% less retained GPU memory.",
   stack: ["Python", "PyTorch", "GitHub Actions", "PyPI"],
   links: [
     { label: "PyPI", href: links.ckaPypi },
@@ -187,3 +179,8 @@ export const pytorchCka: CaseStudy = {
 };
 
 export const caseStudies = [abcFitness, unlearningComparator, pytorchCka];
+
+export const projectStudies = caseStudies.filter((s) => s.kind === "Project");
+export const experienceStudies = caseStudies.filter(
+  (s) => s.kind === "Experience",
+);

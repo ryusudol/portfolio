@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Newsreader } from "next/font/google";
 
+import { SiteAudio } from "@/components/site-audio";
 import { ThemeGuard } from "@/components/theme-guard";
 import { profile } from "@/lib/content";
 import { themeInitScript } from "@/lib/theme-script";
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <ThemeGuard />
         {children}
+        <SiteAudio />
       </body>
     </html>
   );

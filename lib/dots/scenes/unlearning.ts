@@ -1,4 +1,4 @@
-import { clamp, mulberry32, rgba, smoothstep, TAU } from "../math";
+import { clamp, mix, mulberry32, rgba, TAU } from "../math";
 import { dust } from "../shapes";
 import type { Field, Frame, Palette, RGB, Scene } from "../types";
 
@@ -25,8 +25,10 @@ const CLASSES: [number, number, string, RGB][] = [
   [0.66, 0.88, "ship", [156, 117, 95]],
   [0.08, 0.88, "truck", [186, 176, 172]],
 ];
+const INK_COLORS: RGB[] = CLASSES.map((c) => c[3]);
+/** On paper, Tableau's lighter hues wash out, so darken them a touch. */
+const PAPER_COLORS: RGB[] = INK_COLORS.map((c) => mix(c, [0, 0, 0], 0.18));
 const FORGET = 3;
-const FORGET_POINTS = 200;
 const START = 0.2;
 
 /**
@@ -42,9 +44,11 @@ export class UnlearningScene implements Scene {
   /** Where each forgotten point ends up, weighted toward nearby classes. */
   private destinations: number[] = [];
   private hover = -1;
-  private remaining = -1;
-  private counter: HTMLElement | null = null;
-  private progress = 0;
+  private counters: Record<string, HTMLElement> = {};
+  private shown: Record<string, string> = {};
+  /** Paper needs denser dots to read as well as ink does. */
+  private ink = true;
+  private accuracy = "100%";
 
   layout(f: Field, fr: Frame) {
     const { w, h } = fr.visual;
@@ -69,12 +73,21 @@ export class UnlearningScene implements Scene {
       const share = Math.round(6 / (Math.hypot(u - fu, v - fv) + 0.2));
       for (let s = 0; s < share; s++) this.destinations.push(k);
     });
-    f.classColors = CLASSES.map((c) => c[3]);
     this.clusterN = Math.round(f.n * 0.86);
-    this.counter = fr.section.querySelector<HTMLElement>(
-      '[data-counter="forget"]',
-    );
-    this.remaining = -1;
+    this.counters = {};
+    this.shown = {};
+    for (const el of fr.section.querySelectorAll<HTMLElement>(
+      "[data-counter]",
+    )) {
+      this.counters[el.dataset.counter ?? ""] = el;
+    }
+  }
+
+  private write(key: string, value: string) {
+    const el = this.counters[key];
+    if (!el || this.shown[key] === value) return;
+    this.shown[key] = value;
+    el.textContent = value;
   }
 
   private position(
@@ -101,8 +114,6 @@ export class UnlearningScene implements Scene {
     const clusters = this.clusters;
     if (clusters.length === 0) return;
     const p = fr.progress;
-    this.progress = smoothstep(START, 0.92, p);
-    const forget = clusters[FORGET];
 
     // Hovered cluster (like a D3 hover, but on 8,000 dots).
     const ptr = fr.pointer;
@@ -117,6 +128,9 @@ export class UnlearningScene implements Scene {
         }
       });
     }
+
+    f.classColors = this.ink ? INK_COLORS : PAPER_COLORS;
+    const boost = this.ink ? 1 : 1.4;
 
     const pos: [number, number] = [0, 0];
     const to: [number, number] = [0, 0];
@@ -136,7 +150,7 @@ export class UnlearningScene implements Scene {
       if (k !== FORGET) {
         f.gx[i] = vx + pos[0];
         f.gy[i] = vy + pos[1];
-        f.ga[i] = Math.min(1, (0.42 + f.r3[i] * 0.4) * lift);
+        f.ga[i] = Math.min(1, (0.42 + f.r3[i] * 0.4) * lift * boost);
         continue;
       }
 
@@ -147,7 +161,7 @@ export class UnlearningScene implements Scene {
       if (f.r1[i] > 0.94) {
         f.gx[i] = vx + pos[0];
         f.gy[i] = vy + pos[1];
-        f.ga[i] = 0.55 + 0.4 * f.r3[i];
+        f.ga[i] = Math.min(1, (0.55 + 0.4 * f.r3[i]) * boost);
         stayed++;
         continue;
       }
@@ -164,36 +178,54 @@ export class UnlearningScene implements Scene {
       f.gy[i] = vy + pos[1] + dy * eased + dx * bend;
       // Once past halfway, the point takes on the class it now sits in.
       if (eased > 0.5) f.gc[i] = dest + 1;
-      f.ga[i] = 0.6 + 0.35 * f.r3[i];
+      f.ga[i] = Math.min(1, (0.6 + 0.35 * f.r3[i]) * boost);
       if (e < 0.5) stayed++;
     }
 
-    const remaining = Math.round((FORGET_POINTS * stayed) / Math.max(1, total));
-    if (remaining !== this.remaining && this.counter) {
-      this.remaining = remaining;
-      this.counter.textContent = remaining.toLocaleString("en-US");
-    }
-    fr.section.style.setProperty("--cx", `${forget.x.toFixed(1)}px`);
-    fr.section.style.setProperty("--cy", `${forget.y.toFixed(1)}px`);
-    fr.section.style.setProperty("--collapse", this.progress.toFixed(3));
+    // A point still in its cluster is one the model still recognises, so
+    // "cat" accuracy falls as it's unlearned. It's drawn under the class
+    // label (see draw) and mirrored to hidden text for screen readers.
+    this.accuracy = `${Math.round((100 * stayed) / Math.max(1, total))}%`;
+    this.write("forget", this.accuracy);
   }
 
   draw(ctx: CanvasRenderingContext2D, fr: Frame, palette: Palette) {
     const vx = fr.visual.x;
     const vy = fr.visual.y;
-    const s = this.progress;
-    ctx.font = `10px ${palette.mono}`;
+    this.ink = palette.ink;
+    const colors = palette.ink ? INK_COLORS : PAPER_COLORS;
+    const size = fr.compact ? 11 : 13;
+    ctx.font = `${size}px ${palette.mono}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     this.clusters.forEach((c, k) => {
-      const forget = k === FORGET;
-      let alpha = this.hover === k ? 1 : 0.7;
-      if (forget) alpha *= 1 - smoothstep(0.05, 0.25, s);
-      if (alpha <= 0.01) return;
-      ctx.fillStyle = rgba(CLASSES[k][3], alpha);
-      const label = forget ? `${c.label} · forget` : c.label;
+      const alpha = this.hover === k ? 1 : palette.ink ? 0.7 : 0.85;
+      ctx.fillStyle = rgba(colors[k], alpha);
+      // The forget class keeps its label after its points scatter.
+      const label = k === FORGET ? "Cat • forget class" : c.label;
       ctx.fillText(label, vx + c.x, vy + c.y + c.sy * 2.4 + 6);
     });
+
+    // Its accuracy, centred on the same x a line below: the value in fg,
+    // "accuracy" in muted small caps, like the site's labels.
+    const c = this.clusters[FORGET];
+    if (c) {
+      const value = `${this.accuracy} `;
+      const word = "ACCURACY";
+      const small = `500 ${fr.compact ? 10 : 10.5}px ${palette.mono}`;
+      ctx.font = small;
+      const valueWidth = ctx.measureText(value).width;
+      ctx.letterSpacing = "0.12em";
+      const wordWidth = ctx.measureText(word).width;
+      const x = vx + c.x - (valueWidth + wordWidth) / 2;
+      const y = vy + c.y + c.sy * 2.4 + 6 + size + (fr.compact ? 9 : 12);
+      ctx.textAlign = "left";
+      ctx.fillStyle = rgba(palette.muted, 1);
+      ctx.fillText(word, x + valueWidth, y);
+      ctx.letterSpacing = "0px";
+      ctx.fillStyle = rgba(palette.fg, 0.9);
+      ctx.fillText(value, x, y);
+    }
     ctx.textAlign = "start";
   }
 }

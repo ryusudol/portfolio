@@ -46,9 +46,7 @@ export default function AbcFitnessCaseStudy() {
             value: "97%",
             caption: "branch coverage of profile business logic · Jest",
           }}
-          tag={
-            <span className="pill pill--static">Role-based access tested</span>
-          }
+          tag={<span className="stat__tag">Role-based access tested</span>}
         >
           <AsyncControls />
         </Chapter>

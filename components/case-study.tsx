@@ -28,11 +28,9 @@ export function CaseStudyResults({ study }: { study: CaseStudy }) {
         </h1>
         <p className="results__role">{study.role}</p>
         <p className="results__summary">{study.summary}</p>
-        <ul className="chips results__stack">
+        <ul className="tools results__stack" aria-label="Built with">
           {study.stack.map((tool) => (
-            <li key={tool} className="chip">
-              {tool}
-            </li>
+            <li key={tool}>{tool}</li>
           ))}
         </ul>
         {study.links.length > 0 && (
@@ -116,12 +114,12 @@ export function CaseStudyMore({ study }: { study: CaseStudy }) {
         </h2>
         <div className="outro__links">
           {others.map((other) => (
-            <Link key={other.slug} className="pill" href={other.href}>
+            <Link key={other.slug} className="action" href={other.href}>
               {other.title}
               <ArrowRight size={12} aria-hidden />
             </Link>
           ))}
-          <Link className="pill" href="/#contact">
+          <Link className="action" href="/#contact">
             Get in touch
             <ArrowRight size={12} aria-hidden />
           </Link>

@@ -16,7 +16,7 @@ type Props = {
 
 function DetailsLink({ href, name }: { href: string; name: string }) {
   return (
-    <Link className="pill" href={href} aria-label={`${name} details`}>
+    <Link className="action" href={href} aria-label={`${name} details`}>
       Details
       <ArrowRight size={12} aria-hidden />
     </Link>
@@ -57,11 +57,9 @@ export function UnlearningChapter({
         )
       }
       visual={
-        <p className="forgetting" aria-live="off">
-          <span className="forgetting__value" data-counter="forget">
-            200
-          </span>
-          <span className="forgetting__caption">“cat” points left</span>
+        <p className="sr-only" aria-live="off">
+          Accuracy on the forgotten “cat” class:{" "}
+          <span data-counter="forget">100%</span>
         </p>
       }
     />
@@ -107,7 +105,7 @@ export function CkaChapter({
       }
       visual={
         linkToCaseStudy ? (
-          <dl className="readout">
+          <dl className="readout readout--below">
             <div>
               <dt>layer pairs compared</dt>
               <dd data-counter="pairs">0 / 324</dd>

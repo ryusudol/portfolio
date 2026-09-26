@@ -1,6 +1,6 @@
 import { clamp, gauss, smoothstep } from "../math";
 import { dust } from "../shapes";
-import type { Field, Frame, Scene } from "../types";
+import type { Field, Frame, Palette, Scene } from "../types";
 
 const CORNERS: [number, number, number][] = [
   [-1, -1, -1],
@@ -29,6 +29,8 @@ const EDGES: [number, number][] = [
 
 /** Retained GPU memory vs. the baseline library (−95.7%). */
 const RETAINED = 0.043;
+/** Dark dots on paper read fainter than light dots on ink. */
+const PAPER_BOOST = 1.7;
 
 /**
  * O(B³) → O(B²): a lattice cube of work flattens into a single plane as you
@@ -41,6 +43,7 @@ export class CkaScene implements Scene {
   private yaw = 0;
   private counters: Record<string, HTMLElement> = {};
   private shown: Record<string, string> = {};
+  private ink = true;
 
   layout(f: Field, fr: Frame) {
     this.grid = fr.compact ? 8 : 10;
@@ -89,6 +92,7 @@ export class CkaScene implements Scene {
     const G = this.grid;
     const cells = G * G * G;
     const squash = 1 - collapse;
+    const boost = this.ink ? 1 : PAPER_BOOST;
 
     const project = (
       i: number,
@@ -107,7 +111,7 @@ export class CkaScene implements Scene {
       const depth = 0.55 + 0.45 * (1 - (z2 + 1.7) / 3.4);
       let sx = cx + x1 * size * persp;
       let sy = cy + y2 * size * persp;
-      let a = alpha * depth;
+      let a = Math.min(1, alpha * depth * boost);
       // Lattice work is released; the cube's edges stay to outline the plane.
       if (i < this.latticeN && f.r3[i] > keep) {
         const drift = release * 140 * (0.4 + f.r1[i]);
@@ -162,5 +166,9 @@ export class CkaScene implements Scene {
       "memory",
       `${(100 - (100 - RETAINED * 100) * release).toFixed(1)}%`,
     );
+  }
+
+  draw(_ctx: CanvasRenderingContext2D, _fr: Frame, palette: Palette) {
+    this.ink = palette.ink;
   }
 }

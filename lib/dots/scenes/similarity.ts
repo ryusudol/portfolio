@@ -1,9 +1,44 @@
-import { clamp, mulberry32, rgba, smoothstep } from "../math";
+import { clamp, mix, mulberry32, rgba, smoothstep } from "../math";
 import { dust } from "../shapes";
-import type { Field, Frame, Palette, Scene } from "../types";
+import type { Field, Frame, Palette, RGB, Scene } from "../types";
 
 /** ResNet-18's layers: stem, four stages of four convs, and the classifier. */
 const LAYERS = 18;
+/** Dark dots on paper cover less than light dots on ink, so draw them bigger. */
+const PAPER_SIZE = 1.3;
+const PAPER_ALPHA = 1.25;
+
+/** Matplotlib's inferno, sampled at t = 0, 0.1, …, 1. */
+const INFERNO: RGB[] = [
+  [0, 0, 4],
+  [22, 11, 57],
+  [66, 10, 104],
+  [106, 23, 110],
+  [147, 38, 103],
+  [188, 55, 84],
+  [221, 81, 58],
+  [243, 120, 25],
+  [252, 165, 10],
+  [246, 215, 70],
+  [252, 255, 164],
+];
+const inferno = (t: number): RGB => {
+  const x = clamp(t) * (INFERNO.length - 1);
+  const k = Math.min(INFERNO.length - 2, Math.floor(x));
+  return mix(INFERNO[k], INFERNO[k + 1], x - k);
+};
+/** Colour steps; the engine draws at most ten classes. */
+const STEPS = 10;
+const ramp = (from: number, to: number) =>
+  Array.from({ length: STEPS }, (_, k) =>
+    inferno(from + ((to - from) * k) / (STEPS - 1)),
+  );
+/**
+ * Inferno's ends vanish into the page (near-black on ink, pale yellow on
+ * paper), so each theme uses the slice that stays visible on it.
+ */
+const INK_RAMP = ramp(0.36, 1);
+const PAPER_RAMP = ramp(0, 0.74);
 
 /**
  * Relative layer-by-layer CKA for ResNet-18 on CIFAR-10 (0 = least similar
@@ -55,9 +90,9 @@ function similarity() {
  * and upward. Each network's layers start as activations along its axis
  * (bottom for seed B, left for seed A); scrolling
  * compares them pair by pair, and each pair settles into its cell — denser and
- * warmer where the two networks see the input the same way. Every cell keeps a
- * base of plain dots and trades them for accent dots as similarity rises, so
- * the whole map reads, not just its diagonal.
+ * further along inferno where the two networks see the input the same way.
+ * Per-dot jitter dithers neighbouring colour steps, so the scale reads as
+ * continuous.
  */
 export class SimilarityScene implements Scene {
   private values = similarity();
@@ -69,6 +104,7 @@ export class SimilarityScene implements Scene {
   private hover = -1;
   private counter: HTMLElement | null = null;
   private shown = -1;
+  private ink = true;
 
   layout(f: Field, fr: Frame) {
     const { w, h } = fr.visual;
@@ -104,7 +140,7 @@ export class SimilarityScene implements Scene {
     this.shown = -1;
     // Pin the readout just under the heatmap's axis title.
     const below =
-      this.box.y + this.box.size + this.gutter.title + (fr.compact ? 14 : 18);
+      this.box.y + this.box.size + this.gutter.title + (fr.compact ? 26 : 36);
     fr.section.style.setProperty("--below", `${below.toFixed(1)}px`);
   }
 
@@ -119,6 +155,9 @@ export class SimilarityScene implements Scene {
     const cells = LAYERS * LAYERS;
     const computed = Math.floor(smoothstep(0.04, 0.78, fr.progress) * cells);
     const ptr = fr.pointer;
+    const grow = this.ink ? 1 : PAPER_SIZE;
+    const boost = this.ink ? 1 : PAPER_ALPHA;
+    f.classColors = this.ink ? INK_RAMP : PAPER_RAMP;
 
     this.hover = -1;
     if (ptr.active) {
@@ -139,12 +178,18 @@ export class SimilarityScene implements Scene {
       const row = Math.floor(c / LAYERS);
       const col = c % LAYERS;
       const v = this.values[c];
+      if (!this.ink) f.gz[i] = f.size[i] * grow;
 
       if (c < computed) {
         f.gx[i] = left + (col + 0.1 + f.r1[i] * 0.8) * cell;
         f.gy[i] = bottom - (row + 0.1 + f.r2[i] * 0.8) * cell;
-        f.ga[i] = (0.6 + v * 0.35) * (this.hover === c ? 1.3 : 1);
-        f.gh[i] = f.r0[i] < smoothstep(0.25, 0.9, v) ? 1 : 0;
+        f.ga[i] = Math.min(
+          1,
+          (0.6 + v * 0.35) * boost * (this.hover === c ? 1.3 : 1),
+        );
+        f.gh[i] = 0;
+        const t = clamp((v - 0.03) / 0.92 + (f.r0[i] - 0.5) * 0.12);
+        f.gc[i] = 1 + Math.min(STEPS - 1, Math.floor(t * STEPS));
         continue;
       }
 
@@ -154,7 +199,7 @@ export class SimilarityScene implements Scene {
       const out = band + f.r2[i] * spread;
       f.gx[i] = fromBottom ? left + along * cell : left - out;
       f.gy[i] = fromBottom ? bottom + out : bottom - along * cell;
-      f.ga[i] = 0.22 + f.r0[i] * 0.3;
+      f.ga[i] = (0.22 + f.r0[i] * 0.3) * boost;
       f.gh[i] = 0;
     }
 
@@ -172,6 +217,7 @@ export class SimilarityScene implements Scene {
     const top = vy + by;
     const bottom = top + size;
     const { tick, title } = this.gutter;
+    this.ink = palette.ink;
 
     ctx.font = `9.5px ${palette.mono}`;
     ctx.fillStyle = rgba(palette.muted, 0.85);

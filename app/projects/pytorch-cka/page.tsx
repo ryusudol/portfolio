@@ -6,18 +6,29 @@ import {
   CaseStudyResults,
 } from "@/components/case-study";
 import { ChapterNav } from "@/components/chapter-nav";
+import {
+  BenchmarkChapter,
+  GroundworkChapter,
+  InsightChapter,
+  MemoryChapter,
+  RedesignChapter,
+  ShippedChapter,
+  WhyChapter,
+} from "@/components/cka-story";
 import { DotStage } from "@/components/dot-stage";
-import { CkaChapter } from "@/components/featured-chapters";
 import { SiteHeader } from "@/components/site-header";
 import { pytorchCka } from "@/lib/case-studies";
-import { profile, projectChapters } from "@/lib/content";
+import { ckaChapters, profile } from "@/lib/content";
+
+const description =
+  "How I built PyTorch-CKA after the CKA library in my own research tool proved too slow, relearned the linear algebra behind it, and rewrote HSIC so every layer pair comes out of one GPU pass, 7.7× faster than torch_cka with 95.7% less retained GPU memory.";
 
 export const metadata: Metadata = {
   title: `${pytorchCka.title} — ${profile.name}`,
-  description: pytorchCka.summary,
+  description,
   openGraph: {
     title: `${pytorchCka.title} — ${profile.name}`,
-    description: pytorchCka.summary,
+    description,
   },
 };
 
@@ -25,13 +36,24 @@ export default function CkaCaseStudy() {
   return (
     <>
       <SiteHeader />
-      <ChapterNav chapters={projectChapters} />
+      <ChapterNav chapters={ckaChapters} />
       <DotStage />
 
       <main id="chapters">
-        <CaseStudyResults study={pytorchCka} />
-        <CkaChapter id="walkthrough" topic="Walkthrough" />
-        <CaseStudyHighlights study={pytorchCka} />
+        <CaseStudyResults study={pytorchCka} scene="cka-results" />
+        <WhyChapter />
+        <GroundworkChapter />
+        <InsightChapter />
+        <RedesignChapter />
+        <MemoryChapter />
+        <BenchmarkChapter />
+        <ShippedChapter />
+        <CaseStudyHighlights
+          study={pytorchCka}
+          id="lessons"
+          kicker="What I learned"
+          title="Lessons I still use."
+        />
         <CaseStudyMore study={pytorchCka} />
       </main>
     </>

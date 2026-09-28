@@ -8,15 +8,7 @@ import { DotStage } from "@/components/dot-stage";
 import { CkaChapter, UnlearningChapter } from "@/components/featured-chapters";
 import { ProfileSketch } from "@/components/profile-sketch";
 import { SiteHeader } from "@/components/site-header";
-import {
-  alsoBuilt,
-  education,
-  experience,
-  homeChapters,
-  profile,
-  publication,
-  stack,
-} from "@/lib/content";
+import { education, homeChapters, profile, skills } from "@/lib/content";
 
 export default function Home() {
   return (
@@ -37,20 +29,14 @@ export default function Home() {
         >
           <div className="hero__sticky">
             <div className="hero__copy">
-              <p className="kicker hero__kicker">
-                {profile.role} · Rice MCS ’26
-              </p>
               <h1 className="hero__name" data-dots-text>
                 {profile.name}
               </h1>
-              <div className="hero__focus">
-                <p className="hero__focus-label">Focused on</p>
-                <ul>
-                  {profile.focus.map((area) => (
-                    <li key={area}>{area}</li>
-                  ))}
-                </ul>
-              </div>
+              <p className="hero__lede">
+                {profile.tagline.split(/(?<=\.) /).map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </p>
             </div>
             <div
               className="hero__portrait"
@@ -61,6 +47,9 @@ export default function Home() {
           </div>
         </section>
 
+        <UnlearningChapter id="unlearning-comparator" linkToCaseStudy />
+        <CkaChapter id="pytorch-cka" linkToCaseStudy />
+
         <Chapter
           id="experience"
           scene="profile"
@@ -69,11 +58,11 @@ export default function Home() {
           title={["A jQuery profile page,", "rewritten in React."]}
           body={
             <>
-              Software Engineering Intern at ABC Fitness. Rebuilt the ABC
-              Trainerize profile page from scratch for a platform serving 1.6M+
-              clients and 400,000+ fitness professionals — carrying over its
-              business logic with care and covering it with unit tests so it
-              could roll out safely.
+              As a Software Engineering Intern at ABC Fitness, rewrote the
+              user profile page from scratch for the ABC Trainerize platform
+              serving 1.6M+ clients and 400,000+ fitness professionals —
+              carrying over its business logic with care and covering it with
+              unit tests so it could roll out safely.
             </>
           }
           tools={["React", "TypeScript", "RxJS", "Redux", "Jest"]}
@@ -89,9 +78,6 @@ export default function Home() {
           }
           visual={<ProfileSketch />}
         />
-
-        <UnlearningChapter id="unlearning-comparator" linkToCaseStudy />
-        <CkaChapter id="pytorch-cka" linkToCaseStudy />
 
         <section
           id="contact"
@@ -117,20 +103,6 @@ export default function Home() {
           <footer className="colophon">
             <div className="colophon__grid">
               <div>
-                <h3>Experience</h3>
-                {experience.map((item) => (
-                  <p key={item.org}>
-                    <Link href={item.href}>
-                      <strong>{item.org}</strong>
-                    </Link>{" "}
-                    — {item.title}
-                    <span>
-                      {item.place} · {item.period}
-                    </span>
-                  </p>
-                ))}
-              </div>
-              <div>
                 <h3>Education</h3>
                 {education.map((item) => (
                   <p key={item.org}>
@@ -140,29 +112,7 @@ export default function Home() {
                     </span>
                   </p>
                 ))}
-              </div>
-              <div>
-                <h3>Publication</h3>
-                <p>
-                  <a href={publication.href} target="_blank" rel="noreferrer">
-                    {publication.title}
-                  </a>
-                  <span>
-                    {publication.authors} · {publication.venue}
-                  </span>
-                </p>
-                <h3>Also built</h3>
-                {alsoBuilt.map((item) => (
-                  <p key={item.title}>
-                    <a href={item.href} target="_blank" rel="noreferrer">
-                      <strong>{item.title}</strong>
-                    </a>
-                    <span>{item.note}</span>
-                  </p>
-                ))}
-              </div>
-              <div>
-                <h3>Elsewhere</h3>
+                <h3>Contact</h3>
                 <ul className="colophon__links">
                   <li>
                     <a href={`mailto:${profile.email}`}>Email</a>
@@ -178,8 +128,17 @@ export default function Home() {
                     </a>
                   </li>
                 </ul>
-                <h3>Tools</h3>
-                <p className="colophon__stack">{stack.join(" · ")}</p>
+              </div>
+              <div>
+                <h3>Skills &amp; Tools</h3>
+                <dl className="colophon__skills">
+                  {skills.map((group) => (
+                    <div key={group.label}>
+                      <dt>{group.label}</dt>
+                      <dd>{group.items.join(" · ")}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
             </div>
             <p className="colophon__base">

@@ -7,13 +7,23 @@ import { pad, profile } from "@/lib/content";
 import { CountUp } from "./count-up";
 import { ExternalLink } from "./external-link";
 
-/** Opening section of a case study: who, what, and what came of it. */
-export function CaseStudyResults({ study }: { study: CaseStudy }) {
+/**
+ * Opening section of a case study: who, what, and what came of it. Results
+ * with a `chart` drop their outline and get a stage for a particle mini-chart,
+ * which a page-specific `scene` draws.
+ */
+export function CaseStudyResults({
+  study,
+  scene = "results",
+}: {
+  study: CaseStudy;
+  scene?: string;
+}) {
   return (
     <section
       id="results"
       className="results"
-      data-scene="results"
+      data-scene={scene}
       aria-labelledby="results-title"
     >
       <div className="results__inner">
@@ -45,18 +55,31 @@ export function CaseStudyResults({ study }: { study: CaseStudy }) {
 
         <h2 className="results__heading">Results</h2>
         <ul className="results__grid">
-          {study.results.map((result) => (
-            <li
-              key={result.label}
-              className="result"
-              data-dots="outline"
-              data-dots-spread="1.1"
-            >
-              <CountUp value={result.value} className="result__value" />
-              <span className="result__label">{result.label}</span>
-              <p className="result__note">{result.note}</p>
-            </li>
-          ))}
+          {study.results.map((result) =>
+            result.chart ? (
+              <li key={result.label} className="result result--chart">
+                <CountUp value={result.value} className="result__value" />
+                <span className="result__label">{result.label}</span>
+                <div
+                  className="result__chart"
+                  data-chart={result.chart}
+                  aria-hidden
+                />
+                <p className="result__note">{result.note}</p>
+              </li>
+            ) : (
+              <li
+                key={result.label}
+                className="result"
+                data-dots="outline"
+                data-dots-spread="1.1"
+              >
+                <CountUp value={result.value} className="result__value" />
+                <span className="result__label">{result.label}</span>
+                <p className="result__note">{result.note}</p>
+              </li>
+            ),
+          )}
         </ul>
       </div>
     </section>
@@ -64,18 +87,28 @@ export function CaseStudyResults({ study }: { study: CaseStudy }) {
 }
 
 /** Numbered cards for the work behind the results. */
-export function CaseStudyHighlights({ study }: { study: CaseStudy }) {
+export function CaseStudyHighlights({
+  study,
+  id = "highlights",
+  kicker = "What I built",
+  title = "The work behind the numbers.",
+}: {
+  study: CaseStudy;
+  id?: string;
+  kicker?: string;
+  title?: string;
+}) {
   return (
     <section
-      id="highlights"
+      id={id}
       className="highlights"
       data-scene="results"
-      aria-labelledby="highlights-title"
+      aria-labelledby={`${id}-title`}
     >
       <div className="results__inner">
-        <p className="kicker">What I built</p>
-        <h2 id="highlights-title" className="chapter__title">
-          The work behind the numbers.
+        <p className="kicker">{kicker}</p>
+        <h2 id={`${id}-title`} className="chapter__title">
+          {title}
         </h2>
         <ol className="highlights__grid">
           {study.highlights.map((item, i) => (

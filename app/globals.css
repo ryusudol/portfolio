@@ -32,6 +32,11 @@
   --mono: var(--font-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --gutter: clamp(18px, 3.4vw, 48px);
   --nav-space: clamp(76px, 7vw, 124px);
+  /* Page content stays within this width, centred; wider screens get margin.
+     The fixed chrome (header, chapter nav, dock) still hugs the edges. */
+  --content: 1440px;
+  --inset-left: max(var(--gutter), (100% - var(--content)) / 2);
+  --inset-right: max(var(--nav-space), (100% - var(--content)) / 2);
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
   /* Mono roles. Labels name things: small caps, muted, never accent.
@@ -324,12 +329,77 @@ main {
   background: var(--accent);
 }
 
-/* A pill in the bottom-right corner; the label behaves like any action. */
-.site-audio {
+/* The bottom-right dock: round logo links, then the site-audio pill. */
+.site-dock {
   position: fixed;
   right: var(--gutter);
   bottom: clamp(16px, 3vw, 32px);
   z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.site-social {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--veil);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--fg);
+  transition:
+    color 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+}
+
+.site-social:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* Back-to-top floats above the dock's right end so its appearance never
+   shifts the row. */
+.site-top {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--veil);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--fg);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  visibility: hidden;
+  transition:
+    color 0.2s var(--ease),
+    border-color 0.2s var(--ease),
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease),
+    visibility 0s linear 0.25s;
+}
+
+.site-top[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.site-top:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
 .site-audio__button {
@@ -464,10 +534,6 @@ code {
   min-width: 0;
 }
 
-.hero__kicker {
-  margin-bottom: 14px;
-}
-
 /* The portrait faces left, toward the name. Dots are drawn by the canvas. */
 .hero__portrait {
   flex: none;
@@ -491,50 +557,25 @@ code {
   color: transparent;
 }
 
-.hero__focus {
-  max-width: 34em;
-  margin-top: 18px;
-  overflow: hidden;
+.hero__lede {
+  max-width: 22em;
+  margin: 18px 0 0;
+  font-size: clamp(18px, 1.7vw, 23px);
+  line-height: 1.45;
+  text-wrap: balance;
   opacity: calc(1 - var(--p, 0) * 2.4);
 }
 
-.hero__focus-label {
-  margin: 0 0 8px;
-  color: var(--muted);
-  font: var(--label);
-  letter-spacing: var(--label-tracking);
-  text-transform: uppercase;
-}
-
-/* Each item leads with its separator; the ul's negative margin pushes the
-   ones that start a line outside .hero__focus, which clips them. */
-.hero__focus ul {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 0 0 -1.2em;
-  padding: 0;
-  font-size: clamp(16px, 1.5vw, 20px);
-  line-height: 1.5;
-  list-style: none;
-}
-
-.hero__focus li {
-  white-space: nowrap;
-}
-
-.hero__focus li::before {
-  content: "·";
-  display: inline-block;
-  width: 1.2em;
-  color: var(--muted);
-  text-align: center;
+/* One sentence per line, so the closing beat lands on its own. */
+.hero__lede span {
+  display: block;
 }
 
 /* ---------------------------------------------------------------- chapters */
 
 .chapter {
   position: relative;
-  height: 300vh;
+  height: calc(var(--len, 3) * 100vh);
 }
 
 .chapter__sticky {
@@ -546,7 +587,7 @@ code {
   gap: clamp(24px, 5vw, 88px);
   height: 100vh;
   height: 100svh;
-  padding: 88px var(--nav-space) 40px var(--gutter);
+  padding: 88px var(--inset-right) 40px var(--inset-left);
 }
 
 .chapter__copy {
@@ -575,6 +616,12 @@ code {
 .chapter__visual {
   position: relative;
   height: min(74vh, 680px);
+}
+
+/* Stages that share their space with a code listing. As tall as they can be
+   while their readouts still clear the fixed bottom-right dock. */
+.chapter__visual--tall {
+  height: min(100vh - 188px, 740px);
 }
 
 .stat {
@@ -1323,6 +1370,156 @@ code {
   font-variant-numeric: tabular-nums;
 }
 
+/* ------------------------------------------------------- story chapters */
+
+/* Captions that follow the scene: the current one is lit, earlier ones dim. */
+.steps {
+  display: grid;
+  gap: 7px;
+  max-width: 40ch;
+  margin: 18px 0 0;
+  padding: 0;
+  counter-reset: step;
+  list-style: none;
+}
+
+.steps li {
+  position: relative;
+  padding-left: 30px;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.4;
+  opacity: 0.45;
+  counter-increment: step;
+  transition:
+    opacity 0.35s var(--ease),
+    color 0.35s var(--ease);
+}
+
+.steps li::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  top: 0.2em;
+  left: 0;
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
+}
+
+.steps li.is-done {
+  opacity: 0.7;
+}
+
+.steps li.is-active {
+  color: var(--fg);
+  opacity: 1;
+}
+
+.steps li.is-active::before {
+  color: var(--accent);
+}
+
+.inline-link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+  transition:
+    color 0.2s var(--ease),
+    text-decoration-color 0.2s var(--ease);
+}
+
+.inline-link:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+
+/* A short listing pinned to the top of a stage; particles work below it.
+   Centred like the scene's figure and readout, so all three share one axis. */
+.snippet {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.chapter__body sub {
+  font-size: 0.7em;
+  line-height: 0;
+}
+
+/* Whose code this is: the existing library, or my rewrite (accent). */
+.snippet__tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.snippet__tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.snippet__tag--ours {
+  color: var(--accent);
+}
+
+.snippet__tag--ours::before {
+  background: currentColor;
+}
+
+.snippet pre {
+  margin: 0;
+  overflow: hidden;
+  color: var(--fg);
+  font: 11px / 1.75 var(--mono);
+  white-space: pre;
+}
+
+.snippet__line {
+  display: block;
+}
+
+.readout--story {
+  width: max-content;
+  max-width: 100%;
+}
+
+.readout--story dd {
+  font-size: clamp(18px, 1.9vw, 26px);
+}
+
+.readout__from,
+.readout__arrow {
+  color: var(--muted);
+}
+
+/* A 2 × 2 matrix between brackets. */
+.matrix {
+  display: inline-grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 2px 14px;
+  padding: 2px 8px;
+  border-inline: 1px solid var(--line-strong);
+  border-radius: 3px;
+  font: 13px / 1.3 var(--mono);
+  text-align: right;
+}
+
 /* ----------------------------------------------------------------- contact */
 
 .contact {
@@ -1582,6 +1779,25 @@ code {
   min-height: 190px;
 }
 
+/* Results that carry their own particle chart: no box, a hairline on top. */
+.result--chart,
+.dots-ready .result--chart {
+  gap: 6px;
+  padding: 18px 0 0;
+  border: 0;
+  border-top: 1px solid var(--line-strong);
+  border-radius: 0;
+}
+
+.results__grid:has(.result--chart) {
+  gap: 36px 32px;
+}
+
+.result__chart {
+  height: 104px;
+  margin: 12px 0 6px;
+}
+
 .result__value {
   font-size: clamp(34px, 3.6vw, 54px);
   line-height: 1;
@@ -1684,10 +1900,6 @@ code {
 
 .dots-ready .curtain__hint {
   display: block;
-}
-
-.playground__back {
-  margin-top: 36px;
 }
 
 .highlight h2,
@@ -1825,9 +2037,17 @@ code {
   margin-top: 0;
 }
 
+/* Outranks `.colophon p`, which would otherwise zero the gap. */
+.colophon__grid + .colophon__base {
+  margin: 72px 0 0;
+}
+
 .colophon {
   position: relative;
-  padding: 64px var(--nav-space) 32px var(--gutter);
+  /* The bottom padding centres the base line on the fixed bottom-right dock
+     (34px tall), so the two share a row. */
+  padding: 64px var(--inset-right) calc(clamp(16px, 3vw, 32px) + 7px)
+    var(--inset-left);
   border-top: 1px solid var(--line);
   background: var(--veil);
   backdrop-filter: blur(3px);
@@ -1835,9 +2055,8 @@ code {
 
 .colophon__grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 36px;
-  max-width: 1240px;
 }
 
 .colophon h3 {
@@ -1888,9 +2107,22 @@ code {
   font-size: 15px;
 }
 
-.colophon p.colophon__stack {
-  color: var(--muted);
+.colophon__skills {
+  display: grid;
+  gap: 6px;
+  margin: 0;
   font: 11px / 1.9 var(--mono);
+}
+
+.colophon__skills div {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.colophon__skills dd {
+  margin: 0;
+  color: var(--muted);
 }
 
 .colophon__base {
@@ -1898,8 +2130,6 @@ code {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px;
-  max-width: 1240px;
-  margin: 56px 0 0;
   color: var(--muted);
   font: var(--label);
   letter-spacing: var(--label-tracking);
@@ -1907,12 +2137,6 @@ code {
 }
 
 /* ------------------------------------------------------------- responsive */
-
-@media (max-width: 1180px) {
-  .colophon__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 
 @media (max-width: 1199px) {
   .code {
@@ -1942,7 +2166,7 @@ code {
   }
 
   .chapter {
-    height: 260vh;
+    height: calc(var(--len, 3) * 87vh);
   }
 
   .chapter__sticky {
@@ -1951,7 +2175,7 @@ code {
     align-items: start;
     gap: 12px;
     padding-top: 72px;
-    /* Clear the fixed site-audio pill. */
+    /* Clear the fixed bottom-right dock. */
     padding-bottom: 68px;
   }
 
@@ -2002,6 +2226,40 @@ code {
     gap: 18px;
   }
 
+  /* Too narrow for the listing; the caption still says whose code it is. */
+  .snippet pre {
+    display: none;
+  }
+
+  .snippet__tag {
+    margin-bottom: 0;
+  }
+
+  .steps {
+    margin-top: 10px;
+  }
+
+  .steps li {
+    display: none;
+    font-size: 13.5px;
+  }
+
+  .steps li.is-active {
+    display: block;
+  }
+
+  .readout--story {
+    gap: 14px;
+  }
+
+  .readout--story dd {
+    font-size: 17px;
+  }
+
+  .readout--story dt {
+    font-size: 9px;
+  }
+
   .chapter-nav {
     display: none;
   }
@@ -2018,28 +2276,14 @@ code {
     height: min(46vh, 360px);
   }
 
-  .hero__kicker {
-    justify-content: center;
-    margin-bottom: 6px;
-  }
-
   .hero__name {
     margin: 0 auto;
     font-size: 17vw;
   }
 
-  .hero__focus {
+  .hero__lede {
     margin-inline: auto;
-  }
-
-  .hero__focus ul {
-    justify-content: center;
-    gap: 2px 16px;
-    margin-left: 0;
-  }
-
-  .hero__focus li::before {
-    display: none;
+    text-align: center;
   }
 
   .letter {
@@ -2133,7 +2377,13 @@ code {
 
   .colophon__grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
+    gap: 28px;
+  }
+
+  /* Too narrow to share a row with the dock (and the back-to-top button
+     above it); sit above both instead. */
+  .colophon {
+    padding-bottom: calc(clamp(16px, 3vw, 32px) + 106px);
   }
 }
 

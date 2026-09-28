@@ -4,6 +4,8 @@ export type Result = {
   value: string;
   label: string;
   note: string;
+  /** A particle mini-chart of the evidence, drawn by the page's results scene. */
+  chart?: "speed" | "memory" | "complexity" | "downloads";
 };
 
 export type Highlight = {
@@ -130,50 +132,59 @@ export const pytorchCka: CaseStudy = {
   kind: "Project",
   title: "PyTorch-CKA",
   role: "Author & maintainer",
-  when: "Open source · on PyPI",
+  when: "PyPI",
   summary:
-    "A Python library that compares internal representations across layers of CNNs and LLMs — without the slow computation and memory buildup of existing CKA tools.",
+    "A Python library that computes layer-wise representation similarity, showing how similarly neural networks see the same inputs. I started it when the CKA library inside my own research tool became its bottleneck, and ended up rewriting the math so every layer pair comes out of a single GPU pass.",
   blurb:
     "Compares layer representations in CNNs and LLMs, 5.7× faster than an existing CKA library with 95.7% less retained GPU memory.",
-  stack: ["Python", "PyTorch", "GitHub Actions", "PyPI"],
+  stack: ["Python", "PyTorch", "CUDA", "pytest", "GitHub Actions", "PyPI"],
   links: [
     { label: "PyPI", href: links.ckaPypi },
     { label: "Code", href: links.ckaCode },
+    { label: "CKA paper", href: links.ckaPaper },
   ],
   results: [
     {
-      value: "5.7×",
-      label: "faster overall",
-      note: "than an existing CKA library — all 18 layers of ResNet-18 on CIFAR-10, on an H100.",
+      value: "7.7×",
+      label: "faster than torch_cka",
+      note: "All 18 layers of two ResNet-18s over CIFAR-10, on the same H100. 44× faster than a NumPy reference.",
+      chart: "speed",
     },
     {
       value: "−95.7%",
       label: "retained GPU memory",
-      note: "versus an existing library (ResNet-18, batch size 1,000).",
+      note: "Still allocated after one pass over CIFAR-10, compared with torch_cka.",
+      chart: "memory",
     },
     {
       value: "O(B²)",
       label: "HSIC per layer pair",
-      note: "down from O(B³), where B is the batch size.",
+      note: "Down from O(B³), where B is the batch size, because the trace never needed the full K @ L product.",
+      chart: "complexity",
     },
     {
       value: "~400",
       label: "monthly downloads",
-      note: "on PyPI, with CI across Python 3.10–3.14.",
+      note: "The May–August 2026 average on PyPI, across 11 releases tested on Python 3.10–3.14.",
+      chart: "downloads",
     },
   ],
   highlights: [
     {
-      title: "Performance optimization",
-      body: "Replaced full matrix multiplication with Frobenius inner products, cutting HSIC trace complexity from O(B³) to O(B²) per layer pair.",
+      title: "Derive it before optimizing it",
+      body: "Every implementation I read computed tr(K @ L) because that is how the formula is written. Working the estimator out term by term is what showed me the product was optional.",
     },
     {
-      title: "Memory optimization",
-      body: "Automatic activation cleanup and forward-hook removal after each CKA computation, so GPU memory doesn’t pile up between runs.",
+      title: "Don’t make the GPU wait on Python",
+      body: "An .item() inside a hot loop stalls the GPU until Python catches up. Keeping every value a tensor until the final division removed 1,998 syncs per batch.",
     },
     {
-      title: "Deployment & maintenance",
-      body: "Published on PyPI with automated CI testing across Python 3.10–3.14.",
+      title: "Memory has an owner",
+      body: "A forward hook holds references, so del and gc can’t free what it points to. Scoping hooks to a with block and clearing features every batch is what gave the 4.26 GB back.",
+    },
+    {
+      title: "Measure against the real thing",
+      body: "My first version felt fast and was only 2.1× faster. Benchmarking against existing libraries on real models is what pointed at the loop, and later proved the rewrite.",
     },
   ],
 };

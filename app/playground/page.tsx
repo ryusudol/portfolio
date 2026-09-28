@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "reicon-react";
+import { ArrowLeft } from "reicon-react";
 
 import { BarrierIcon } from "@/components/barrier-icon";
 import { DotStage } from "@/components/dot-stage";
@@ -69,12 +69,6 @@ export default function Playground() {
               <p className="curtain__hint" aria-hidden="true">
                 [ scroll to pull back the curtain ]
               </p>
-            </div>
-            <div className="results__links playground__back">
-              <Link className="action" href="/">
-                Back to selected work
-                <ArrowRight size={12} aria-hidden />
-              </Link>
             </div>
           </div>
         </section>

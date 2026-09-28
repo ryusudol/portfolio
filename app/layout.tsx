@@ -3,7 +3,9 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Newsreader } from "next/font/google";
 
+import { BackToTop } from "@/components/back-to-top";
 import { SiteAudio } from "@/components/site-audio";
+import { SocialLinks } from "@/components/social-links";
 import { ThemeGuard } from "@/components/theme-guard";
 import { profile } from "@/lib/content";
 import { themeInitScript } from "@/lib/theme-script";
@@ -77,7 +79,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <ThemeGuard />
         {children}
-        <SiteAudio />
+        <div className="site-dock">
+          <BackToTop />
+          <SocialLinks />
+          <SiteAudio />
+        </div>
       </body>
     </html>
   );

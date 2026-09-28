@@ -86,10 +86,7 @@ export function CkaChapter({
         <>
           Developed an open-source Python library that compares internal
           representations across CNN and LLM layers with Centered Kernel
-          Alignment (CKA). Replaced full matrix products with Frobenius inner
-          products, taking HSIC from O(B³) to O(B²) per layer pair — 5.7× faster
-          than an existing CKA library (all 18 layers of ResNet-18 on CIFAR-10,
-          H100).
+          Alignment (CKA) — 5.7× faster than an existing CKA library.
         </>
       }
       tools={["Python", "PyTorch"]}

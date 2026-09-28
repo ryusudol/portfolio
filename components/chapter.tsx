@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { CountUp } from "./count-up";
 
@@ -15,6 +15,13 @@ type ChapterProps = {
   tools?: string[];
   stat?: { value: string; caption: string };
   tag?: ReactNode;
+  /**
+   * Captions the scene highlights one at a time as the chapter scrolls, so
+   * the copy narrates whichever phase the particles are in.
+   */
+  steps?: ReactNode[];
+  /** Scroll length in viewport heights; longer stories get more room. */
+  length?: number;
   visual?: ReactNode;
   visualClassName?: string;
 };
@@ -35,6 +42,8 @@ export function Chapter({
   tools,
   stat,
   tag,
+  steps,
+  length,
   visual,
   visualClassName,
 }: ChapterProps) {
@@ -44,6 +53,7 @@ export function Chapter({
       className="chapter"
       data-scene={scene}
       aria-labelledby={`${id}-title`}
+      style={length ? ({ "--len": length } as CSSProperties) : undefined}
     >
       <div className="chapter__sticky">
         <div className="chapter__copy">
@@ -59,6 +69,16 @@ export function Chapter({
             {title[1]}
           </h2>
           <p className="chapter__body">{body}</p>
+          {steps && (
+            <ol className="steps">
+              {steps.map((step, i) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: static list
+                <li key={i} data-step={i}>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          )}
           {tools && (
             <ul className="tools" aria-label="Built with">
               {tools.map((tool) => (

@@ -1,8 +1,8 @@
 export const profile = {
   name: "Suhyeon Yu",
   role: "Software Engineer",
-  tagline: "Frontend engineering, data visualization, and machine learning.",
-  focus: ["Frontend engineering", "Data visualization", "Machine learning"],
+  tagline:
+    "I build interactive interfaces that make complex data and ML models clear. And beautiful.",
   location: "Houston, TX",
   email: "suhyeon.yu.2789@gmail.com",
   github: "https://github.com/ryusudol",
@@ -48,9 +48,9 @@ export const pad = (n: number) => String(n).padStart(2, "0");
 /** Order matches the `data-scene` sections rendered on the home page. */
 export const homeChapters: Chapter[] = [
   { id: "intro", label: "Intro" },
-  { id: "experience", label: "Experience" },
   { id: "unlearning-comparator", label: "Machine Unlearning Comparator" },
   { id: "pytorch-cka", label: "PyTorch-CKA" },
+  { id: "experience", label: "Experience" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -60,6 +60,20 @@ export const abcChapters: Chapter[] = [
   { id: "async", label: "Async" },
   { id: "interface", label: "Interface" },
   { id: "orchestration", label: "Orchestration" },
+  { id: "more", label: "More" },
+];
+
+/** Order matches the `data-scene` sections of the PyTorch-CKA case study. */
+export const ckaChapters: Chapter[] = [
+  { id: "results", label: "Results" },
+  { id: "why", label: "Why" },
+  { id: "groundwork", label: "Groundwork" },
+  { id: "insight", label: "Insight" },
+  { id: "redesign", label: "Redesign" },
+  { id: "memory", label: "Memory" },
+  { id: "benchmark", label: "Benchmark" },
+  { id: "shipped", label: "Shipped" },
+  { id: "lessons", label: "Lessons" },
   { id: "more", label: "More" },
 ];
 
@@ -93,17 +107,9 @@ export const links = {
   unlearningPaper: "https://ieeexplore.ieee.org/document/11364307",
   ckaCode: "https://github.com/ryusudol/Centered-Kernel-Alignment",
   ckaPypi: "https://pypi.org/project/pytorch-cka/",
+  ckaPaper: "https://arxiv.org/abs/1905.00414",
+  essenceOfLinearAlgebra: "https://www.3blue1brown.com/topics/linear-algebra",
 } as const;
-
-export const experience = [
-  {
-    title: "Software Engineering Intern",
-    org: "ABC Fitness",
-    place: "Austin, TX",
-    period: "Jun – Aug 2026",
-    href: "/experience/abc-fitness",
-  },
-];
 
 export const education = [
   {
@@ -128,29 +134,42 @@ export const alsoBuilt = [
   },
 ];
 
-export const publication = {
-  title:
-    "Unlearning Comparator: A Visual Analytics System for Comparative Evaluation of Machine Unlearning Methods",
-  venue: "IEEE TVCG · vol. 32, no. 3 · Mar 2026",
-  authors: "J. Lee, S. Yu, Y. Jang, S. S. Woo, J. Jo",
-  href: links.unlearningPaper,
-};
-
-export const stack = [
-  "TypeScript",
-  "React",
-  "Next.js",
-  "RxJS",
-  "D3",
-  "Zustand",
-  "TanStack Query",
-  "Redux",
-  "Jest",
-  "Vitest",
-  "Node.js",
-  "FastAPI",
-  "Python",
-  "PyTorch",
-  "AWS",
-  "Docker",
-];
+/** Grouped as on the resume's Skills & Tools section. */
+export const skills = [
+  { label: "Languages", items: ["TypeScript", "Python", "C/C++"] },
+  {
+    label: "Frontend",
+    items: [
+      "HTML",
+      "CSS",
+      "React",
+      "Next.js",
+      "Redux",
+      "TanStack Query",
+      "Tailwind CSS",
+      "SCSS",
+      "D3",
+      "Zustand",
+    ],
+  },
+  { label: "Backend", items: ["Node.js", "FastAPI", "GraphQL", "REST APIs"] },
+  {
+    label: "Databases",
+    items: ["SQL (PostgreSQL, MySQL)", "NoSQL (MongoDB)"],
+  },
+  { label: "Testing", items: ["Vitest", "Jest", "pytest"] },
+  {
+    label: "Cloud & DevOps",
+    items: [
+      "AWS (EC2, S3, Lambda)",
+      "CI/CD (GitHub Actions)",
+      "Docker",
+      "Git",
+      "GitHub",
+    ],
+  },
+  {
+    label: "AI Tools",
+    items: ["Cursor", "Claude Code", "Codex", "Grok Build"],
+  },
+] as const;

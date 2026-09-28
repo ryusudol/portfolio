@@ -86,7 +86,10 @@ export function CaseStudyResults({
   );
 }
 
-/** Numbered cards for the work behind the results. */
+/**
+ * Numbered cards for the work behind the results. A card with a `proof` ends
+ * on the number that shows it, linking back to the chapter it came from.
+ */
 export function CaseStudyHighlights({
   study,
   id = "highlights",
@@ -122,6 +125,17 @@ export function CaseStudyHighlights({
               <span className="highlight__index">{pad(i + 1)}</span>
               <h3>{item.title}</h3>
               <p>{item.body}</p>
+              {item.proof && (
+                <a className="highlight__proof" href={item.proof.href}>
+                  <span className="highlight__proof-value">
+                    {item.proof.value}
+                  </span>
+                  <span className="highlight__proof-label">
+                    {item.proof.label}
+                  </span>
+                  <ArrowRight size={12} aria-hidden />
+                </a>
+              )}
             </li>
           ))}
         </ol>

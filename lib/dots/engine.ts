@@ -344,7 +344,7 @@ export class DotEngine {
     this.field.gc.fill(0);
     scene.update(this.field, fr);
     this.commit();
-    this.step(fr);
+    this.step(fr, scene.repels?.(fr) ?? true);
     this.render(fr, scene);
   }
 
@@ -363,7 +363,7 @@ export class DotEngine {
     }
   }
 
-  private step(fr: Frame) {
+  private step(fr: Frame, repel: boolean) {
     const f = this.field;
     const scale = fr.dt * 60;
     const damp = 0.84 ** scale;
@@ -377,7 +377,7 @@ export class DotEngine {
     const p = this.pointer;
     const pr = fr.compact ? 70 : 105;
     const pr2 = pr * pr;
-    const pointerOn = p.active && !reduced;
+    const pointerOn = p.active && !reduced && repel;
 
     this.pulses = this.pulses.filter((pulse) => time - pulse.t0 < 1.4);
     const pulses = this.pulses;

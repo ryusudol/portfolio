@@ -91,6 +91,11 @@ export interface Scene {
   update(field: Field, frame: Frame): void;
   /** Optional overlay (glows, labels) drawn on top of the particles. */
   draw?(ctx: CanvasRenderingContext2D, frame: Frame, palette: Palette): void;
+  /**
+   * Whether the pointer pushes particles aside this frame (default true).
+   * Scenes return false over a chart the visitor is reading by hovering.
+   */
+  repels?(frame: Frame): boolean;
   /** Runs when another scene takes over. */
   leave?(frame: Frame): void;
 }

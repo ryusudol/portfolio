@@ -6,8 +6,9 @@ import {
   shareByValue,
   similarity,
 } from "../cka-data";
-import { rgba, smoothstep } from "../math";
+import { smoothstep } from "../math";
 import { dust } from "../shapes";
+import { axisGutter, cellReadout, layerAxes, resetText } from "../story";
 import type { Field, Frame, Palette, Scene } from "../types";
 
 /** Dark dots on paper cover less than light dots on ink, so draw them bigger. */
@@ -38,9 +39,10 @@ export class SimilarityScene implements Scene {
 
   layout(f: Field, fr: Frame) {
     const { w, h } = fr.visual;
-    this.gutter = fr.compact
-      ? { band: 6, spread: 10, tick: 25, title: 41 }
-      : { band: 8, spread: 14, tick: 34, title: 54 };
+    this.gutter = {
+      ...(fr.compact ? { band: 6, spread: 10 } : { band: 8, spread: 14 }),
+      ...axisGutter(fr.compact),
+    };
     const size = Math.min(w * 0.78, h - (fr.compact ? 100 : 160));
     this.box = {
       x: (w - size) / 2 + size * 0.04,
@@ -59,6 +61,14 @@ export class SimilarityScene implements Scene {
     const below =
       this.box.y + this.box.size + this.gutter.title + (fr.compact ? 26 : 36);
     fr.section.style.setProperty("--below", `${below.toFixed(1)}px`);
+  }
+
+  /** Hold the map still under the pointer so a hovered cell can be read. */
+  repels(fr: Frame) {
+    const { x, y, size } = this.box;
+    const px = fr.pointer.x - fr.visual.x - x;
+    const py = fr.pointer.y - fr.visual.y - y;
+    return px < 0 || py < 0 || px > size || py > size;
   }
 
   update(f: Field, fr: Frame) {
@@ -128,43 +138,29 @@ export class SimilarityScene implements Scene {
   draw(ctx: CanvasRenderingContext2D, fr: Frame, palette: Palette) {
     const { x: vx, y: vy } = fr.visual;
     const { x: bx, y: by, size } = this.box;
-    const cell = size / LAYERS;
     const left = vx + bx;
-    const top = vy + by;
-    const bottom = top + size;
-    const { tick, title } = this.gutter;
+    const bottom = vy + by + size;
+    const axes = { left, bottom, size };
     this.ink = palette.ink;
-
-    ctx.font = `9.5px ${palette.mono}`;
-    ctx.fillStyle = rgba(palette.muted, 0.85);
-    ctx.textBaseline = "middle";
-    ctx.textAlign = "center";
-    for (const l of [1, 6, 10, 14, 18]) {
-      ctx.fillText(String(l), left + (l - 0.5) * cell, bottom + tick);
-      ctx.fillText(String(l), left - tick, bottom - (l - 0.5) * cell);
-    }
-    ctx.fillText("ResNet-18 · seed B", left + size / 2, bottom + title);
-    ctx.save();
-    ctx.translate(left - title, top + size / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.fillText("ResNet-18 · seed A", 0, 0);
-    ctx.restore();
-
+    layerAxes(
+      ctx,
+      palette,
+      axes,
+      { x: "ResNet-18 · seed B", y: "ResNet-18 · seed A" },
+      { compact: fr.compact },
+    );
     if (this.hover >= 0) {
       const row = Math.floor(this.hover / LAYERS);
       const col = this.hover % LAYERS;
-      ctx.strokeStyle = rgba(palette.fg, 0.8);
-      ctx.lineWidth = 1;
-      ctx.strokeRect(left + col * cell, bottom - (row + 1) * cell, cell, cell);
-      ctx.fillStyle = rgba(palette.fg, 0.95);
-      ctx.font = `10px ${palette.mono}`;
-      const label = `A·L${row + 1} × B·L${col + 1}  CKA ${this.values[this.hover].toFixed(2)}`;
-      const onRight = col < LAYERS / 2;
-      ctx.textAlign = onRight ? "left" : "right";
-      const x = onRight ? left + (col + 1) * cell + 8 : left + col * cell - 8;
-      ctx.fillText(label, x, bottom - (row + 0.5) * cell);
+      cellReadout(
+        ctx,
+        palette,
+        axes,
+        row,
+        col,
+        `A·L${row + 1} × B·L${col + 1}  CKA ${this.values[this.hover].toFixed(2)}`,
+      );
     }
-    ctx.textAlign = "start";
-    ctx.textBaseline = "alphabetic";
+    resetText(ctx);
   }
 }

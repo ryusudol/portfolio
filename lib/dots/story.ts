@@ -118,3 +118,70 @@ export function resetText(ctx: CanvasRenderingContext2D) {
   ctx.textBaseline = "alphabetic";
   ctx.setLineDash([]);
 }
+
+/** Layer ticks on a layer-by-layer heatmap (1-based, as the axes read). */
+const LAYER_TICKS = [1, 6, 10, 14, 18];
+
+/** Distances out from a heatmap's edge to its tick numbers and axis title. */
+export const axisGutter = (compact: boolean) =>
+  compact ? { tick: 25, title: 41 } : { tick: 34, title: 54 };
+
+/**
+ * Axes for an 18 × 18 layer heatmap laid out like a plot: layer 1 at the
+ * bottom-left corner, ticks and titles on the left and bottom edges.
+ */
+export function layerAxes(
+  ctx: CanvasRenderingContext2D,
+  palette: Palette,
+  box: { left: number; bottom: number; size: number },
+  titles: { x: string; y: string },
+  { compact = false, alpha = 1, layers = 18 } = {},
+) {
+  if (alpha <= 0.01) return;
+  const { left, bottom, size } = box;
+  const { tick, title } = axisGutter(compact);
+  const cell = size / layers;
+  ctx.font = `9.5px ${palette.mono}`;
+  ctx.fillStyle = rgba(palette.muted, 0.85 * alpha);
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  for (const l of LAYER_TICKS) {
+    ctx.fillText(String(l), left + (l - 0.5) * cell, bottom + tick);
+    ctx.fillText(String(l), left - tick, bottom - (l - 0.5) * cell);
+  }
+  ctx.fillText(titles.x, left + size / 2, bottom + title);
+  ctx.save();
+  ctx.translate(left - title, bottom - size / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText(titles.y, 0, 0);
+  ctx.restore();
+}
+
+/**
+ * The hovered cell's outline and readout, written beside the cell (toward the
+ * map's centre) so it never lands on an axis title.
+ */
+export function cellReadout(
+  ctx: CanvasRenderingContext2D,
+  palette: Palette,
+  box: { left: number; bottom: number; size: number },
+  row: number,
+  col: number,
+  text: string,
+  layers = 18,
+) {
+  const cell = box.size / layers;
+  const top = box.bottom - (row + 1) * cell;
+  ctx.strokeStyle = rgba(palette.fg, 0.8);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(box.left + col * cell, top, cell, cell);
+  const onRight = col < layers / 2;
+  label(
+    ctx,
+    palette,
+    text,
+    onRight ? box.left + (col + 1) * cell + 8 : box.left + col * cell - 8,
+    top + cell / 2,
+    { align: onRight ? "left" : "right", color: palette.fg, alpha: 0.95 },
+  );
+}

@@ -6,7 +6,8 @@ type ChapterProps = {
   id: string;
   scene: string;
   topic: string;
-  source: string;
+  /** Where the chapter's idea comes from, shown after the topic. */
+  source?: string;
   title: [string, string];
   body: ReactNode;
   children?: ReactNode;
@@ -60,7 +61,7 @@ export function Chapter({
           <p className="kicker">
             <span>
               {topic}
-              <span className="kicker__source"> · {source}</span>
+              {source && <span className="kicker__source"> · {source}</span>}
             </span>
           </p>
           <h2 id={`${id}-title`} className="chapter__title">

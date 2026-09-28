@@ -66,13 +66,12 @@ export const abcChapters: Chapter[] = [
 /** Order matches the `data-scene` sections of the PyTorch-CKA case study. */
 export const ckaChapters: Chapter[] = [
   { id: "results", label: "Results" },
-  { id: "why", label: "Why" },
+  { id: "why", label: "Motivation" },
   { id: "groundwork", label: "Groundwork" },
   { id: "insight", label: "Insight" },
   { id: "redesign", label: "Redesign" },
-  { id: "memory", label: "Memory" },
+  { id: "memory", label: "Memory management" },
   { id: "benchmark", label: "Benchmark" },
-  { id: "shipped", label: "Shipped" },
   { id: "lessons", label: "Lessons" },
   { id: "more", label: "More" },
 ];

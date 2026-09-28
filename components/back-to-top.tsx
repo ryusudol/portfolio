@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "reicon-react";
 
-/** A round up-arrow that floats above the dock once the page is scrolled past
-    most of the first screen. Scrolling defers to the root's CSS
+/** A round up-arrow at the head of the dock, shown once the page is scrolled
+    past most of the first screen. Scrolling defers to the root's CSS
     scroll-behavior, so it glides normally and jumps under reduced motion. */
 export function BackToTop() {
   const [visible, setVisible] = useState(false);

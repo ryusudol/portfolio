@@ -361,12 +361,9 @@ main {
   border-color: color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
-/* Back-to-top floats above the dock's right end so its appearance never
-   shifts the row. */
+/* Back-to-top leads the dock. The row is anchored to the right, so it grows
+   leftward and the other buttons never move when this one appears. */
 .site-top {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + 8px);
   display: grid;
   place-items: center;
   width: 34px;
@@ -1454,6 +1451,31 @@ code {
   line-height: 0;
 }
 
+/* Inline code in prose: the page's mono, sized to sit in a line of serif. */
+.chapter__body code,
+.highlight p code {
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+/* A labelled list under a chapter's steps, like the ideas a chapter rests on. */
+.chapter__aside {
+  margin-top: 22px;
+}
+
+.chapter__aside-title {
+  margin: 0;
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.chapter__aside .tools {
+  margin-top: 8px;
+  color: var(--fg);
+}
+
 /* Whose code this is: the existing library, or my rewrite (accent). */
 .snippet__tag {
   display: flex;
@@ -1497,6 +1519,12 @@ code {
 .readout--story {
   width: max-content;
   max-width: 100%;
+}
+
+/* Long terms wrap instead of pushing the last readout off the stage. */
+.readout--story dt {
+  white-space: normal;
+  text-wrap: balance;
 }
 
 .readout--story dd {
@@ -1819,6 +1847,43 @@ code {
   color: var(--muted);
   font-size: 14.5px;
   line-height: 1.5;
+}
+
+/* The number behind a lesson, and a jump back to where it happened. */
+.highlight__proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-strong);
+  color: var(--fg);
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+
+.highlight__proof:hover {
+  color: var(--accent);
+}
+
+.highlight__proof-value {
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.highlight__proof-label {
+  color: var(--muted);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.highlight__proof svg {
+  align-self: center;
+  margin-left: auto;
 }
 
 .highlights__grid {
@@ -2194,6 +2259,7 @@ code {
   }
 
   .chapter__chips,
+  .chapter__aside,
   .controls__note,
   .controls .hint {
     display: none;
@@ -2380,10 +2446,9 @@ code {
     gap: 28px;
   }
 
-  /* Too narrow to share a row with the dock (and the back-to-top button
-     above it); sit above both instead. */
+  /* Too narrow to share a row with the dock; sit above it instead. */
   .colophon {
-    padding-bottom: calc(clamp(16px, 3vw, 32px) + 106px);
+    padding-bottom: calc(clamp(16px, 3vw, 32px) + 64px);
   }
 }
 

@@ -86,7 +86,8 @@ export function CkaChapter({
         <>
           Developed an open-source Python library that compares internal
           representations across CNN and LLM layers with Centered Kernel
-          Alignment (CKA) — 5.7× faster than an existing CKA library.
+          Alignment (CKA) — 7.7× faster than torch_cka, the most widely used
+          one.
         </>
       }
       tools={["Python", "PyTorch"]}

@@ -12,7 +12,6 @@ import {
   InsightChapter,
   MemoryChapter,
   RedesignChapter,
-  ShippedChapter,
   WhyChapter,
 } from "@/components/cka-story";
 import { DotStage } from "@/components/dot-stage";
@@ -47,7 +46,6 @@ export default function CkaCaseStudy() {
         <RedesignChapter />
         <MemoryChapter />
         <BenchmarkChapter />
-        <ShippedChapter />
         <CaseStudyHighlights
           study={pytorchCka}
           id="lessons"

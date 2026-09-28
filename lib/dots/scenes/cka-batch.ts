@@ -8,7 +8,16 @@ import {
 } from "../cka-data";
 import { clamp, lerp, rgba, smoothstep } from "../math";
 import { dust } from "../shapes";
-import { freeArea, label, resetText, Steps, stepAt } from "../story";
+import {
+  axisGutter,
+  cellReadout,
+  freeArea,
+  label,
+  layerAxes,
+  resetText,
+  Steps,
+  stepAt,
+} from "../story";
 import type { Field, Frame, Palette, Scene } from "../types";
 
 /** Virtual rows per Gram card, so flattening reads as rows laid end to end. */
@@ -25,6 +34,8 @@ type Box = { x: number; y: number; w: number; h: number };
  * every one of the 324 cells fills at once, fed by its row and its column. The
  * off-diagonal and column sums shrink each strip to a short vector and sweep
  * the correction terms across; normalising turns the grid into the CKA map.
+ * Model A's layers run bottom to top and model B's left to right, so layer 1
+ * of both sits at the bottom-left, as in every heatmap on the site.
  */
 export class BatchScene implements Scene {
   private values = similarity();
@@ -45,6 +56,8 @@ export class BatchScene implements Scene {
   private card = 60;
   private steps = new Steps();
   private hover = -1;
+  /** The map has reached its final place and can be hovered. */
+  private settled = false;
   private p = 0;
   private ink = true;
 
@@ -64,10 +77,16 @@ export class BatchScene implements Scene {
     this.rowsBox = { x: ox - gap - wa, y: oy, w: wa, h: size };
     this.colsBox = { x: ox, y: oy - gap - hb, w: size, h: hb };
     this.card = Math.min(wa * 0.46, hb * 0.52, size * 0.4);
-    const finalSize = Math.min(area.w * 0.64, area.h - (fr.compact ? 22 : 34));
+    // The finished map leaves room on the left and below for its axes.
+    const { title } = axisGutter(fr.compact);
+    const finalSize = Math.min(
+      area.w * 0.64,
+      area.w - title * 2 - 16,
+      area.h - title - 12,
+    );
     this.final = {
-      x: area.x + (area.w - finalSize) / 2,
-      y: area.y + (area.h - finalSize) / 2 - (fr.compact ? 8 : 12),
+      x: area.x + (area.w - finalSize + title) / 2,
+      y: area.y + (area.h - finalSize - title) / 2,
       w: finalSize,
       h: finalSize,
     };
@@ -77,6 +96,15 @@ export class BatchScene implements Scene {
     this.cellOf = shareByValue(this.values, this.cellN);
     this.stripCellOf = shareByValue(this.values, this.stripN * 2);
     this.steps.collect(fr.section);
+  }
+
+  /** Hold the finished map still under the pointer so a cell can be read. */
+  repels(fr: Frame) {
+    if (!this.settled) return true;
+    const b = this.box;
+    const px = fr.pointer.x - fr.visual.x - b.x;
+    const py = fr.pointer.y - fr.visual.y - b.y;
+    return px < 0 || py < 0 || px > b.w || py > b.h;
   }
 
   update(f: Field, fr: Frame) {
@@ -104,10 +132,11 @@ export class BatchScene implements Scene {
 
     // Hovering the finished map reads out a pair.
     this.hover = -1;
+    this.settled = settle > 0.9;
     const ptr = fr.pointer;
-    if (ptr.active && settle > 0.9) {
+    if (ptr.active && this.settled) {
       const col = Math.floor((ptr.x - vx - box.x) / cf);
-      const row = Math.floor((ptr.y - vy - box.y) / cf);
+      const row = Math.floor((vy + box.y + box.h - ptr.y) / cf);
       if (col >= 0 && col < LAYERS && row >= 0 && row < LAYERS)
         this.hover = row * LAYERS + col;
     }
@@ -147,7 +176,7 @@ export class BatchScene implements Scene {
         let sy: number;
         if (isA) {
           sx = vx + this.rowsBox.x + this.rowsBox.w * (1 - along);
-          sy = vy + this.out.y + (layer + 0.5) * co + across;
+          sy = vy + this.out.y + this.out.h - (layer + 0.5) * co + across;
         } else {
           sx = vx + this.out.x + (layer + 0.5) * co + across;
           sy = vy + this.colsBox.y + this.colsBox.h * (1 - along);
@@ -163,7 +192,10 @@ export class BatchScene implements Scene {
           const value = this.values[c];
           const tx = vx + box.x + ((c % LAYERS) + 0.1 + f.r1[i] * 0.8) * cf;
           const ty =
-            vy + box.y + (Math.floor(c / LAYERS) + 0.1 + f.r2[i] * 0.8) * cf;
+            vy +
+            box.y +
+            box.h -
+            (Math.floor(c / LAYERS) + 0.1 + f.r2[i] * 0.8) * cf;
           x = lerp(x, tx, settle);
           y = lerp(y, ty, settle);
           alpha = lerp(alpha, (0.6 + value * 0.35) * boost, settle);
@@ -188,11 +220,11 @@ export class BatchScene implements Scene {
           ? vx + this.rowsBox.x + f.r0[i] * this.rowsBox.w
           : vx + this.out.x + (col + 0.5) * co;
         const srcY = fromRow
-          ? vy + this.out.y + (row + 0.5) * co
+          ? vy + this.out.y + this.out.h - (row + 0.5) * co
           : vy + this.colsBox.y + f.r0[i] * this.colsBox.h;
         const t = clamp(einsum * 1.35 - f.r1[i] * 0.35);
         const dstX = vx + box.x + (col + 0.1 + f.r1[i] * 0.8) * cf;
-        const dstY = vy + box.y + (row + 0.1 + f.r2[i] * 0.8) * cf;
+        const dstY = vy + box.y + box.h - (row + 0.1 + f.r2[i] * 0.8) * cf;
         f.gx[i] = lerp(srcX, dstX, t);
         f.gy[i] = lerp(srcY, dstY, t);
         // Two correction terms sweep across: row by row, then column by column.
@@ -301,33 +333,24 @@ export class BatchScene implements Scene {
         alpha: einsum,
       },
     );
-    label(
+    const axes = { left: vx + o.x, bottom: vy + o.y + o.h, size: o.w };
+    layerAxes(
       ctx,
       palette,
-      "CKA  ·  model A layer (row) × model B layer (column)",
-      vx + o.x + o.w / 2,
-      vy + o.y + o.h + 14,
-      {
-        align: "center",
-        size,
-        alpha: done * (this.hover < 0 ? 1 : 0.3),
-      },
+      axes,
+      { x: "model B layer", y: "model A layer" },
+      { compact: fr.compact, alpha: done },
     );
-
     if (this.hover >= 0) {
-      const co = o.w / LAYERS;
       const row = Math.floor(this.hover / LAYERS);
       const col = this.hover % LAYERS;
-      ctx.strokeStyle = rgba(palette.fg, 0.8);
-      ctx.lineWidth = 1;
-      ctx.strokeRect(vx + o.x + col * co, vy + o.y + row * co, co, co);
-      label(
+      cellReadout(
         ctx,
         palette,
-        `A·L${row + 1} × B·L${col + 1}   CKA ${this.values[this.hover].toFixed(2)}`,
-        vx + o.x + o.w / 2,
-        vy + o.y + o.h + 14,
-        { align: "center", size, color: palette.fg, alpha: 0.95 },
+        axes,
+        row,
+        col,
+        `A·L${row + 1} × B·L${col + 1}  CKA ${this.values[this.hover].toFixed(2)}`,
       );
     }
     resetText(ctx);

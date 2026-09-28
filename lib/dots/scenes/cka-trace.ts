@@ -9,7 +9,7 @@ import {
   Steps,
   stepAt,
 } from "../story";
-import type { Field, Frame, Palette, Scene } from "../types";
+import type { Field, Frame, Palette, RGB, Scene } from "../types";
 
 /** Batch size drawn. The real one is 1,000; eight keeps every cell legible. */
 const B = 8;
@@ -353,6 +353,46 @@ export class TraceScene implements Scene {
     });
   }
 
+  /**
+   * A matrix's name over its box's left edge and the library that computes it
+   * over the right edge. When the box is too narrow for both on one line, the
+   * library moves up a line so the two never overlap.
+   */
+  private heading(
+    ctx: CanvasRenderingContext2D,
+    palette: Palette,
+    fr: Frame,
+    box: { left: number; right: number; y: number },
+    name: { text: string; color: RGB; alpha: number },
+    library: { text: string; color: RGB; alpha: number },
+  ) {
+    const big = fr.compact ? 12 : 14;
+    const small = fr.compact ? 9 : 10;
+    ctx.font = `${big}px ${palette.mono}`;
+    const nameW = ctx.measureText(name.text).width;
+    ctx.font = `${small}px ${palette.mono}`;
+    const libraryW = ctx.measureText(library.text).width;
+    const fits = nameW + libraryW + 12 <= box.right - box.left;
+    label(ctx, palette, name.text, box.left, box.y, {
+      size: big,
+      color: name.color,
+      alpha: name.alpha,
+    });
+    label(
+      ctx,
+      palette,
+      library.text,
+      fits ? box.right : box.left,
+      fits ? box.y : box.y - big - 4,
+      {
+        align: fits ? "right" : "left",
+        size: small,
+        color: library.color,
+        alpha: library.alpha,
+      },
+    );
+  }
+
   draw(ctx: CanvasRenderingContext2D, fr: Frame, palette: Palette) {
     this.ink = palette.ink;
     const p = this.p;
@@ -453,16 +493,14 @@ export class TraceScene implements Scene {
       ctx.lineWidth = 1;
       ctx.strokeRect(r1x - half - 3, r1y - half - 3, this.Sr + 6, this.Sr + 6);
     }
-    label(ctx, palette, "K @ L", r1x - half - 3, r1y - half - 16, {
-      size: big,
-      color: palette.fg,
-      alpha: row1,
-    });
-    label(ctx, palette, "torch_cka", r1x + half + 3, r1y - half - 16, {
-      align: "right",
-      size: small,
-      alpha: row1 * 0.85,
-    });
+    this.heading(
+      ctx,
+      palette,
+      fr,
+      { left: r1x - half - 3, right: r1x + half + 3, y: r1y - half - 16 },
+      { text: "K @ L", color: palette.fg, alpha: row1 },
+      { text: "torch_cka", color: palette.muted, alpha: row1 * 0.85 },
+    );
     label(
       ctx,
       palette,
@@ -501,17 +539,15 @@ export class TraceScene implements Scene {
       color: palette.fg,
       alpha: again * (1 - overlay),
     });
-    label(ctx, palette, "K ⊙ L", r2x - half - 3, r2y - half - 16, {
-      size: big,
-      color: palette.accent,
-      alpha: smoothstep(0.8, 0.85, p),
-    });
-    label(ctx, palette, "pytorch-cka", r2x + half + 3, r2y - half - 16, {
-      align: "right",
-      size: small,
-      color: palette.accent,
-      alpha: smoothstep(0.8, 0.85, p) * 0.9,
-    });
+    const merged = smoothstep(0.8, 0.85, p);
+    this.heading(
+      ctx,
+      palette,
+      fr,
+      { left: r2x - half - 3, right: r2x + half + 3, y: r2y - half - 16 },
+      { text: "K ⊙ L", color: palette.accent, alpha: merged },
+      { text: "pytorch-cka", color: palette.accent, alpha: merged * 0.9 },
+    );
     this.arrow(ctx, palette, r2x + half + 14, d2x - r - 12, r2y, "Σ", toS2);
     label(ctx, palette, "B²", d2x, r2y + r + 16, {
       align: "center",

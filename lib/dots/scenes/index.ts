@@ -7,7 +7,6 @@ import { LoopScene } from "./cka-loop";
 import { MemoryScene } from "./cka-memory";
 import { RaceScene } from "./cka-race";
 import { CkaResultsScene } from "./cka-results";
-import { TimelineScene } from "./cka-timeline";
 import { TraceScene } from "./cka-trace";
 import { CurtainScene } from "./curtain";
 import { HeroScene } from "./hero";
@@ -34,7 +33,6 @@ export const scenes: Record<string, () => Scene> = {
   "cka-batch": () => new BatchScene(),
   "cka-memory": () => new MemoryScene(),
   "cka-race": () => new RaceScene(),
-  "cka-timeline": () => new TimelineScene(),
   contact: () => new ShapesScene({ share: 0.5 }),
   curtain: () => new CurtainScene(),
   results: () => new ShapesScene({ share: 0.5, alpha: 0.75 }),

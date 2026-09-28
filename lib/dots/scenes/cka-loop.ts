@@ -8,7 +8,15 @@ import {
 } from "../cka-data";
 import { clamp, gauss, lerp, rgba, smoothstep, TAU } from "../math";
 import { dust } from "../shapes";
-import { fmt, freeArea, label, Readouts, resetText } from "../story";
+import {
+  axisGutter,
+  fmt,
+  freeArea,
+  label,
+  layerAxes,
+  Readouts,
+  resetText,
+} from "../story";
 import type { Field, Frame, Palette, Scene } from "../types";
 
 const CELLS = LAYERS * LAYERS;
@@ -64,8 +72,8 @@ function pairAt(clock: number) {
 /**
  * torch_cka's inner loop, running: one layer pair at a time, each pair a full
  * B × B × B cube of multiply-adds for trace(K @ L) that collapses into a
- * single cell, followed by three GPU→CPU syncs. The 18 × 18 map fills in
- * reading order, slowly.
+ * single cell, followed by six GPU→CPU syncs. The 18 × 18 map fills row by
+ * row from layer 1 at the bottom-left, slowly.
  */
 export class LoopScene implements Scene {
   private values = similarity();
@@ -81,12 +89,13 @@ export class LoopScene implements Scene {
   private ink = true;
 
   layout(f: Field, fr: Frame) {
-    const area = freeArea(fr, fr.compact ? 18 : 52);
-    const gutter = fr.compact ? 18 : 30;
-    const size = Math.min(area.w * 0.86, area.h - gutter);
+    const area = freeArea(fr, fr.compact ? 12 : 20);
+    // Room on the left and below for the layer ticks and axis titles.
+    const { title } = axisGutter(fr.compact);
+    const size = Math.min(area.w * 0.86 - title, area.h - title - 8);
     this.box = {
-      x: area.x + (area.w - size) / 2,
-      y: area.y + (area.h - size) / 2 + gutter / 2,
+      x: area.x + (area.w - size + title) / 2,
+      y: area.y + (area.h - size - title) / 2,
       size,
     };
     this.heatN = Math.round(f.n * 0.5);
@@ -100,7 +109,11 @@ export class LoopScene implements Scene {
   private cellCenter(c: number, fr: Frame, out: [number, number]) {
     const cell = this.box.size / LAYERS;
     out[0] = fr.visual.x + this.box.x + ((c % LAYERS) + 0.5) * cell;
-    out[1] = fr.visual.y + this.box.y + (Math.floor(c / LAYERS) + 0.5) * cell;
+    out[1] =
+      fr.visual.y +
+      this.box.y +
+      this.box.size -
+      (Math.floor(c / LAYERS) + 0.5) * cell;
     return out;
   }
 
@@ -113,7 +126,7 @@ export class LoopScene implements Scene {
 
     const cell = this.box.size / LAYERS;
     const left = fr.visual.x + this.box.x;
-    const top = fr.visual.y + this.box.y;
+    const bottom = fr.visual.y + this.box.y + this.box.size;
     const done = Math.min(CELLS, k + (u > 0.8 ? 1 : 0));
     const grow = this.ink ? 1 : PAPER_SIZE;
     const boost = this.ink ? 1 : PAPER_ALPHA;
@@ -178,7 +191,7 @@ export class LoopScene implements Scene {
         if (!this.ink) f.gz[i] = f.size[i] * grow;
         if (c < done) {
           f.gx[i] = left + (col + 0.1 + f.r1[i] * 0.8) * cell;
-          f.gy[i] = top + (row + 0.1 + f.r2[i] * 0.8) * cell;
+          f.gy[i] = bottom - (row + 0.1 + f.r2[i] * 0.8) * cell;
           f.ga[i] = Math.min(1, (0.6 + this.values[c] * 0.35) * boost);
           f.gh[i] = 0;
           f.gc[i] = rampClass(this.values[c], f.r0[i]);
@@ -186,7 +199,7 @@ export class LoopScene implements Scene {
           // Still to do: one faint dot per pair.
           const j = 0.05 * cell;
           f.gx[i] = left + (col + 0.5) * cell + gauss(f.r1[i], f.r2[i]) * j;
-          f.gy[i] = top + (row + 0.5) * cell + gauss(f.r2[i], f.r3[i]) * j;
+          f.gy[i] = bottom - (row + 0.5) * cell + gauss(f.r2[i], f.r3[i]) * j;
           f.ga[i] = 0.08 * boost;
           f.gh[i] = 0;
         }
@@ -254,19 +267,13 @@ export class LoopScene implements Scene {
     const left = fr.visual.x + this.box.x;
     const top = fr.visual.y + this.box.y;
     const size = this.box.size;
-    const off = fr.compact ? 12 : 16;
-
-    // Axis names sit bottom and right, away from where the loop starts.
-    label(ctx, palette, "model B layer  j →", left, top + size + off, {
-      size: fr.compact ? 9 : 10,
-    });
-    ctx.save();
-    ctx.translate(left + size + off, top);
-    ctx.rotate(Math.PI / 2);
-    label(ctx, palette, "model A layer  i →", 0, 0, {
-      size: fr.compact ? 9 : 10,
-    });
-    ctx.restore();
+    layerAxes(
+      ctx,
+      palette,
+      { left, bottom: top + size, size },
+      { x: "model B layer", y: "model A layer" },
+      { compact: fr.compact },
+    );
 
     if (this.k >= CELLS) {
       resetText(ctx);

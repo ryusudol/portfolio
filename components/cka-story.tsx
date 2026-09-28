@@ -95,8 +95,7 @@ export function WhyChapter() {
       id="why"
       scene="cka-loop"
       visualClassName="chapter__visual--tall"
-      topic="Why"
-      source="Machine Unlearning Comparator"
+      topic="Why I started this project"
       title={["It started as a bottleneck", "in my own tool."]}
       body={
         <>
@@ -104,15 +103,17 @@ export function WhyChapter() {
           <Link className="inline-link" href={unlearningComparator.href}>
             Machine Unlearning Comparator
           </Link>
-          , I found its CKA view extremely slow, even for 10 layers of ResNet-18
-          comparing two model pairs over 10,000 CIFAR-10 samples. The view
-          scores each unlearned model against the original or a retrained model,
-          layer by layer, and the library doing that work was torch_cka. The
-          animation replays torch_cka’s inner loop, which handles one layer pair
-          at a time and stalls on the GPU six times before moving on.
+          , I found the CKA computation behind its layer-similarity view
+          extremely slow, even for 10 layers of ResNet-18 comparing two model
+          pairs over 10,000 CIFAR-10 samples. It ran on torch_cka, the most
+          widely used CKA library for PyTorch at the time. The animation replays
+          its nested loop. For every batch, it takes the 18 × 18 layer pairs one
+          at a time, and each pair stalls the GPU six times: both of its HSIC
+          calls end in three <code>.item()</code> calls, and each one makes
+          Python wait for the GPU to hand back a number before it can queue more
+          work.
         </>
       }
-      tag={<span className="hint">[ torch_cka’s loop, replayed ]</span>}
       visual={
         <>
           <Snippet
@@ -143,7 +144,7 @@ export function WhyChapter() {
               </>,
               <>
                 {"        "}hsic_l[i, j] += {t.f("_HSIC")}(L, L){at(35)}
-                {t.c("# and again")}
+                {t.c("# L @ L, again for every i")}
               </>,
             ]}
           />
@@ -182,8 +183,11 @@ export function GroundworkChapter() {
           3Blue1Brown’s{" "}
           <A href={links.essenceOfLinearAlgebra}>Essence of Linear Algebra</A>,
           then learned PyTorch. The picture that stuck is that a matrix moves
-          space, and CKA is built to ignore the moves that don’t change what a
-          layer knows.
+          space. Rotating a layer’s activations, or scaling them evenly, changes
+          every number but not which inputs sit close together, and that
+          closeness is what the layer has learned. CKA scores those moves as no
+          change at all. Only moves that distort it, like stretching or
+          flattening, lower the score.
         </>
       }
       steps={[
@@ -193,7 +197,6 @@ export function GroundworkChapter() {
         "Stretch and shear them, and similarity drops.",
         "Flatten them to a line, and what the layer knew is lost.",
       ]}
-      tag={<span className="hint">[ scroll to transform the space ]</span>}
       visual={
         <Readout
           items={[
@@ -213,7 +216,19 @@ export function GroundworkChapter() {
           ]}
         />
       }
-    />
+    >
+      <div className="chapter__aside">
+        <p className="chapter__aside-title">The ideas CKA rests on</p>
+        <ul className="tools">
+          <li>Dot products</li>
+          <li>Gram matrices</li>
+          <li>Orthogonal transformations</li>
+          <li>Trace</li>
+          <li>Frobenius inner product</li>
+          <li>Centering</li>
+        </ul>
+      </div>
+    </Chapter>
   );
 }
 
@@ -224,16 +239,19 @@ export function InsightChapter() {
       scene="cka-trace"
       topic="Insight"
       source="Frobenius inner product"
-      title={["The product was never", "part of the math."]}
+      title={["The trace never needed", "the whole product."]}
       length={4}
       body={
         <>
-          CKA compares two layers through their Gram matrices K and L, B × B
-          tables of how alike each pair of inputs looks to that layer. Its core
-          term is tr(KL). torch_cka, like the other implementations I had read,
-          built all of K @ L to get it, spending B³ multiply-adds and then
-          keeping only the B numbers on the diagonal. Written out by hand, their
-          sum is just{" "}
+          CKA compares layers through their Gram matrices. For a batch of B
+          inputs, a layer’s activations form a B × D matrix X, one row per
+          input, and its Gram matrix K = XXᵀ holds the dot product of every pair
+          of inputs, a B × B table of how alike they look to that layer. Layers
+          of any width give tables of the same size, and rotating X leaves K
+          unchanged. CKA’s core term is tr(KL). torch_cka built all of K @ L to
+          get it, spending B³ multiply-adds and then keeping only the B numbers
+          on the diagonal, which is a big part of why it was slow. Written out
+          by hand, their sum is just{" "}
           <span className="nowrap">
             Σ K<sub>ij</sub> L<sub>ij</sub>
           </span>
@@ -250,15 +268,15 @@ export function InsightChapter() {
         <Readout
           items={[
             [
-              "torch_cka · K @ L, trace",
+              "torch_cka · tr(K\u00a0@\u00a0L)",
               <Counter key="c" name="cubic" initial="0" />,
             ],
             [
-              "pytorch-cka · Σ K ⊙ L",
+              "pytorch-cka · Σ\u00a0K\u00a0⊙\u00a0L",
               <Counter key="s" name="square" initial="0" />,
             ],
             [
-              "at batch size 1,000",
+              "at B\u00a0=\u00a01,000",
               <Counter key="r" name="ratio" initial="–" />,
             ],
           ]}
@@ -275,30 +293,39 @@ export function RedesignChapter() {
       scene="cka-batch"
       visualClassName="chapter__visual--tall"
       topic="Redesign"
-      source="torch.einsum"
+      source="vectorized HSIC"
       title={["Every layer pair,", "in one pass."]}
       length={3.5}
       body={
         <>
           My first working version already summed K ⊙ L, yet it was only 2.1×
-          faster than torch_cka. The per-pair loop was still there, and another
-          HSIC term still multiplied K by L. So I rewrote the estimator to work
-          on whole stacks. Each Gram matrix is built once, one einsum takes all
-          324 Frobenius products, and an outer product plus one matmul supply
-          the rest of the unbiased HSIC.
+          faster than torch_cka: 13.9 s against 29.3 s on a Colab T4, with the
+          same models and data as the benchmark below. The per-pair loop was
+          still there, and another HSIC term still multiplied K by L. So I
+          rewrote the estimator to work on whole stacks. Each Gram matrix is
+          built once, a single <code>torch.einsum</code> takes all 324 Frobenius
+          products, and an outer product plus one matmul supply the rest of the
+          unbiased HSIC.
         </>
       }
       steps={[
-        "Build each layer’s Gram once and stack them.",
-        "Flatten the stacks into (18, B²) and (B², 18).",
-        "One einsum computes all 324 products at once.",
+        "Build each layer’s Gram matrix once and stack each model’s 18.",
+        "Read each B × B matrix row by row into B² numbers: (18, B²) and (B², 18).",
+        'Multiply the two, einsum("aij,bij->ab"), for all 324 Frobenius products at once.',
         "Off-diagonal and column sums add the other two terms, with no K @ L.",
         "Normalize to get the CKA matrix, then hover a cell.",
       ]}
+      tag={
+        <p className="hint">
+          Counts per batch, 18 × 18 layers. torch_cka: 666 HSIC calls (1 per
+          row, 2 per pair), 3 .item() syncs each, and 342 Gram builds (each K
+          once, each L per pair). pytorch-cka: 1 call, 18 Grams per model.
+        </p>
+      }
       visual={
         <>
           <Snippet
-            label="pytorch-cka · my rewrite"
+            label="pytorch-cka"
             ours
             lines={[
               t.c("# runs once per batch, for all 324 pairs at once"),
@@ -339,29 +366,31 @@ export function MemoryChapter() {
     <Chapter
       id="memory"
       scene="cka-memory"
-      topic="Memory"
-      source="Hooks & lifecycles"
+      topic="Memory management"
+      source="forward hooks"
       title={["Keep the answer,", "drop the activations."]}
       body={
         <>
-          Speed was half the problem. torch_cka left its forward hooks on the
-          models, and through them the last batch of activations, 4.26 GB that
-          stayed allocated even after deleting the object and collecting
-          garbage. pytorch-cka registers hooks inside a with block and removes
-          them on exit, clears features every batch, and carries only running
-          HSIC sums from one batch to the next.
+          Speed was half the problem. After one pass over the 10,000 CIFAR-10
+          test images on an A100, torch_cka still held 4.26 GB of GPU memory,
+          the last batch’s activations from all 18 layers of both models. Its
+          forward hooks store each output on the CKA object and are never
+          removed, and since the models keep the hooks, even{" "}
+          <code>del cka</code> and <code>gc.collect()</code> can’t free it.
+          pytorch-cka scopes its hooks to a <code>with</code> block, clears
+          features every batch, and ends at 0.18 GB.
         </>
       }
       steps={[
         "Every batch, hooks capture 18 layers from both models.",
-        "When compare() ends, pytorch-cka removes its hooks and frees the features.",
-        "After del cka and gc.collect(), torch_cka’s hooks still hold 4.26 GB.",
+        "When the comparison ends, pytorch-cka removes its hooks and frees the features.",
+        "torch_cka’s hooks stay on the models, and so does its last batch, 4.26 GB.",
       ]}
       chips={[
-        "One forward pass for self-comparison",
-        "CUDA streams for two models",
-        "DataParallel & DDP",
-        "Hugging Face outputs",
+        "Self-comparison in one forward pass",
+        "Two models run in parallel on CUDA streams",
+        "Unwraps DataParallel and DDP models",
+        "Reads Hugging Face model outputs",
       ]}
       visual={
         <Readout
@@ -392,52 +421,22 @@ export function BenchmarkChapter() {
       title={["Same GPU, same layers,", "8.98 s down to 1.16 s."]}
       body={
         <>
-          The benchmark compares two ResNet-18s, one before and one after
-          unlearning, on all 18 layers over four CIFAR-10 splits, on an H100.
-          pytorch-cka finished in 1.16 seconds, 7.7× faster than torch_cka, 17×
-          faster than ckapytorch, and 44× faster than a NumPy reference on CPU.
-          The work I removed grew cubically with batch size, so the gap widens
-          as batches grow.
+          The benchmark compares two ResNet-18s, the original and one unlearned
+          to forget CIFAR-10’s airplane class, across all 18 layers. It runs
+          over the four splits the comparator uses, forget-class and
+          remaining-class images from the training and test sets, 10,000 images
+          in batches of 1,000, on an H100. pytorch-cka finished in 1.16 seconds,
+          7.7× faster than torch_cka, 17× faster than ckapytorch, and 44× faster
+          than a NumPy reference on CPU. The work I removed grows cubically with
+          batch size, so the gap should widen as batches grow.
         </>
       }
-      tag={<span className="hint">[ scroll to run the clock ]</span>}
       visual={
         <Readout
           items={[
             ["elapsed", <Counter key="e" name="elapsed" initial="0.00 s" />],
             ["pytorch-cka", "1.16 s"],
             ["vs torch_cka", "7.7× faster"],
-          ]}
-        />
-      }
-    />
-  );
-}
-
-export function ShippedChapter() {
-  return (
-    <Chapter
-      id="shipped"
-      scene="cka-timeline"
-      topic="Shipped"
-      source="PyPI"
-      title={["Built in a month,", "maintained since."]}
-      body={
-        <>
-          Most of it came together in January 2026, with 134 commits from the
-          first estimator to v1.0 on PyPI. In August I came back to add
-          cka_from_features, for activations people have already extracted, and
-          to bring the test suite to 100% coverage, run in CI on Python 3.10
-          through 3.14. It now sees about 400 downloads a month.
-        </>
-      }
-      tag={<span className="hint">[ scroll through the commit history ]</span>}
-      visual={
-        <Readout
-          items={[
-            ["commits", <Counter key="c" name="commits" initial="0" />],
-            ["releases", <Counter key="r" name="releases" initial="0" />],
-            ["downloads", "~400 / month"],
           ]}
         />
       }

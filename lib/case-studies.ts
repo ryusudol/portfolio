@@ -11,6 +11,8 @@ export type Result = {
 export type Highlight = {
   title: string;
   body: string;
+  /** The number that shows the lesson, linking to the chapter it came from. */
+  proof?: { value: string; label: string; href: string };
 };
 
 export type CaseStudy = {
@@ -132,28 +134,27 @@ export const pytorchCka: CaseStudy = {
   kind: "Project",
   title: "PyTorch-CKA",
   role: "Author & maintainer",
-  when: "PyPI",
+  when: "Published on PyPI",
   summary:
     "A Python library that computes layer-wise representation similarity, showing how similarly neural networks see the same inputs. I started it when the CKA library inside my own research tool became its bottleneck, and ended up rewriting the math so every layer pair comes out of a single GPU pass.",
   blurb:
-    "Compares layer representations in CNNs and LLMs, 5.7× faster than an existing CKA library with 95.7% less retained GPU memory.",
-  stack: ["Python", "PyTorch", "CUDA", "pytest", "GitHub Actions", "PyPI"],
+    "Compares layer representations in CNNs and LLMs, 7.7× faster than torch_cka with 95.7% less retained GPU memory.",
+  stack: ["Python", "PyTorch", "pytest", "GitHub Actions", "PyPI"],
   links: [
     { label: "PyPI", href: links.ckaPypi },
     { label: "Code", href: links.ckaCode },
-    { label: "CKA paper", href: links.ckaPaper },
   ],
   results: [
     {
       value: "7.7×",
       label: "faster than torch_cka",
-      note: "All 18 layers of two ResNet-18s over CIFAR-10, on the same H100. 44× faster than a NumPy reference.",
+      note: "Two ResNet-18s, before and after unlearning, compared on all 18 layers over 10,000 CIFAR-10 images on an H100. 44× faster than a NumPy reference.",
       chart: "speed",
     },
     {
       value: "−95.7%",
       label: "retained GPU memory",
-      note: "Still allocated after one pass over CIFAR-10, compared with torch_cka.",
+      note: "GPU memory still allocated after one pass over the 10,000 CIFAR-10 test images on an A100: 0.18 GB, down from torch_cka’s 4.26 GB.",
       chart: "memory",
     },
     {
@@ -173,18 +174,38 @@ export const pytorchCka: CaseStudy = {
     {
       title: "Derive it before optimizing it",
       body: "Every implementation I read computed tr(K @ L) because that is how the formula is written. Working the estimator out term by term is what showed me the product was optional.",
+      proof: {
+        value: "B³ → B²",
+        label: "multiply-adds per layer pair",
+        href: "#insight",
+      },
     },
     {
       title: "Don’t make the GPU wait on Python",
       body: "An .item() inside a hot loop stalls the GPU until Python catches up. Keeping every value a tensor until the final division removed 1,998 syncs per batch.",
+      proof: {
+        value: "1,998 → 0",
+        label: ".item() syncs per batch",
+        href: "#redesign",
+      },
     },
     {
       title: "Memory has an owner",
-      body: "A forward hook holds references, so del and gc can’t free what it points to. Scoping hooks to a with block and clearing features every batch is what gave the 4.26 GB back.",
+      body: "A forward hook keeps its object reachable, so del and gc can’t free what it points to. Scoping hooks to a with block and clearing features every batch cut retained memory from 4.26 GB to 0.18 GB.",
+      proof: {
+        value: "4.26 → 0.18 GB",
+        label: "retained after one pass",
+        href: "#memory",
+      },
     },
     {
       title: "Measure against the real thing",
       body: "My first version felt fast and was only 2.1× faster. Benchmarking against existing libraries on real models is what pointed at the loop, and later proved the rewrite.",
+      proof: {
+        value: "8.98 s → 1.16 s",
+        label: "same H100, same layers",
+        href: "#benchmark",
+      },
     },
   ],
 };

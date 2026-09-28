@@ -58,11 +58,11 @@ export default function Home() {
           title={["A jQuery profile page,", "rewritten in React."]}
           body={
             <>
-              As a Software Engineering Intern at ABC Fitness, rewrote the
-              user profile page from scratch for the ABC Trainerize platform
-              serving 1.6M+ clients and 400,000+ fitness professionals —
-              carrying over its business logic with care and covering it with
-              unit tests so it could roll out safely.
+              As a Software Engineering Intern at ABC Fitness, rewrote the user
+              profile page from scratch for the ABC Trainerize platform serving
+              1.6M+ clients and 400,000+ fitness professionals — carrying over
+              its business logic with care and covering it with unit tests so it
+              could roll out safely.
             </>
           }
           tools={["React", "TypeScript", "RxJS", "Redux", "Jest"]}

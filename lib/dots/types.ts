@@ -7,6 +7,8 @@ export type Palette = {
   accent: RGB;
   hot: RGB;
   fg: RGB;
+  /** The page background, for cards drawn over the dots. */
+  bg: RGB;
   muted: RGB;
   /** Resolved monospace font-family for canvas labels. */
   mono: string;

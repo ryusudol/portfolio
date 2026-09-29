@@ -5,7 +5,15 @@ export type Result = {
   label: string;
   note: string;
   /** A particle mini-chart of the evidence, drawn by the page's results scene. */
-  chart?: "speed" | "memory" | "complexity" | "downloads";
+  chart?:
+    | "speed"
+    | "memory"
+    | "complexity"
+    | "downloads"
+    | "views"
+    | "linked"
+    | "stars"
+    | "redraw";
 };
 
 export type Highlight = {
@@ -23,6 +31,8 @@ export type CaseStudy = {
   role: string;
   when: string;
   summary: string;
+  /** A term the rest of the page leans on, defined under the summary. */
+  definition?: { term: string; body: string };
   /** One line for the /work card; falls back to `summary`. */
   blurb?: string;
   stack: string[];
@@ -58,7 +68,7 @@ export const abcFitness: CaseStudy = {
     {
       value: "Beyond",
       label: "the migration scope",
-      note: "Redesigned the hierarchy: a streamlined header, grouped cards, modal editing, and drag-and-drop certification reordering.",
+      note: "Redesigned the hierarchy with a streamlined header, grouped cards, modal editing, and drag-and-drop certification reordering.",
     },
     {
       value: "97%",
@@ -74,10 +84,14 @@ export const unlearningComparator: CaseStudy = {
   href: "/projects/unlearning-comparator",
   kind: "Project",
   title: "Machine Unlearning Comparator",
-  role: "Full stack, Data Visualization",
-  when: "Published in IEEE TVCG · Mar 2026",
+  role: "Frontend Engineering, Data Visualization",
+  when: "Published in IEEE TVCG",
   summary:
-    "An interactive visual analytics system for evaluating how machine-unlearning methods affect the accuracy, efficiency, and privacy of ML models.",
+    "An interactive dashboard for comparing machine unlearning methods by putting two models side by side. Researchers build candidate models with different methods and settings, then screen them all on accuracy, efficiency, and privacy in one table. They pick two to contrast class by class, image by image, and layer by layer, and run a simulated privacy attack to check whether the data a model was asked to forget can still be detected. Together, the views catch a method that matches retraining on every accuracy score yet has forgotten almost nothing.",
+  definition: {
+    term: "What is machine unlearning?",
+    body: "Machine unlearning removes part of what a trained model learned, like every airplane in its training images, so that it behaves as if it had never seen them. Retraining from scratch without that data is exact but slow and computationally expensive, so unlearning methods adjust the trained model instead. The hard part is telling how close they got.",
+  },
   blurb:
     "An interactive system for comparing machine-unlearning methods on accuracy, efficiency, and privacy, with 100+ stars on GitHub.",
   stack: ["React", "TypeScript", "D3", "Zustand", "FastAPI", "PyTorch"],
@@ -88,42 +102,66 @@ export const unlearningComparator: CaseStudy = {
   ],
   results: [
     {
-      value: "100+",
-      label: "GitHub stars",
-      note: "for the open-source dashboard.",
+      value: "TVCG",
+      label: "journal paper, second author",
+      note: "Published in IEEE Transactions on Visualization and Computer Graphics. I built the interface it presents, where every view reads the same pair of models.",
+      chart: "views",
+    },
+    {
+      value: "4,000",
+      label: "SVG points, linked by hover",
+      note: "Each model’s 2,000 training images as UMAP points, one element each, so hovering an image in one plot finds it in the other.",
+      chart: "linked",
     },
     {
       value: "−99%",
-      label: "DOM work per hover",
-      note: "by replacing full SVG redraws with D3 joins and in-place updates.",
+      label: "SVG nodes rebuilt per hover",
+      note: "1,133 down to 8 in the Attack Simulation view once a hover restyled the plot in place. The embedding view’s first hover fell from about 70 ms to 10 ms.",
+      chart: "redraw",
     },
     {
-      value: "2,000",
-      label: "points per scatterplot",
-      note: "UMAP projections of penultimate-layer activations, kept interactive.",
-    },
-    {
-      value: "TVCG",
-      label: "journal publication",
-      note: "IEEE Transactions on Visualization and Computer Graphics, vol. 32, no. 3.",
+      value: "101",
+      label: "GitHub stars",
+      note: "Starred since December 2024, with a live demo that runs in the browser on precomputed results, no GPU needed.",
+      chart: "stars",
     },
   ],
   highlights: [
     {
-      title: "AI interpretability",
-      body: "Built the frontend end to end for comparing unlearning methods side by side on accuracy, efficiency, and privacy.",
+      title: "Summary numbers can hide a failure",
+      body: "Random Labeling matched retraining on every accuracy column. Only the views of images, predictions, and layers showed that it had renamed the airplanes without forgetting them.",
+      proof: {
+        value: "0.003",
+        label: "its privacy score, out of 1",
+        href: "#problem",
+      },
     },
     {
-      title: "Data-intensive visualization",
-      body: "D3/Recharts views including 2,000-point UMAP scatterplots and 400-point stacked dot plots that simulate membership inference attacks via a draggable threshold.",
+      title: "Test an encoding on its readers",
+      body: "The bubble matrix read fine to me, but the researchers struggled with it. A glyph that small can’t carry two numbers, so each number got its own half of the cell.",
+      proof: {
+        value: "90% · 0.16",
+        label: "share and confidence, one cell",
+        href: "#matrix",
+      },
     },
     {
-      title: "Interaction engineering",
-      body: "Hover, zoom, and drag stay smooth because updates are joined in place instead of redrawing whole SVGs — 99% fewer DOM manipulations per hover.",
+      title: "A store is only as narrow as its selectors",
+      body: "Zustand lets a component subscribe to one slice of state, but only when it passes a selector. The model table’s selector kept it still through every poll, while the components that still take a whole store re-render as often as they did under Context.",
+      proof: {
+        value: "1 → 0",
+        label: "table re-renders per poll",
+        href: "#state",
+      },
     },
     {
-      title: "Backend extension",
-      body: "Extended the FastAPI/PyTorch backend to a face-recognition dataset, which let another research lab adopt the system.",
+      title: "Draw once, then update",
+      body: "A React effect that redraws a D3 chart runs again on every state change, hovers included. Building the SVG once and changing attributes in place gives the same picture for a fraction of the work, and kept the per-element events that made SVG worth choosing.",
+      proof: {
+        value: "1,133 → 8",
+        label: "SVG nodes rebuilt per hover",
+        href: "#redraw",
+      },
     },
   ],
 };
@@ -137,6 +175,10 @@ export const pytorchCka: CaseStudy = {
   when: "Published on PyPI",
   summary:
     "A Python library that computes layer-wise representation similarity, showing how similarly neural networks see the same inputs. I started it when the CKA library inside my own research tool became its bottleneck, and ended up rewriting the math so every layer pair comes out of a single GPU pass.",
+  definition: {
+    term: "What is CKA?",
+    body: "Centered Kernel Alignment (CKA) scores how similarly two layers represent the same inputs, from 0 to 1. It feeds one batch through both layers and compares how each arranges the inputs relative to one another. A score of 1 means the arrangements match, even if one is rotated or evenly scaled. The layers can differ in width and come from different models, which makes CKA a common way to ask which layers of two networks learned alike.",
+  },
   blurb:
     "Compares layer representations in CNNs and LLMs, 7.7× faster than torch_cka with 95.7% less retained GPU memory.",
   stack: ["Python", "PyTorch", "pytest", "GitHub Actions", "PyPI"],
@@ -154,7 +196,7 @@ export const pytorchCka: CaseStudy = {
     {
       value: "−95.7%",
       label: "retained GPU memory",
-      note: "GPU memory still allocated after one pass over the 10,000 CIFAR-10 test images on an A100: 0.18 GB, down from torch_cka’s 4.26 GB.",
+      note: "After one pass over the 10,000 CIFAR-10 test images on an A100, 0.18 GB of GPU memory stays allocated, down from torch_cka’s 4.26 GB.",
       chart: "memory",
     },
     {

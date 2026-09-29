@@ -11,6 +11,17 @@ import { TraceScene } from "./cka-trace";
 import { CurtainScene } from "./curtain";
 import { HeroScene } from "./hero";
 import { InterfaceScene } from "./interface";
+import { AttackScene } from "./muc-attack";
+import { EmbeddingScene } from "./muc-embedding";
+import { LayersScene } from "./muc-layers";
+import { MatrixScene } from "./muc-matrix";
+import { MotivationScene } from "./muc-motivation";
+import { RedrawScene } from "./muc-redraw";
+import { RenderScene } from "./muc-render";
+import { MucResultsScene } from "./muc-results";
+import { ScreenScene } from "./muc-screen";
+import { StateScene } from "./muc-state";
+import { WorkflowScene } from "./muc-workflow";
 import { OutroScene } from "./outro";
 import { RequestsScene } from "./requests";
 import { ShapesScene } from "./shapes";
@@ -33,6 +44,17 @@ export const scenes: Record<string, () => Scene> = {
   "cka-batch": () => new BatchScene(),
   "cka-memory": () => new MemoryScene(),
   "cka-race": () => new RaceScene(),
+  "muc-results": () => new MucResultsScene(),
+  "muc-motivation": () => new MotivationScene(),
+  "muc-screen": () => new ScreenScene(),
+  "muc-workflow": () => new WorkflowScene(),
+  "muc-embedding": () => new EmbeddingScene(),
+  "muc-matrix": () => new MatrixScene(),
+  "muc-layers": () => new LayersScene(),
+  "muc-attack": () => new AttackScene(),
+  "muc-state": () => new StateScene(),
+  "muc-render": () => new RenderScene(),
+  "muc-redraw": () => new RedrawScene(),
   contact: () => new ShapesScene({ share: 0.5 }),
   curtain: () => new CurtainScene(),
   results: () => new ShapesScene({ share: 0.5, alpha: 0.75 }),

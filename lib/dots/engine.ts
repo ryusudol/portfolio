@@ -256,6 +256,7 @@ export class DotEngine {
       accent: read("--accent", [226, 88, 58]),
       hot: read("--hot", [255, 72, 30]),
       fg: read("--fg", [236, 232, 225]),
+      bg: read("--bg", [19, 19, 18]),
       muted: read("--muted", [140, 136, 130]),
       mono: cs.getPropertyValue("--font-mono").trim() || "monospace",
       ink: document.documentElement.dataset.theme !== "paper",

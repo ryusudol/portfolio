@@ -1756,6 +1756,29 @@ code {
   line-height: 1.5;
 }
 
+/* A term the page relies on, set off from the summary by a hairline. */
+.results__definition {
+  max-width: 62ch;
+  margin-top: 22px;
+  padding-left: 16px;
+  border-left: 1px solid var(--line-strong);
+}
+
+.results__definition p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.results__definition .results__definition-term {
+  margin-bottom: 6px;
+  color: var(--fg);
+  font: var(--label);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
 .results__stack {
   margin-top: 22px;
 }

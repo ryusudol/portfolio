@@ -76,11 +76,20 @@ export const ckaChapters: Chapter[] = [
   { id: "more", label: "More" },
 ];
 
-/** Order matches the `data-scene` sections of a featured-project case study. */
-export const projectChapters: Chapter[] = [
+/** Order matches the `data-scene` sections of the Unlearning Comparator case study. */
+export const mucChapters: Chapter[] = [
   { id: "results", label: "Results" },
-  { id: "walkthrough", label: "Walkthrough" },
-  { id: "highlights", label: "What I built" },
+  { id: "why", label: "Motivation" },
+  { id: "problem", label: "Blind spot" },
+  { id: "workflow", label: "Workflow" },
+  { id: "embedding", label: "Embedding" },
+  { id: "matrix", label: "Prediction matrix" },
+  { id: "layers", label: "Layers" },
+  { id: "attack", label: "Attack" },
+  { id: "state", label: "State management" },
+  { id: "rendering", label: "SVG or canvas" },
+  { id: "redraw", label: "Performance" },
+  { id: "lessons", label: "Lessons" },
   { id: "more", label: "More" },
 ];
 

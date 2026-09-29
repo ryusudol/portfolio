@@ -185,3 +185,19 @@ export function cellReadout(
     { align: onRight ? "left" : "right", color: palette.fg, alpha: 0.95 },
   );
 }
+
+/**
+ * Reports each change in a stage's size. On narrow screens the copy above a
+ * stage grows and shrinks as its step captions swap, so the stage resizes
+ * mid-chapter and a scene has to re-plan its geometry.
+ */
+export class StageSize {
+  private key = "";
+
+  changed(fr: Frame) {
+    const key = `${Math.round(fr.visual.w)}x${Math.round(fr.visual.h)}`;
+    if (key === this.key) return false;
+    this.key = key;
+    return true;
+  }
+}

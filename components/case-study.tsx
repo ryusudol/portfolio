@@ -38,6 +38,12 @@ export function CaseStudyResults({
         </h1>
         <p className="results__role">{study.role}</p>
         <p className="results__summary">{study.summary}</p>
+        {study.definition && (
+          <div className="results__definition">
+            <p className="results__definition-term">{study.definition.term}</p>
+            <p>{study.definition.body}</p>
+          </div>
+        )}
         <ul className="tools results__stack" aria-label="Built with">
           {study.stack.map((tool) => (
             <li key={tool}>{tool}</li>

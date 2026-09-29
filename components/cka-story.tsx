@@ -1,93 +1,17 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
-
 import { unlearningComparator } from "@/lib/case-studies";
 import { links } from "@/lib/content";
 
 import { Chapter } from "./chapter";
-
-const t = {
-  c: (s: string) => <span className="tok-comment">{s}</span>,
-  k: (s: string) => <span className="tok-key">{s}</span>,
-  s: (s: string) => <span className="tok-string">{s}</span>,
-  f: (s: string) => <span className="tok-fn">{s}</span>,
-};
-
-/** Pads code of `length` characters out to the listing's comment column. */
-const at = (length: number) => " ".repeat(Math.max(2, 40 - length));
-
-/**
- * A short listing pinned to the top of a chapter's stage, captioned with whose
- * code it is so the particles below read as that library's work.
- */
-function Snippet({
-  label,
-  ours = false,
-  lines,
-}: {
-  label: string;
-  ours?: boolean;
-  lines: ReactNode[];
-}) {
-  return (
-    <figure className="snippet" data-reserve="top">
-      <figcaption
-        className={`snippet__tag${ours ? " snippet__tag--ours" : ""}`}
-      >
-        {label}
-      </figcaption>
-      <pre>
-        <code>
-          {lines.map((line, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: static listing
-            <span key={i} className="snippet__line">
-              {line}
-              {"\n"}
-            </span>
-          ))}
-        </code>
-      </pre>
-    </figure>
-  );
-}
-
-function Readout({ items }: { items: [string, ReactNode][] }) {
-  return (
-    <dl className="readout readout--story" data-reserve="bottom">
-      {items.map(([term, value]) => (
-        <div key={term}>
-          <dt>{term}</dt>
-          <dd>{value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
-function Counter({ name, initial }: { name: string; initial: string }) {
-  return <span data-counter={name}>{initial}</span>;
-}
-
-function Change({ from, to }: { from: string; to: string }) {
-  return (
-    <>
-      <span className="readout__from">{from}</span>
-      <span className="readout__arrow" aria-hidden>
-        {" → "}
-      </span>
-      <span className="sr-only"> to </span>
-      {to}
-    </>
-  );
-}
-
-function A({ href, children }: { href: string; children: string }) {
-  return (
-    <a className="inline-link" href={href} target="_blank" rel="noreferrer">
-      {children}
-    </a>
-  );
-}
+import {
+  A,
+  pad as at,
+  Change,
+  Counter,
+  Readout,
+  Snippet,
+  tok as t,
+} from "./story-parts";
 
 export function WhyChapter() {
   return (
@@ -108,7 +32,7 @@ export function WhyChapter() {
           pairs over 10,000 CIFAR-10 samples. It ran on torch_cka, the most
           widely used CKA library for PyTorch at the time. The animation replays
           its nested loop. For every batch, it takes the 18 × 18 layer pairs one
-          at a time, and each pair stalls the GPU six times: both of its HSIC
+          at a time, and each pair stalls the GPU six times. Both of its HSIC
           calls end in three <code>.item()</code> calls, and each one makes
           Python wait for the GPU to hand back a number before it can queue more
           work.
@@ -299,27 +223,28 @@ export function RedesignChapter() {
       body={
         <>
           My first working version already summed K ⊙ L, yet it was only 2.1×
-          faster than torch_cka: 13.9 s against 29.3 s on a Colab T4, with the
-          same models and data as the benchmark below. The per-pair loop was
-          still there, and another HSIC term still multiplied K by L. So I
-          rewrote the estimator to work on whole stacks. Each Gram matrix is
-          built once, a single <code>torch.einsum</code> takes all 324 Frobenius
-          products, and an outer product plus one matmul supply the rest of the
-          unbiased HSIC.
+          faster than torch_cka, taking 13.9 s against its 29.3 s on a Colab T4,
+          with the same models and data as the benchmark below. The per-pair
+          loop was still there, and another HSIC term still multiplied K by L.
+          So I rewrote the estimator to work on whole stacks. Each Gram matrix
+          is built once, a single <code>torch.einsum</code> takes all 324
+          Frobenius products, and an outer product plus one matmul supply the
+          rest of the unbiased HSIC.
         </>
       }
       steps={[
         "Build each layer’s Gram matrix once and stack each model’s 18.",
-        "Read each B × B matrix row by row into B² numbers: (18, B²) and (B², 18).",
+        "Read each B × B matrix row by row into B² numbers, giving (18, B²) and (B², 18).",
         'Multiply the two, einsum("aij,bij->ab"), for all 324 Frobenius products at once.',
         "Off-diagonal and column sums add the other two terms, with no K @ L.",
         "Normalize to get the CKA matrix, then hover a cell.",
       ]}
       tag={
         <p className="hint">
-          Counts per batch, 18 × 18 layers. torch_cka: 666 HSIC calls (1 per
-          row, 2 per pair), 3 .item() syncs each, and 342 Gram builds (each K
-          once, each L per pair). pytorch-cka: 1 call, 18 Grams per model.
+          Counts per batch, 18 × 18 layers. torch_cka makes 666 HSIC calls (1
+          per row, 2 per pair) with 3 .item() syncs each, and 342 Gram builds
+          (each K once, each L per pair). pytorch-cka makes 1 call and builds 18
+          Grams per model.
         </p>
       }
       visual={

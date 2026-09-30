@@ -297,10 +297,10 @@ export function MemoryChapter() {
       body={
         <>
           Speed was half the problem. After one pass over the 10,000 CIFAR-10
-          test images on an A100, torch_cka still held 4.26 GB of GPU memory,
-          the last batch’s activations from all 18 layers of both models. Its
-          forward hooks store each output on the CKA object and are never
-          removed, and since the models keep the hooks, even{" "}
+          test images, 10 batches of 1,000, on an A100, torch_cka still held
+          4.26 GB of GPU memory, the last batch’s activations from all 18 layers
+          of both models. Its forward hooks store each output on the CKA object
+          and are never removed, and since the models keep the hooks, even{" "}
           <code>del cka</code> and <code>gc.collect()</code> can’t free it.
           pytorch-cka scopes its hooks to a <code>with</code> block, clears
           features every batch, and ends at 0.18 GB.

@@ -162,11 +162,12 @@ export class BatchScene implements Scene {
         const layer = k % LAYERS;
         const u = f.r0[i];
         const v = f.r1[i];
-        // Gram matrices are brightest on the diagonal: a layer vs. itself.
+        // Gram matrices are brightest on the diagonal: an input vs. itself.
         const texture = 0.16 + 0.64 * Math.exp(-Math.abs(u - v) * 7);
         const origin = isA ? cardA : cardB;
         const cx = origin.x + layer * offset + u * this.card;
-        const cy = origin.y + layer * offset + v * this.card;
+        // Row v counts up from the card's bottom edge, like every heatmap here.
+        const cy = origin.y + layer * offset + (1 - v) * this.card;
         const flatAt = (Math.floor(v * ROWS) + u) / ROWS;
         const t = clamp(unroll * 1.6 - flatAt * 0.6);
         // Column sums keep one entry per row: each strip shrinks from B² to B.

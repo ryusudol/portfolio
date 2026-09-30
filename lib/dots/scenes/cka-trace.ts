@@ -59,7 +59,8 @@ function slot(k: number, g: number, out: [number, number]) {
  * cube collapses into K @ L, whose diagonal alone becomes the trace while the
  * rest falls away. Below it, the same number straight from the matrices: lay
  * L on K, multiply matching cells, add. The two answers match; one cost B³,
- * the other B².
+ * the other B². Rows run bottom to top, so input 1 sits at the bottom-left and
+ * the diagonal climbs to the top-right, as in every heatmap on the site.
  */
 export class TraceScene implements Scene {
   private K = gram(3);
@@ -213,17 +214,18 @@ export class TraceScene implements Scene {
         const nth = Math.floor(local / CELLS);
         const r = Math.floor(c / B);
         const q = c % B;
+        const up = B - 1 - r;
         const v = isK ? this.K[c] : this.L[c];
         slot(nth, this.cellGrid, sub);
         const baseA = isK ? kA : lA;
         let x = baseA.x + (q + sub[0]) * cellA;
-        let y = baseA.y + (r + sub[1]) * cellA;
+        let y = baseA.y + (up + sub[1]) * cellA;
         // K[i, k] lies on the cube's left face, L[k, j] on its top face.
         if (isK)
           this.project(
             fr,
             -FACE,
-            r - HALF + sub[1] - 0.5,
+            up - HALF + sub[1] - 0.5,
             q - HALF + sub[0] - 0.5,
             pt,
           );
@@ -239,7 +241,7 @@ export class TraceScene implements Scene {
         y = lerp(y, pt[1], fold);
         const base2 = isK ? k2 : l2;
         let x2 = base2.x + (q + sub[0]) * cellR;
-        const y2 = base2.y + (r + sub[1]) * cellR;
+        const y2 = base2.y + (up + sub[1]) * cellR;
         if (!isK) x2 = lerp(x2, k2.x + (q + sub[0]) * cellR, overlay);
         x = lerp(x, x2, again);
         y = lerp(y, y2, again);
@@ -269,6 +271,7 @@ export class TraceScene implements Scene {
         const k = Math.floor(vox / CELLS);
         const r = Math.floor((vox % CELLS) / B);
         const q = vox % B;
+        const up = B - 1 - r;
         const v = this.K[r * B + k] * this.L[k * B + q];
         const g = this.voxelGrid;
         const ox = ((nth % g) + 0.5) / g - 0.5;
@@ -277,14 +280,14 @@ export class TraceScene implements Scene {
         this.project(
           fr,
           q - HALF + ox * 0.62,
-          r - HALF + oy * 0.62,
+          up - HALF + oy * 0.62,
           k - HALF + oz * 0.62,
           pt,
         );
         // Collapsing along k: every product lands in its cell of K @ L.
         slot(k * this.perVoxel + nth, this.pGrid, sub);
         const px = p1.x + (q + sub[0]) * cellR;
-        const py = p1.y + (r + sub[1]) * cellR;
+        const py = p1.y + (up + sub[1]) * cellR;
         let x = lerp(pt[0], px, collapse);
         let y = lerp(pt[1], py, collapse);
         const shown = clamp(sweep - k);
@@ -432,8 +435,8 @@ export class TraceScene implements Scene {
         alpha: flat * 0.7,
       });
       ctx.save();
-      ctx.translate(left - 10, top);
-      ctx.rotate(Math.PI / 2);
+      ctx.translate(left - 10, top + this.S);
+      ctx.rotate(-Math.PI / 2);
       label(ctx, palette, "input i →", 0, 0, {
         size: small,
         alpha: flat * 0.7,

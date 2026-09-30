@@ -7,6 +7,7 @@ import { CodeSample } from "@/components/code-sample";
 import { DotStage } from "@/components/dot-stage";
 import { MiniApp } from "@/components/mini-app";
 import { SiteHeader } from "@/components/site-header";
+import { UnderConstruction } from "@/components/under-construction";
 import { abcFitness } from "@/lib/case-studies";
 import { abcChapters, profile } from "@/lib/content";
 
@@ -27,7 +28,12 @@ export default function AbcFitnessCaseStudy() {
       <DotStage />
 
       <main id="chapters">
-        <CaseStudyResults study={abcFitness} />
+        <CaseStudyResults
+          study={abcFitness}
+          notice={
+            <UnderConstruction note="This case study is being rewritten." />
+          }
+        />
 
         <Chapter
           id="async"

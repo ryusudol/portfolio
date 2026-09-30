@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "reicon-react";
 
-import { BarrierIcon } from "@/components/barrier-icon";
 import { DotStage } from "@/components/dot-stage";
 import { SiteHeader } from "@/components/site-header";
+import { UnderConstruction } from "@/components/under-construction";
 import { playground, profile } from "@/lib/content";
 
 const description =
@@ -41,15 +41,7 @@ export default function Playground() {
             <p className="results__summary">
               Things I’m curious about outside my main work.
             </p>
-            <div className="construction">
-              <BarrierIcon size={72} />
-              <div>
-                <p className="construction__title">Under construction</p>
-                <p className="construction__note">
-                  Experiments land here as I build them.
-                </p>
-              </div>
-            </div>
+            <UnderConstruction note="Experiments land here as I build them." />
             <div className="curtain" data-dots-curtain>
               <ul className="highlights__grid playground__grid">
                 {playground.map((item) => (

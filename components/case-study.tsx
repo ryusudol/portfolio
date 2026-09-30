@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { ArrowRight } from "reicon-react";
 
 import { type CaseStudy, caseStudies } from "@/lib/case-studies";
@@ -10,14 +11,16 @@ import { ExternalLink } from "./external-link";
 /**
  * Opening section of a case study: who, what, and what came of it. Results
  * with a `chart` drop their outline and get a stage for a particle mini-chart,
- * which a page-specific `scene` draws.
+ * which a page-specific `scene` draws. A `notice` sits above everything else.
  */
 export function CaseStudyResults({
   study,
   scene = "results",
+  notice,
 }: {
   study: CaseStudy;
   scene?: string;
+  notice?: ReactNode;
 }) {
   return (
     <section
@@ -27,6 +30,7 @@ export function CaseStudyResults({
       aria-labelledby="results-title"
     >
       <div className="results__inner">
+        {notice}
         <p className="kicker">
           <span>
             {study.kind}

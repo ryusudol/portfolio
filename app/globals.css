@@ -1935,6 +1935,11 @@ code {
   margin: 0;
 }
 
+.results__inner > .construction:first-child {
+  margin-top: 0;
+  margin-bottom: 32px;
+}
+
 .construction__title {
   font-size: clamp(30px, 4vw, 54px);
   line-height: 1.05;

@@ -23,7 +23,9 @@ const SAMPLES = ENTROPY.retrained.length;
 const LEFT = stack(ENTROPY.retrained);
 const RIGHT = stack(ENTROPY.ft);
 /** Axes, gridlines, legend, and the line chart: the rest of the SVG. */
-const FRAME = 240;
+const FRAME = 360;
+/** The frame's parts: the plot's three axes, the curve, and its two axes. */
+const PARTS = 6;
 const CURVE = ATTACK.ft.filter((row) => row[0] >= 0 && row[0] <= TOP);
 const CURVE_W = 90;
 const [PURPLE_PAPER] = onPaper([PURPLE]);
@@ -117,8 +119,9 @@ export class RedrawScene implements Scene {
       } else {
         // The rest of the SVG: axes, gridlines, legend, and the line chart.
         const k = i - 2 * SAMPLES;
-        const part = k % 4;
+        const part = k % PARTS;
         const u = f.r0[i];
+        const cx = x + w + 24;
         if (part === 0) {
           out[0] = x;
           out[1] = y + u * h;
@@ -128,13 +131,22 @@ export class RedrawScene implements Scene {
         } else if (part === 2) {
           out[0] = x + w / 2;
           out[1] = y + u * h;
-        } else {
-          // The attack-score curve beside the plot, as the view draws it.
-          const row = CURVE[Math.floor(u * CURVE.length)];
-          out[0] = x + w + 24 + row[3] * CURVE_W;
+        } else if (part === 3) {
+          // The attack-score curve beside the plot, as the view draws it,
+          // its dots spaced evenly along the thresholds.
+          const n = Math.floor(k / PARTS) / (FRAME / PARTS);
+          const row = CURVE[Math.floor(n * CURVE.length)];
+          out[0] = cx + row[3] * CURVE_W;
           out[1] = y + (1 - row[0] / TOP) * h;
+        } else if (part === 4) {
+          // The curve's own axes, so it reads as a chart and not the frame.
+          out[0] = cx;
+          out[1] = y + u * h;
+        } else {
+          out[0] = cx + u * CURVE_W;
+          out[1] = y + h;
         }
-        alpha = part === 3 && fr.compact ? 0 : 0.35;
+        alpha = part >= 3 && fr.compact ? 0 : 0.35;
         f.gz[i] = 1.2;
         f.gh[i] = 0;
       }

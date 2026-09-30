@@ -267,17 +267,31 @@ export class MatrixScene implements Scene {
       });
       ctx.restore();
     });
-    const axis = "true class ↓  ·  predicted class →";
-    if (!compact) label(ctx, palette, axis, x0, y0 - 14, { size, alpha: 0.7 });
-
-    // The legend switches with the design, and moves up a line when it
-    // would run into the axis label.
+    // The axis label and, a line above it, the legend, both centered on the
+    // grid. The legend switches with the design.
+    const mid = x0 + w / 2;
+    const axis = compact
+      ? "true class ↓ · predicted class →"
+      : "true class ↓  ·  predicted class →";
+    label(ctx, palette, axis, mid, y0 - 14, {
+      align: "center",
+      size,
+      alpha: 0.7,
+    });
     ctx.font = `${size}px ${palette.mono}`;
-    const room = w - ctx.measureText(axis).width - 20;
-    const lx = x0 + w;
-    const ly = y0 - (compact || room < this.legendWidth(ctx) ? 32 : 14);
-    this.bubbleLegend(ctx, palette, lx, ly, size, 1 - this.split, compact);
-    if (this.split > 0.02) this.splitLegend(ctx, palette, lx, ly, size);
+    const ly = y0 - 32;
+    const right = (width: number) => mid + width / 2;
+    this.bubbleLegend(
+      ctx,
+      palette,
+      right(this.bubbleWidth(ctx, compact)),
+      ly,
+      size,
+      1 - this.split,
+      compact,
+    );
+    if (this.split > 0.02)
+      this.splitLegend(ctx, palette, right(this.splitWidth(ctx)), ly, size);
 
     if (step === 1 && this.hover < 0) {
       ctx.strokeStyle = rgba(palette.accent, 0.7);
@@ -292,29 +306,32 @@ export class MatrixScene implements Scene {
       const cy = y0 + FORGET * cell;
       ctx.strokeStyle = rgba(palette.accent, 0.9 * a);
       ctx.strokeRect(cx, cy, cell, cell);
-      label(
-        ctx,
-        palette,
-        "90% of airplanes → bird, at 0.16",
-        compact ? x0 : cx + cell + 10,
-        compact ? y0 - 14 : cy + cell / 2,
-        {
-          size: compact ? 9.5 : 10.5,
-          color: palette.accent,
-          alpha: a,
-        },
-      );
+      // Phones have no room beside the cell, and the step and the readout
+      // already say it.
+      if (!compact)
+        label(
+          ctx,
+          palette,
+          "90% of airplanes → bird, at 0.16",
+          cx + cell + 10,
+          cy + cell / 2,
+          { size: 10.5, color: palette.accent, alpha: a },
+        );
     }
     resetText(ctx);
   }
 
-  /** The wider of the two legends, in the current font. */
-  private legendWidth(ctx: CanvasRenderingContext2D) {
+  /** The bubble legend's width in the current font; phones drop its size note. */
+  private bubbleWidth(ctx: CanvasRenderingContext2D, compact: boolean) {
     const text = (t: string) => ctx.measureText(t).width;
-    const bubble =
-      72 + 8 + text("confidence") + 14 + text("size = proportion ·");
-    const split = text("proportion") + text("confidence") + 2 * 9 + 31;
-    return Math.max(bubble, split);
+    const scale = 72 + 8 + text("confidence");
+    return compact ? scale : scale + 14 + text("size = proportion ·");
+  }
+
+  /** The split legend's width in the current font. */
+  private splitWidth(ctx: CanvasRenderingContext2D) {
+    const text = (t: string) => ctx.measureText(t).width;
+    return text("proportion") + text("confidence") + 2 * 9 + 26;
   }
 
   /** Bubble size is proportion, and color is confidence on the turbo scale. */

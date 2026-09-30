@@ -43,6 +43,8 @@ const SAMPLE = 250;
 const LINKS = [3, 11, 17, 5, 22, 8];
 const STAR_DOTS = 3;
 const REBUILT = [1133, 8];
+/** Space between the two UMAP plots, split by a hairline. */
+const GAP = 30;
 const COUNT: Record<Kind, number> = {
   views: VIEW_DOTS,
   linked: 2 * SAMPLE,
@@ -252,9 +254,9 @@ export class MucResultsScene implements Scene {
 
   /** One of the two plots, leaving a line under them for their names. */
   private plotBox(r: DOMRect, side: number) {
-    const w = (r.width - 16) / 2;
+    const w = (r.width - GAP) / 2;
     return {
-      x: r.left + side * (w + 16),
+      x: r.left + side * (w + GAP),
       y: r.top + 2,
       w,
       h: r.height - 18,
@@ -348,6 +350,13 @@ export class MucResultsScene implements Scene {
         const y0 = a.y + ea.y[n] * a.h;
         const x1 = b.x + eb.x[n] * b.w;
         const y1 = b.y + eb.y[n] * b.h;
+        const mid = a.x + a.w + GAP / 2;
+        ctx.strokeStyle = rgba(palette.muted, 0.3 * clamp(t * 3));
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(mid, a.y);
+        ctx.lineTo(mid, a.y + a.h);
+        ctx.stroke();
         const phase = fr.reduced ? 1 : (this.clock % 1.8) / 1.8;
         const grow = smoothstep(0.05, 0.35, phase) * clamp(t * 2);
         ctx.strokeStyle = rgba(palette.fg, 0.8 * grow);

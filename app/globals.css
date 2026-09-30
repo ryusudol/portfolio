@@ -2328,13 +2328,17 @@ code {
     margin-top: 10px;
   }
 
+  /* One step at a time, all stacked in one cell, so the list keeps the
+     tallest step's height and the stage under it never resizes. Hidden
+     steps still count, so the numbers stay right. */
   .steps li {
-    display: none;
+    grid-area: 1 / 1;
+    visibility: hidden;
     font-size: 13.5px;
   }
 
   .steps li.is-active {
-    display: block;
+    visibility: visible;
   }
 
   .readout--story {

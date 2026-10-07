@@ -161,7 +161,7 @@ export class CkaScene implements Scene {
     }
 
     this.write("order", collapse > 0.5 ? "O(B²)" : "O(B³)");
-    this.write("speed", `${(1 + 4.7 * collapse).toFixed(1)}×`);
+    this.write("speed", `${(1 + 5.8 * collapse).toFixed(1)}×`);
     this.write(
       "memory",
       `${(100 - (100 - RETAINED * 100) * release).toFixed(1)}%`,

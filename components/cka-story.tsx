@@ -223,8 +223,8 @@ export function RedesignChapter() {
       body={
         <>
           My first working version already summed K ⊙ L, yet it was only 2.1×
-          faster than torch_cka, taking 13.9 s against its 29.3 s on a Colab T4,
-          with the same models and data as the benchmark below. The per-pair
+          faster than torch_cka, taking 13.9 s against its 29.3 s on a Colab T4
+          with the comparator’s original and unlearned ResNet-18s. The per-pair
           loop was still there, and another HSIC term still multiplied K by L.
           So I rewrote the estimator to work on whole stacks. Each Gram matrix
           is built once, a single <code>torch.einsum</code> takes all 324
@@ -297,11 +297,11 @@ export function MemoryChapter() {
       body={
         <>
           Speed was half the problem. After one pass over the 10,000 CIFAR-10
-          test images, 10 batches of 1,000, on an A100, torch_cka still held
-          4.26 GB of GPU memory, the last batch’s activations from all 18 layers
-          of both models. Its forward hooks store each output on the CKA object
-          and are never removed, and since the models keep the hooks, even{" "}
-          <code>del cka</code> and <code>gc.collect()</code> can’t free it.
+          test images, 10 batches of 1,000, on a Blackwell GPU, torch_cka still
+          held 4.26 GB of GPU memory, the last batch’s activations from all 18
+          layers of both models. Its forward hooks store each output on the CKA
+          object and are never removed, and since the models keep the hooks,
+          even <code>del cka</code> and <code>gc.collect()</code> can’t free it.
           pytorch-cka scopes its hooks to a <code>with</code> block, clears
           features every batch, and ends at 0.18 GB.
         </>
@@ -342,26 +342,27 @@ export function BenchmarkChapter() {
       id="benchmark"
       scene="cka-race"
       topic="Benchmark"
-      source="ResNet-18 · CIFAR-10 · H100"
-      title={["Same GPU, same layers,", "8.98 s down to 1.16 s."]}
+      source="ResNet-18 · CIFAR-10 · RTX PRO 6000"
+      title={["Same GPU, same layers,", "5.87 s down to 0.86 s."]}
       body={
         <>
-          The benchmark compares two ResNet-18s, the original and one unlearned
-          to forget CIFAR-10’s airplane class, across all 18 layers. It runs
-          over the four splits the comparator uses, forget-class and
-          remaining-class images from the training and test sets, 10,000 images
-          in batches of 1,000, on an H100. pytorch-cka finished in 1.16 seconds,
-          7.7× faster than torch_cka, 17× faster than ckapytorch, and 44× faster
-          than a NumPy reference on CPU. The work I removed grows cubically with
-          batch size, so the gap should widen as batches grow.
+          The benchmark compares two ResNet-18s across the 18 layers the network
+          is named after, its 17 main-path convolutions and the final
+          classifier. It runs over the 10,000 CIFAR-10 test images in batches of
+          1,000 on an NVIDIA RTX PRO 6000 Blackwell GPU, with fresh copies of
+          the same weights for every run and the mean of five runs after a
+          warm-up. pytorch-cka finished in 0.86 seconds, 6.8× faster than
+          torch_cka and 30× faster than a plain NumPy version of the same
+          estimator on the CPU. The work I removed grows cubically with batch
+          size, so the gap should widen as batches grow.
         </>
       }
       visual={
         <Readout
           items={[
             ["elapsed", <Counter key="e" name="elapsed" initial="0.00 s" />],
-            ["pytorch-cka", "1.16 s"],
-            ["vs torch_cka", "7.7× faster"],
+            ["pytorch-cka", "0.86 s"],
+            ["vs torch_cka", "6.8× faster"],
           ]}
         />
       }

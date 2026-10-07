@@ -15,7 +15,7 @@ const LAYERS = 18;
 const BATCHES = 10;
 /** Tank capacity, and what each library left allocated after one pass (MB). */
 const CAPACITY = 5000;
-const HELD = 4260.2;
+const HELD = 4259.2;
 const KEPT = 182.5;
 const STEP_AT = [0, 0.44, 0.64] as const;
 

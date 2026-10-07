@@ -13,14 +13,14 @@ type Chart = {
   count: number;
 };
 
-/** Seconds for all 18 ResNet-18 layers on an H100. */
+/** Seconds for all 18 ResNet-18 layers on an RTX PRO 6000 Blackwell. */
 const SPEED = [
-  { name: "torch_cka", seconds: 8.98 },
-  { name: "pytorch-cka", seconds: 1.16 },
+  { name: "torch_cka", seconds: 5.87 },
+  { name: "pytorch-cka", seconds: 0.86 },
 ];
 /** MB left allocated after one pass over CIFAR-10. */
-const HELD = 4260.2;
-const KEPT = 183.5;
+const HELD = 4259.2;
+const KEPT = 182.5;
 /** PyPI downloads per month without mirrors (pypistats), April–August 2026. */
 const MONTHS = [
   { name: "Apr", downloads: 53 },
@@ -42,8 +42,8 @@ const SHARE: Record<Kind, number> = {
 
 /**
  * The case study's four results, each with a small particle chart of its own
- * evidence: two bars racing to 8.98 s and 1.16 s, a GPU memory tank draining
- * from 4,260 MB to 183.5 MB, a B × B × B cube of work flattening into a
+ * evidence: two bars racing to 5.87 s and 0.86 s, a GPU memory tank draining
+ * from 4,259 MB to 182.5 MB, a B × B × B cube of work flattening into a
  * B × B plane, and monthly downloads as stacked dots.
  */
 export class CkaResultsScene implements Scene {
@@ -106,7 +106,7 @@ export class CkaResultsScene implements Scene {
     }
   }
 
-  /** Two bars growing at the same rate; pytorch-cka's stops at 1.16 s. */
+  /** Two bars growing at the same rate; pytorch-cka's stops at 0.86 s. */
   private speed(f: Field, i: number, k: number, c: Chart, t: number) {
     const r = c.rect as DOMRect;
     const total = SPEED[0].seconds + SPEED[1].seconds;
@@ -169,7 +169,7 @@ export class CkaResultsScene implements Scene {
     return { x: r.left, y: r.top + 4, w: r.width * 0.34, h: r.height - 8 };
   }
 
-  /** MB held: fills to torch_cka's 4,260, then drains to pytorch-cka's 183.5. */
+  /** MB held: fills to torch_cka's 4,259, then drains to pytorch-cka's 182.5. */
   private level(t: number) {
     const fill = smoothstep(0, 0.45, t);
     const drain = smoothstep(0.55, 1, t);

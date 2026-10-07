@@ -20,7 +20,7 @@ import { pytorchCka } from "@/lib/case-studies";
 import { ckaChapters, profile } from "@/lib/content";
 
 const description =
-  "How I built PyTorch-CKA after the CKA library in my own research tool proved too slow, relearned the linear algebra behind it, and rewrote HSIC so every layer pair comes out of one GPU pass, 7.7× faster than torch_cka with 95.7% less retained GPU memory.";
+  "How I built PyTorch-CKA after the CKA library in my own research tool proved too slow, relearned the linear algebra behind it, and rewrote HSIC so every layer pair comes out of one GPU pass, 6.8× faster than torch_cka with 95.7% less retained GPU memory.";
 
 export const metadata: Metadata = {
   title: `${pytorchCka.title} — ${profile.name}`,

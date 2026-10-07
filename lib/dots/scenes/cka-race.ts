@@ -4,16 +4,16 @@ import { freeArea, label, Readouts, resetText } from "../story";
 import type { Field, Frame, Palette, Scene } from "../types";
 
 /**
- * Wall-clock seconds to compare two ResNet-18s on all 18 layers over four
- * CIFAR-10 splits on an H100 (docs/benchmarks/speed_comparison_18_layers).
+ * Mean wall-clock seconds to compare two ResNet-18s on all 18 layers over the
+ * CIFAR-10 test set on an RTX PRO 6000 Blackwell
+ * (docs/benchmarks/speed_comparison_libraries).
  */
 const RUNS = [
-  { name: "pytorch-cka", seconds: 1.16 },
-  { name: "torch_cka", seconds: 8.98 },
-  { name: "ckapytorch", seconds: 19.23 },
-  { name: "NumPy (CPU)", seconds: 50.82 },
+  { name: "pytorch-cka", seconds: 0.86 },
+  { name: "torch_cka", seconds: 5.87 },
+  { name: "NumPy (CPU)", seconds: 25.64 },
 ];
-const SPAN = 52;
+const SPAN = 26;
 const TOTAL = RUNS.reduce((s, r) => s + r.seconds, 0);
 
 /**
@@ -104,7 +104,7 @@ export class RaceScene implements Scene {
       ctx.lineTo(left + this.span, vy + y);
       ctx.stroke();
     }
-    for (let s = 0; s <= 50; s += 10) {
+    for (let s = 0; s <= 25; s += 5) {
       const x = left + s * px;
       ctx.strokeStyle = rgba(palette.muted, s === 0 ? 0.35 : 0.1);
       ctx.beginPath();

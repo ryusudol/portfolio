@@ -180,7 +180,7 @@ export const pytorchCka: CaseStudy = {
     body: "Centered Kernel Alignment (CKA) scores how similarly two layers represent the same inputs, from 0 to 1. It feeds one batch through both layers and compares how each arranges the inputs relative to one another. A score of 1 means the arrangements match, even if one is rotated or evenly scaled. The layers can differ in width and come from different models, which makes CKA a common way to ask which layers of two networks learned alike.",
   },
   blurb:
-    "Compares layer representations in CNNs and LLMs, 7.7× faster than torch_cka with 95.7% less retained GPU memory.",
+    "Compares layer representations in CNNs and LLMs, 6.8× faster than torch_cka with 95.7% less retained GPU memory.",
   stack: ["Python", "PyTorch", "pytest", "GitHub Actions", "PyPI"],
   links: [
     { label: "PyPI", href: links.ckaPypi },
@@ -188,15 +188,15 @@ export const pytorchCka: CaseStudy = {
   ],
   results: [
     {
-      value: "7.7×",
+      value: "6.8×",
       label: "faster than torch_cka",
-      note: "Two ResNet-18s, before and after unlearning, compared on all 18 layers over 10,000 CIFAR-10 images on an H100. 44× faster than a NumPy reference.",
+      note: "Two ResNet-18s compared on all 18 layers over 10,000 CIFAR-10 images on an RTX PRO 6000 Blackwell GPU. 30× faster than a plain NumPy version on the CPU.",
       chart: "speed",
     },
     {
       value: "−95.7%",
       label: "retained GPU memory",
-      note: "After one pass over the 10,000 CIFAR-10 test images on an A100, 0.18 GB of GPU memory stays allocated, down from torch_cka’s 4.26 GB.",
+      note: "After one pass over the 10,000 CIFAR-10 test images on the same Blackwell GPU, 0.18 GB of GPU memory stays allocated, down from torch_cka’s 4.26 GB.",
       chart: "memory",
     },
     {
@@ -244,8 +244,8 @@ export const pytorchCka: CaseStudy = {
       title: "Measure against the real thing",
       body: "My first version felt fast and was only 2.1× faster. Benchmarking against existing libraries on real models is what pointed at the loop, and later proved the rewrite.",
       proof: {
-        value: "8.98 s → 1.16 s",
-        label: "same H100, same layers",
+        value: "5.87 s → 0.86 s",
+        label: "same GPU, same layers",
         href: "#benchmark",
       },
     },

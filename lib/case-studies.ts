@@ -13,7 +13,11 @@ export type Result = {
     | "views"
     | "linked"
     | "stars"
-    | "redraw";
+    | "redraw"
+    | "catalogue"
+    | "vallado"
+    | "sieve"
+    | "latency";
 };
 
 export type Highlight = {
@@ -252,7 +256,107 @@ export const pytorchCka: CaseStudy = {
   ],
 };
 
-export const caseStudies = [abcFitness, unlearningComparator, pytorchCka];
+export const orbitExplorer: CaseStudy = {
+  slug: "orbit-explorer",
+  href: "/projects/orbit-explorer",
+  kind: "Project",
+  title: "Orbit Explorer",
+  role: "Solo project, from the Rust engine to the interface",
+  when: "Live in the browser",
+  summary:
+    "A digital twin of Earth orbit that runs in the browser, and flies out to every planet, the Moon, and the Oort cloud. It propagates all 32,583 objects in the public catalogue live, routes packets across Starlink’s laser mesh, screens the whole catalogue for close approaches, and maps coverage. Beyond Earth, every known moon of Mars and the giant planets and every spacecraft orbiting another world fly on JPL’s trajectories. I wrote the orbital mechanics in Rust from the published model definitions, compiled them to WebAssembly, and checked each result against a published reference.",
+  definition: {
+    term: "What is SGP4?",
+    body: "SGP4 is the standard model for predicting where a tracked object will be. The US Space Force publishes every object’s orbit as a few mean elements, and SGP4 turns them back into a position and velocity at any time, accounting for Earth’s flattening, atmospheric drag, and, on high orbits, the pull of the Sun and Moon. The elements are only good to about a kilometre, so an implementation is judged by how exactly it reproduces the reference code.",
+  },
+  blurb:
+    "A browser digital twin of Earth orbit, with all 32,583 tracked objects at 60 fps, Starlink laser routing, conjunction screening, and flights out to every planet’s moons, on a Rust engine checked against published references.",
+  stack: [
+    "Rust",
+    "WebAssembly",
+    "TypeScript",
+    "React",
+    "Three.js",
+    "WebGPU",
+    "D3",
+    "Zustand",
+  ],
+  links: [
+    { label: "Live demo", href: links.orbitDemo },
+    { label: "Code", href: links.orbitCode },
+  ],
+  results: [
+    {
+      value: "32,583",
+      label: "objects propagated live",
+      note: "The full public catalogue from Space-Track, at 60 fps on an M1 MacBook Air. Each frame’s JavaScript takes about 2.6 ms, and moving every object takes 0.22 ms of it.",
+      chart: "catalogue",
+    },
+    {
+      value: "0.10 mm",
+      label: "worst error on 666 reference states",
+      note: "My SGP4 against the published verification output for the model, deep-space orbits and the cases built to fail included.",
+      chart: "vallado",
+    },
+    {
+      value: "423×",
+      label: "faster close-approach sieve",
+      note: "A sorted spatial grid finds every pair within 10 km in 1.5 ms, where checking all 530 million pairs takes 638 ms. At 100,000 objects it is 1,522× faster.",
+      chart: "sieve",
+    },
+    {
+      value: "21 ms",
+      label: "London to New York by laser",
+      note: "About 6 ms faster than the best fibre possible, a straight cable along the 5,570 km great circle, routed over the satellites’ real positions.",
+      chart: "latency",
+    },
+  ],
+  highlights: [
+    {
+      title: "Check against the reference, not yourself",
+      body: "SGP4 has a published verification set. Matching it to a tenth of a millimetre, error codes included, is what made every later number worth trusting. An independent Rust implementation then agreed to 0.7 µm.",
+      proof: {
+        value: "666 / 666",
+        label: "reference states matched",
+        href: "#validation",
+      },
+    },
+    {
+      title: "Exact to the model, not to the bit",
+      body: "Bit-for-bit agreement with satellite.js held only while I kept the reference code’s slow steps. Exact identities in their place made propagation a quarter faster and moved positions by a billionth of a TLE’s own error, so the model is what to match, not its rounding.",
+      proof: {
+        value: "2 nm",
+        label: "median difference from satellite.js",
+        href: "#validation",
+      },
+    },
+    {
+      title: "Keep the simulation out of React",
+      body: "The render loop is a plain class that owns the workers and the GPU. React reads a summary of it five times a second, so a busy panel can never cost the globe a frame.",
+      proof: {
+        value: "0.22 ms",
+        label: "to move all 32,583 objects a frame",
+        href: "#pipeline",
+      },
+    },
+    {
+      title: "Prove a bound, then test the case that broke it",
+      body: "A single speed bound once let a transfer orbit slip past a satellite between samples. Sizing each object’s search from its own top speed closed the gap, and a test now pins that pass.",
+      proof: {
+        value: "60,756",
+        label: "encounters at every step size",
+        href: "#bound",
+      },
+    },
+  ],
+};
+
+export const caseStudies = [
+  abcFitness,
+  orbitExplorer,
+  unlearningComparator,
+  pytorchCka,
+];
 
 export const projectStudies = caseStudies.filter((s) => s.kind === "Project");
 export const experienceStudies = caseStudies.filter(

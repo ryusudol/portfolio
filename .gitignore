@@ -48,3 +48,6 @@ __pycache__/
 
 # mcp
 .playwright-mcp/
+
+# orbit data export (Rust)
+/scripts/orbit/export/target/

@@ -22,6 +22,22 @@ import { MucResultsScene } from "./muc-results";
 import { ScreenScene } from "./muc-screen";
 import { StateScene } from "./muc-state";
 import { WorkflowScene } from "./muc-workflow";
+import { BoundScene } from "./orbit-bound";
+import { CatalogueScene } from "./orbit-catalogue";
+import { ConjunctionsScene } from "./orbit-conjunctions";
+import { EarthScene } from "./orbit-earth";
+import { FlightScene } from "./orbit-flight";
+import { FollowScene } from "./orbit-follow";
+import { GiantsScene } from "./orbit-giants";
+import { HeliosphereScene } from "./orbit-heliosphere";
+import { OrbitHomeScene } from "./orbit-home";
+import { PipelineScene } from "./orbit-pipeline";
+import { PrecisionScene } from "./orbit-precision";
+import { RelayScene } from "./orbit-relay";
+import { OrbitResultsScene } from "./orbit-results";
+import { RoutingScene } from "./orbit-routing";
+import { SieveScene } from "./orbit-sieve";
+import { ValidationScene } from "./orbit-validation";
 import { OutroScene } from "./outro";
 import { RequestsScene } from "./requests";
 import { ShapesScene } from "./shapes";
@@ -55,9 +71,25 @@ export const scenes: Record<string, () => Scene> = {
   "muc-state": () => new StateScene(),
   "muc-render": () => new RenderScene(),
   "muc-redraw": () => new RedrawScene(),
+  orbit: () => new OrbitHomeScene(),
+  "orbit-results": () => new OrbitResultsScene(),
+  "orbit-earth": () => new EarthScene(),
+  "orbit-follow": () => new FollowScene(),
+  "orbit-routing": () => new RoutingScene("routing"),
+  "orbit-conjunctions": () => new ConjunctionsScene(),
+  "orbit-coverage": () => new RoutingScene("coverage"),
+  "orbit-catalogue": () => new CatalogueScene(),
+  "orbit-flight": () => new FlightScene(),
+  "orbit-relay": () => new RelayScene(),
+  "orbit-giants": () => new GiantsScene(),
+  "orbit-heliosphere": () => new HeliosphereScene(),
+  "orbit-validation": () => new ValidationScene(),
+  "orbit-pipeline": () => new PipelineScene(),
+  "orbit-precision": () => new PrecisionScene(),
+  "orbit-sieve": () => new SieveScene(),
+  "orbit-bound": () => new BoundScene(),
   contact: () => new ShapesScene({ share: 0.5 }),
   curtain: () => new CurtainScene(),
   results: () => new ShapesScene({ share: 0.5, alpha: 0.75 }),
-  profile: () => new ShapesScene({ share: 0.8, stages: 6 }),
   outro: () => new OutroScene(),
 };

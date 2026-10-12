@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { ArrowRight } from "reicon-react";
 
-import { pytorchCka, unlearningComparator } from "@/lib/case-studies";
+import {
+  orbitExplorer,
+  pytorchCka,
+  unlearningComparator,
+} from "@/lib/case-studies";
 import { links } from "@/lib/content";
 
 import { Chapter } from "./chapter";
@@ -20,6 +24,52 @@ function DetailsLink({ href, name }: { href: string; name: string }) {
       Details
       <ArrowRight size={12} aria-hidden />
     </Link>
+  );
+}
+
+export function OrbitChapter({ id, topic = "Featured project" }: Props) {
+  return (
+    <Chapter
+      id={id}
+      scene="orbit"
+      topic={topic}
+      source="Orbit Explorer"
+      title={["Every satellite in orbit,", "live in the browser."]}
+      body={
+        <>
+          Built a digital twin of Earth orbit that propagates all 32,583 tracked
+          objects live on an SGP4 engine I wrote in Rust and WebAssembly, routes
+          packets across Starlink’s laser mesh, screens the catalogue for close
+          approaches, and flies out to every planet’s moons.
+        </>
+      }
+      tools={[
+        "Rust",
+        "WebAssembly",
+        "TypeScript",
+        "React",
+        "Three.js",
+        "WebGPU",
+      ]}
+      tag={
+        <>
+          <DetailsLink href={orbitExplorer.href} name={orbitExplorer.title} />
+          <ExternalLink href={links.orbitDemo}>Demo</ExternalLink>
+        </>
+      }
+      visual={
+        <dl className="readout">
+          <div>
+            <dt>tracked objects</dt>
+            <dd>32,583</dd>
+          </div>
+          <div>
+            <dt>camera from the Earth</dt>
+            <dd data-counter="distance">–</dd>
+          </div>
+        </dl>
+      }
+    />
   );
 }
 

@@ -1,0 +1,12 @@
+[package]
+name = "orbit-export"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Orbit Explorer is expected next to this repository.
+[dependencies]
+orbit-explorer-engine = { path = "../../../../orbit-explorer/engine" }
+
+[profile.release]
+opt-level = 3

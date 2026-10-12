@@ -7,7 +7,7 @@ import { experienceStudies, projectStudies } from "@/lib/case-studies";
 import { alsoBuilt, profile } from "@/lib/content";
 
 const description =
-  "Where I’ve worked and what I’ve built — from rebuilding the ABC Trainerize profile page in React to visual analytics for machine unlearning and a fast CKA library for PyTorch.";
+  "Where I’ve worked and what I’ve built — from rebuilding the ABC Trainerize profile page in React to a digital twin of Earth orbit, visual analytics for machine unlearning, and a fast CKA library for PyTorch.";
 
 export const metadata: Metadata = {
   title: `Work — ${profile.name}`,

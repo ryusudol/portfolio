@@ -48,9 +48,9 @@ export const pad = (n: number) => String(n).padStart(2, "0");
 /** Order matches the `data-scene` sections rendered on the home page. */
 export const homeChapters: Chapter[] = [
   { id: "intro", label: "Intro" },
+  { id: "orbit-explorer", label: "Orbit Explorer" },
   { id: "unlearning-comparator", label: "Machine Unlearning Comparator" },
   { id: "pytorch-cka", label: "PyTorch-CKA" },
-  { id: "experience", label: "Experience" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -72,6 +72,28 @@ export const ckaChapters: Chapter[] = [
   { id: "redesign", label: "Redesign" },
   { id: "memory", label: "Memory management" },
   { id: "benchmark", label: "Benchmark" },
+  { id: "lessons", label: "Lessons" },
+  { id: "more", label: "More" },
+];
+
+/** Order matches the `data-scene` sections of the Orbit Explorer case study. */
+export const orbitChapters: Chapter[] = [
+  { id: "results", label: "Results" },
+  { id: "earth", label: "Explore" },
+  { id: "follow", label: "Follow" },
+  { id: "routing", label: "Laser routing" },
+  { id: "conjunctions", label: "Conjunctions" },
+  { id: "coverage", label: "Coverage" },
+  { id: "catalogue", label: "Catalogue" },
+  { id: "flight", label: "Flight to the Moon" },
+  { id: "relay", label: "Link to Earth" },
+  { id: "giants", label: "Giant planets" },
+  { id: "heliosphere", label: "Oort cloud" },
+  { id: "validation", label: "Validation" },
+  { id: "pipeline", label: "Architecture" },
+  { id: "precision", label: "Precision" },
+  { id: "sieve", label: "Spatial grid" },
+  { id: "bound", label: "Sampling bound" },
   { id: "lessons", label: "Lessons" },
   { id: "more", label: "More" },
 ];
@@ -117,6 +139,9 @@ export const links = {
   ckaPypi: "https://pypi.org/project/pytorch-cka/",
   ckaPaper: "https://arxiv.org/abs/1905.00414",
   essenceOfLinearAlgebra: "https://www.3blue1brown.com/topics/linear-algebra",
+  orbitDemo: "https://orbit-explorer.pages.dev/",
+  orbitCode: "https://github.com/ryusudol/orbit-explorer",
+  vallado: "https://celestrak.org/publications/AIAA/2006-6753/",
 } as const;
 
 export const education = [

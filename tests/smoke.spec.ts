@@ -13,7 +13,7 @@ test.describe("portfolio smoke", () => {
     await expect(page.locator("html")).toHaveClass(/dots-ready/);
 
     for (const name of [
-      /rewritten in React/i,
+      /live in the browser/i,
       /for machine unlearning/i,
       /see the same things/i,
       /let’s work together/i,
@@ -24,11 +24,9 @@ test.describe("portfolio smoke", () => {
     }
   });
 
-  test("experience chapter links to the ABC Fitness case study", async ({
-    page,
-  }) => {
-    await page.goto("/#experience");
-    await page.getByRole("link", { name: "ABC Fitness details" }).click();
+  test("/work links to the ABC Fitness case study", async ({ page }) => {
+    await page.goto("/work");
+    await page.getByRole("link", { name: "ABC Fitness" }).click();
 
     await expect(page).toHaveURL(/\/experience\/abc-fitness$/);
     await expect(
@@ -100,6 +98,7 @@ test.describe("portfolio smoke", () => {
     page,
   }) => {
     for (const [section, title] of [
+      ["#orbit-explorer", "Orbit Explorer"],
       ["#unlearning-comparator", "Machine Unlearning Comparator"],
       ["#pytorch-cka", "PyTorch-CKA"],
     ]) {
@@ -129,15 +128,43 @@ test.describe("portfolio smoke", () => {
         page.getByRole("heading", { level: 2, name, exact: true }),
       ).toBeVisible();
     }
-    await expect(page.locator(".work-card")).toHaveCount(4);
+    await expect(page.locator(".work-card")).toHaveCount(5);
     await page.getByRole("link", { name: "PyTorch-CKA" }).click();
     await expect(page).toHaveURL(/\/projects\/pytorch-cka$/);
+  });
+
+  test("/work opens the Orbit Explorer case study", async ({ page }) => {
+    await page.goto("/work");
+    await page.getByRole("link", { name: "Orbit Explorer" }).click();
+    await expect(page).toHaveURL(/\/projects\/orbit-explorer$/);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Orbit Explorer" }),
+    ).toBeVisible();
+    await expect(page.locator(".result")).toHaveCount(4);
+    for (const name of [
+      /live in the browser/i,
+      /ride along with it/i,
+      /faster than fibre/i,
+      /is Starlink/i,
+      /not evenly/i,
+      /to the Moon/i,
+      /can call home/i,
+      /290 round Saturn/i,
+      /to 100,000 au/i,
+      /checked to 0\.1 mm/i,
+      /between samples/i,
+    ]) {
+      await expect(
+        page.getByRole("heading", { level: 2, name }),
+      ).toBeAttached();
+    }
   });
 
   for (const path of [
     "/",
     "/work",
     "/experience/abc-fitness",
+    "/projects/orbit-explorer",
     "/projects/unlearning-comparator",
     "/projects/pytorch-cka",
     "/playground",

@@ -1,12 +1,11 @@
-import Link from "next/link";
-import { ArrowRight } from "reicon-react";
-
-import { Chapter } from "@/components/chapter";
 import { ChapterNav } from "@/components/chapter-nav";
 import { ContactForm } from "@/components/contact-form";
 import { DotStage } from "@/components/dot-stage";
-import { CkaChapter, UnlearningChapter } from "@/components/featured-chapters";
-import { ProfileSketch } from "@/components/profile-sketch";
+import {
+  CkaChapter,
+  OrbitChapter,
+  UnlearningChapter,
+} from "@/components/featured-chapters";
 import { SiteHeader } from "@/components/site-header";
 import { education, homeChapters, profile, skills } from "@/lib/content";
 
@@ -47,37 +46,9 @@ export default function Home() {
           </div>
         </section>
 
+        <OrbitChapter id="orbit-explorer" />
         <UnlearningChapter id="unlearning-comparator" linkToCaseStudy />
         <CkaChapter id="pytorch-cka" linkToCaseStudy />
-
-        <Chapter
-          id="experience"
-          scene="profile"
-          topic="Experience"
-          source="ABC Fitness"
-          title={["A jQuery profile page,", "rewritten in React."]}
-          body={
-            <>
-              As a Software Engineering Intern at ABC Fitness, rewrote the user
-              profile page from scratch for the ABC Trainerize platform serving
-              1.6M+ clients and 400,000+ fitness professionals — carrying over
-              its business logic with care and covering it with unit tests so it
-              could roll out safely.
-            </>
-          }
-          tools={["React", "TypeScript", "RxJS", "Redux", "Jest"]}
-          tag={
-            <Link
-              className="action"
-              href="/experience/abc-fitness"
-              aria-label="ABC Fitness details"
-            >
-              Details
-              <ArrowRight size={12} aria-hidden />
-            </Link>
-          }
-          visual={<ProfileSketch />}
-        />
 
         <section
           id="contact"

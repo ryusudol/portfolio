@@ -471,14 +471,14 @@ export function PipelineChapter() {
       length={4}
       body={
         <>
-          A frame gets 16.7 ms, and running SGP4 on the whole catalog takes
-          8.6 ms natively, about 6 ms a keyframe even split across four
-          WebAssembly workers. So SGP4 never runs per frame. The workers write
-          keyframes, every object’s position and velocity at one instant, into
-          shared memory, and each frame interpolates between two of them. None
-          of this state lives in React. A plain render-loop class owns the
-          workers and the GPU, and React only reads the summary it publishes
-          five times a second.
+          A frame gets 16.7 ms, and running SGP4 on the whole catalog takes 8.6
+          ms natively, about 6 ms a keyframe even split across four WebAssembly
+          workers. So SGP4 never runs per frame. The workers write keyframes,
+          every object’s position and velocity at one instant, into shared
+          memory, and each frame interpolates between two of them. None of this
+          state lives in React. A plain render-loop class owns the workers and
+          the GPU, and React only reads the summary it publishes five times a
+          second.
         </>
       }
       steps={[
@@ -624,8 +624,8 @@ export function SieveChapter() {
           million pairs of objects are near each other. Checking them all takes
           638 ms a step, and a day of screening at 60 s steps has 1,441 of them.
           A spatial grid sorts objects into cubic cells. A pair closer than one
-          cell must share a cell or sit in neighboring ones, so each object
-          only looks around itself and finds exactly the same pairs.
+          cell must share a cell or sit in neighboring ones, so each object only
+          looks around itself and finds exactly the same pairs.
         </>
       }
       steps={[

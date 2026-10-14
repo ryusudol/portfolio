@@ -10,7 +10,7 @@ import { ChapterNav } from "@/components/chapter-nav";
 import { DotStage } from "@/components/dot-stage";
 import {
   BoundChapter,
-  CatalogueChapter,
+  CatalogChapter,
   ConjunctionsChapter,
   CoverageChapter,
   EarthChapter,
@@ -38,7 +38,7 @@ const barlow = Barlow({
 });
 
 const description =
-  "How I built Orbit Explorer, a digital twin of Earth orbit in the browser that flies out to every planet and the Oort cloud. An SGP4 engine in Rust, checked to 0.1 mm against the published reference, propagates all 32,583 tracked objects through shared-memory workers, routes London to New York over Starlink’s laser mesh in about 21 ms, screens the catalogue for close approaches 423× faster than checking every pair, and places every known moon of the giant planets on JPL’s trajectories.";
+  "How I built Orbit Explorer, a digital twin of Earth orbit in the browser that flies out to every planet and the Oort cloud. An SGP4 engine in Rust, checked to 0.1 mm against the published reference, propagates all 32,583 tracked objects through shared-memory workers, routes London to New York over Starlink’s laser mesh in about 21 ms, screens the catalog for close approaches 423× faster than checking every pair, and places every known moon of the giant planets on JPL’s trajectories.";
 
 export const metadata: Metadata = {
   title: `${orbitExplorer.title} — ${profile.name}`,
@@ -63,7 +63,7 @@ export default function OrbitCaseStudy() {
         <RoutingChapter />
         <ConjunctionsChapter />
         <CoverageChapter />
-        <CatalogueChapter />
+        <CatalogChapter />
         <FlightChapter />
         <RelayChapter />
         <GiantsChapter />

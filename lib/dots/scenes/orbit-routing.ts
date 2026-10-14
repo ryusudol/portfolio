@@ -34,7 +34,7 @@ import {
   buildMesh,
   C_KM_S,
   createMesh,
-  FIBRE_INDEX,
+  FIBER_INDEX,
   greatCircleKm,
   type Mesh,
   type Route,
@@ -57,14 +57,14 @@ const COVER_AT = [0, 0.24, 0.5, 0.75] as const;
 const LONDON: [number, number] = [51.5072, -0.1276];
 const NEW_YORK: [number, number] = [40.7128, -74.006];
 const GREAT_CIRCLE = greatCircleKm(LONDON, NEW_YORK);
-const FIBRE_MS = ((GREAT_CIRCLE * FIBRE_INDEX) / C_KM_S) * 1e3;
+const FIBER_MS = ((GREAT_CIRCLE * FIBER_INDEX) / C_KM_S) * 1e3;
 /** The view looks down on the North Atlantic. */
 const FACE: [number, number] = [45, -40];
 /** Coverage looks from lower down, so both 47° bands show. */
 const COVER_FACE: [number, number] = [12, -30];
 const MIN_ELEV = 25;
 const DEG = Math.PI / 180;
-/** The app's link and route colours. */
+/** The app's link and route colors. */
 const LINK: [number, number, number] = [134, 182, 239];
 const ROUTE: [number, number, number] = [255, 241, 214];
 /** Latency samples kept for the panel's chart, one per rebuild. */
@@ -79,11 +79,11 @@ const MARKERS = [281, 1373, 1672, 1823, 2208];
 
 /**
  * The app's Routing mode, in dots. Starlink's 53° shell, as the engine
- * recovers it from the 9 October catalogue, flies over a dot-matrix Earth
+ * recovers it from the October 9 catalog, flies over a dot-matrix Earth
  * lit by the real Sun. The +Grid links and the Dijkstra route are a port of
  * the engine's Rust (`lib/dots/orbit-mesh.ts`), rebuilt four times a second,
  * and the Laser Routing panel shows what the app's does, live. As
- * `coverage`, the same view is the Coverage mode: the globe coloured from the
+ * `coverage`, the same view is the Coverage mode: the globe colored from the
  * engine's coverage grid, the panel's latitude profile drawn in dots.
  */
 export class RoutingScene implements Scene {
@@ -127,7 +127,7 @@ export class RoutingScene implements Scene {
       if (!earth || this.earth) return;
       this.earth = earth;
       this.globe.build(this.globeN, earth);
-      this.summarise(earth);
+      this.summarize(earth);
     });
     loadShell().then((shell) => {
       if (!shell || this.shell) return;
@@ -145,7 +145,7 @@ export class RoutingScene implements Scene {
   }
 
   /** The coverage panel's numbers, from the engine's grid. */
-  private summarise(earth: Earth) {
+  private summarize(earth: Earth) {
     let fewest = Number.POSITIVE_INFINITY;
     let most = 0;
     let sum = 0;
@@ -584,7 +584,7 @@ export class RoutingScene implements Scene {
     else this.routingPanel(ctx);
   }
 
-  /** Parallels on the globe, labelled with the mean count along them. */
+  /** Parallels on the globe, labeled with the mean count along them. */
   private bands(ctx: CanvasRenderingContext2D, lats: number[]) {
     const v = this.v;
     const u = new Float64Array(3);
@@ -700,7 +700,7 @@ export class RoutingScene implements Scene {
       alpha: 0.7 * a,
     });
     y += 30;
-    const chip = `${(FIBRE_MS - ms).toFixed(1)} MS FASTER THAN FIBRE`;
+    const chip = `${(FIBER_MS - ms).toFixed(1)} MS FASTER THAN FIBER`;
     const cw =
       type.text(ctx, chip, -999, -999, { size: 7.5, spacing: 0.14 }) + 20;
     ctx.strokeStyle = ink(0.35 * a);
@@ -733,7 +733,7 @@ export class RoutingScene implements Scene {
       y += 22;
     };
     bar("Laser mesh", ms, false);
-    bar("Ideal fibre", FIBRE_MS, true);
+    bar("Ideal fiber", FIBER_MS, true);
     y += 6;
     const cols: [string, string, string][] = [
       ["PATH LENGTH", best ? fmt(best.km) : "–", "KM"],
@@ -768,10 +768,10 @@ export class RoutingScene implements Scene {
       alpha: 0.46 * a,
     });
     this.axes(ctx, box, [0, 10, 20, 30], 30, null);
-    const fy = box.y + box.h * (1 - FIBRE_MS / 30);
+    const fy = box.y + box.h * (1 - FIBER_MS / 30);
     ctx.fillStyle = ink(0.6 * a);
     for (let d = 0; d < box.w; d += 4) ctx.fillRect(box.x + d, fy, 2, 1);
-    type.text(ctx, `${FIBRE_MS.toFixed(1)} ms`, box.x + box.w + 4, fy, {
+    type.text(ctx, `${FIBER_MS.toFixed(1)} ms`, box.x + box.w + 4, fy, {
       size: 7.5,
       weight: 400,
       alpha: 0.7 * a,

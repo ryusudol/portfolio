@@ -187,7 +187,7 @@ export class BoundScene implements Scene {
       label(
         ctx,
         palette,
-        "encounters under 5 km, 24 hours, whole catalogue",
+        "encounters under 5 km, 24 hours, whole catalog",
         x0 + b.w / 2,
         y1 + 32,
         {

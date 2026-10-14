@@ -13,13 +13,13 @@ import type { Field, Frame, Palette, Scene } from "../types";
 
 const STEP_AT = [0, 0.24, 0.5, 0.76] as const;
 /**
- * The 53° shell's 464 km, from Earth's centre, and orbital speed there. The
- * app works in kilometres, and float32's step depends on the unit, so the
+ * The 53° shell's 464 km, from Earth's center, and orbital speed there. The
+ * app works in kilometers, and float32's step depends on the unit, so the
  * rounding here happens in km too.
  */
 const RADIUS_KM = 6842;
 const SPEED_KM_S = 7.63;
-/** Float32's spacing at that radius, in metres (0.49 m). */
+/** Float32's spacing at that radius, in meters (0.49 m). */
 const ULP_M = 2 ** (Math.floor(Math.log2(RADIUS_KM)) - 23) * 1000;
 /** Model span drawn on the stage (m), and the camera's distance from it. */
 const SPAN = 34;
@@ -43,16 +43,16 @@ const AREA = PARTS.reduce((s, p) => s + p.w * p.h * p.weight, 0);
 
 /**
  * Float32 rounding, done for real with `Math.fround`. The satellite flies at
- * orbital speed 6,842 km from Earth's centre with the camera riding along.
+ * orbital speed 6,842 km from Earth's center with the camera riding along.
  * Drawn the naive way, each vertex's world position and the camera's are
- * rounded to float32 separately, so every vertex lands up to half a metre off
+ * rounded to float32 separately, so every vertex lands up to half a meter off
  * and the model shakes. Drawn camera-relative, the offset is taken in
  * float64 first and only the small result is rounded.
  */
 export class PrecisionScene implements Scene {
   private n = 0;
   private local = new Float64Array(0);
-  private centre = { x: 0, y: 0 };
+  private center = { x: 0, y: 0 };
   private scale = 10;
   private t = 0;
   private step = 0;
@@ -64,7 +64,7 @@ export class PrecisionScene implements Scene {
   layout(f: Field, fr: Frame) {
     const area = freeArea(fr, 24);
     this.scale = Math.min((area.w * 0.86) / (SPAN - 2), area.h * 0.09);
-    this.centre = {
+    this.center = {
       x: area.x + area.w / 2 - ((PARTS[0].x + 27.2) / 2) * this.scale,
       y: area.y + area.h * 0.5,
     };
@@ -112,8 +112,8 @@ export class PrecisionScene implements Scene {
     const naive = step === 1;
     const camX = Math.fround(cx);
     const camY = Math.fround(cy);
-    const vx = fr.visual.x + this.centre.x;
-    const vy = fr.visual.y + this.centre.y;
+    const vx = fr.visual.x + this.center.x;
+    const vy = fr.visual.y + this.center.y;
     const s = this.scale;
     const boost = this.ink ? 1 : 1.25;
     let worst = 0;
@@ -164,8 +164,8 @@ export class PrecisionScene implements Scene {
 
   draw(ctx: CanvasRenderingContext2D, fr: Frame, palette: Palette) {
     this.ink = palette.ink;
-    const vx = fr.visual.x + this.centre.x;
-    const vy = fr.visual.y + this.centre.y;
+    const vx = fr.visual.x + this.center.x;
+    const vy = fr.visual.y + this.center.y;
     const s = this.scale;
     const size = fr.compact ? 9 : 10;
     // Float32's spacing at this radius, 0.49 m, as a faint grid under the model.

@@ -26,7 +26,7 @@ import { dust } from "../shapes";
 import { label, resetText } from "../story";
 import type { Field, Frame, Palette, Scene } from "../types";
 
-type Kind = "catalogue" | "vallado" | "sieve" | "latency";
+type Kind = "catalog" | "vallado" | "sieve" | "latency";
 
 type Chart = {
   el: HTMLElement;
@@ -37,18 +37,18 @@ type Chart = {
 };
 
 const WARP = 600;
-/** London to New York, one way: laser over the 53° shell, and ideal fibre. */
+/** London to New York, one way: laser over the 53° shell, and ideal fiber. */
 const LASER_MS = 21;
-const FIBRE_MS = 27.3;
+const FIBER_MS = 27.3;
 /** Seconds of animation per millisecond of light travel. */
 const PACE = 0.11;
-const RACE = FIBRE_MS * PACE + 1.6;
+const RACE = FIBER_MS * PACE + 1.6;
 const V_LO = -3.2;
 const V_HI = -0.6;
 const WORST = Math.max(...VALLADO_LOG);
 
 const COUNT: Record<Kind, (n: number) => number> = {
-  catalogue: (n) => Math.round(n * 0.17),
+  catalog: (n) => Math.round(n * 0.17),
   vallado: () => VALLADO_LOG.length,
   sieve: () => 360,
   latency: () => 420,
@@ -56,15 +56,15 @@ const COUNT: Record<Kind, (n: number) => number> = {
 
 /**
  * The four results, each with a particle chart of its own evidence: the
- * sampled catalogue orbiting a small Earth, the 666 reference states on a
+ * sampled catalog orbiting a small Earth, the 666 reference states on a
  * log axis of error, the sieve's scaling against all pairs, and a packet
- * racing London to New York by laser while another goes by fibre.
+ * racing London to New York by laser while another goes by fiber.
  */
 export class OrbitResultsScene implements Scene {
   private charts: Chart[] = [];
   private cat: Catalog | null = null;
   private earth: Earth | null = null;
-  /** A small Explore view: the dot-matrix Earth under the catalogue's halo. */
+  /** A small Explore view: the dot-matrix Earth under the catalog's halo. */
   private globe = new DotGlobe();
   private sun = new Float64Array(3);
   private clock = 0;
@@ -90,7 +90,7 @@ export class OrbitResultsScene implements Scene {
     loadCatalog().then((cat) => {
       this.cat = cat;
     });
-    const tile = this.charts.find((c) => c.kind === "catalogue");
+    const tile = this.charts.find((c) => c.kind === "catalog");
     const globeN = tile ? Math.round(tile.count * 0.42) : 0;
     this.globe.build(globeN, this.earth);
     loadEarth().then((earth) => {
@@ -118,7 +118,7 @@ export class OrbitResultsScene implements Scene {
     const t = smoothstep(0.4, 2.2, this.clock);
     const boost = this.ink ? 1 : 1.3;
     for (const c of this.charts) c.rect = c.el.getBoundingClientRect();
-    // The app's colours, for the catalogue tile; the other charts don't use classes.
+    // The app's colors, for the catalog tile; the other charts don't use classes.
     f.classColors = APP_COLORS;
     const theta = gmst(this.cat?.jd ?? 2461323.39) + OMEGA_EARTH * this.t;
     sunDirection(
@@ -144,8 +144,8 @@ export class OrbitResultsScene implements Scene {
       f.gj[i] = 0.25;
       f.gz[i] = this.ink ? 0 : f.size[i] * 1.3;
       switch (c.kind) {
-        case "catalogue":
-          this.catalogue(f, i, k, c.rect, t);
+        case "catalog":
+          this.catalog(f, i, k, c.rect, t);
           break;
         case "vallado":
           this.histogram(f, i, k, c.rect, t);
@@ -157,9 +157,9 @@ export class OrbitResultsScene implements Scene {
           this.latency(f, i, k, c, fr);
           break;
       }
-      if (c.kind !== "catalogue") f.ga[i] = Math.min(1, f.ga[i] * boost);
+      if (c.kind !== "catalog") f.ga[i] = Math.min(1, f.ga[i] * boost);
     }
-    const tile = this.charts.find((c) => c.kind === "catalogue");
+    const tile = this.charts.find((c) => c.kind === "catalog");
     if (tile?.rect && tile.rect.width > 1 && this.cat) {
       const start = tile.start + tile.count - this.globe.n;
       this.globe.place(f, start, this.orbitView(tile.rect), this.sun, fr, t);
@@ -178,10 +178,10 @@ export class OrbitResultsScene implements Scene {
     );
   }
 
-  /** Objects in the app's colours, Earth-fixed; the last share of the tile's dots is the globe. */
-  private catalogue(f: Field, i: number, k: number, r: DOMRect, t: number) {
+  /** Objects in the app's colors, Earth-fixed; the last share of the tile's dots is the globe. */
+  private catalog(f: Field, i: number, k: number, r: DOMRect, t: number) {
     const cat = this.cat;
-    const tile = this.charts.find((c) => c.kind === "catalogue") as Chart;
+    const tile = this.charts.find((c) => c.kind === "catalog") as Chart;
     if (!cat || k >= tile.count - this.globe.n || k >= cat.n) {
       if (!cat) f.ga[i] = 0;
       return;
@@ -291,7 +291,7 @@ export class OrbitResultsScene implements Scene {
     const ms = Math.max(0, time - 0.4) / PACE;
     const third = Math.floor(c.count / 3);
     if (k < third) {
-      // The ground, and with it the fibre's path.
+      // The ground, and with it the fiber's path.
       const u = (k + f.r0[i]) / third;
       f.gx[i] = g.x0 + (g.x1 - g.x0) * u;
       f.gy[i] = g.arc(u) + (f.r1[i] - 0.5) * 1.5;
@@ -306,9 +306,9 @@ export class OrbitResultsScene implements Scene {
       f.ga[i] = 0.22 + f.r3[i] * 0.15;
       return;
     }
-    // Packets: half ride the laser, half the fibre.
+    // Packets: half ride the laser, half the fiber.
     const laser = k < 2.5 * third;
-    const u = clamp(ms / (laser ? LASER_MS : FIBRE_MS));
+    const u = clamp(ms / (laser ? LASER_MS : FIBER_MS));
     const jitter = (f.r1[i] - 0.5) * 6;
     const trail = f.r2[i] * 0.05;
     const v = clamp(u - trail);
@@ -328,7 +328,7 @@ export class OrbitResultsScene implements Scene {
     for (const c of this.charts) {
       const r = c.rect;
       if (!r || r.width < 1) continue;
-      if (c.kind === "catalogue") {
+      if (c.kind === "catalog") {
         const v = this.orbitView(r);
         const sn = this.sun;
         const x1 = sn[0] * v.cosYaw - sn[1] * v.sinYaw;
@@ -425,10 +425,10 @@ export class OrbitResultsScene implements Scene {
           color: palette.accent,
           alpha: ms >= LASER_MS ? 1 : 0.25,
         });
-        label(ctx, palette, `fibre  ${FIBRE_MS} ms`, end, g.arc(1), {
+        label(ctx, palette, `fiber  ${FIBER_MS} ms`, end, g.arc(1), {
           size,
           color: palette.fg,
-          alpha: ms >= FIBRE_MS ? 0.9 : 0.25,
+          alpha: ms >= FIBER_MS ? 0.9 : 0.25,
         });
       }
     }

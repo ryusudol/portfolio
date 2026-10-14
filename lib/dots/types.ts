@@ -52,9 +52,9 @@ export type Field = {
   sz: Float32Array;
   sj: Float32Array;
   /**
-   * Categorical colour: a scene sets `gc` (1-based index into `classColors`,
+   * Categorical color: a scene sets `gc` (1-based index into `classColors`,
    * 0 = none; reset every frame). `c` is the class being shown and `cw` its
-   * strength, so colours fade out, and cross-fade when a particle changes class.
+   * strength, so colors fade out, and cross-fade when a particle changes class.
    */
   gc: Uint8Array;
   tc: Uint8Array;

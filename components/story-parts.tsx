@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-/** Syntax colours for the short listings the story chapters pin to a stage. */
+/** Syntax colors for the short listings the story chapters pin to a stage. */
 export const tok = {
   c: (s: string) => <span className="tok-comment">{s}</span>,
   k: (s: string) => <span className="tok-key">{s}</span>,

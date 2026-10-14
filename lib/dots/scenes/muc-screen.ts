@@ -23,7 +23,7 @@ const METRIC_PAPER = onPaper(METRIC);
 type Column = {
   /** The column's full name, over two lines. */
   name: [string, string];
-  /** 0 accuracy, 1 efficiency, 2 privacy, as the comparator colours them. */
+  /** 0 accuracy, 1 efficiency, 2 privacy, as the comparator colors them. */
   group: number;
   value: (m: ModelRow) => number | null;
   text: (m: ModelRow) => string;
@@ -199,7 +199,7 @@ export class ScreenScene implements Scene {
     const colors = palette.ink ? METRIC : METRIC_PAPER;
     const size = compact ? 9.5 : 10.5;
 
-    // Column headers, coloured like the comparator's metric groups.
+    // Column headers, colored like the comparator's metric groups.
     COLUMNS.forEach((column, c) => {
       const x = vx + g.colX[c];
       const y = vy + g.top + 12;

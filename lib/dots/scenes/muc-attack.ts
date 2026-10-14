@@ -90,7 +90,7 @@ export class AttackScene implements Scene {
     return this.plot.y + (1 - entropy / TOP) * this.plot.h;
   }
 
-  /** Dot position for a stacked slot; sides grow out from the centre line. */
+  /** Dot position for a stacked slot; sides grow out from the center line. */
   private dot(side: -1 | 1, bin: number, slot: number, out: [number, number]) {
     const half = this.plot.w / 2 - 6;
     const perRow = Math.max(4, Math.floor(half / this.d));

@@ -25,7 +25,7 @@ export const inferno = (t: number): RGB => {
   return mix(INFERNO[k], INFERNO[k + 1], x - k);
 };
 
-/** Colour steps; the engine draws at most ten classes. */
+/** Color steps; the engine draws at most ten classes. */
 export const STEPS = 10;
 const ramp = (from: number, to: number) =>
   Array.from({ length: STEPS }, (_, k) =>

@@ -8,7 +8,7 @@ import {
 } from "../orbit-app";
 import {
   type Catalog,
-  catalogueDots,
+  catalogDots,
   type Earth,
   gmst,
   loadCatalog,
@@ -46,7 +46,7 @@ const rotZ = (a: number): Mat3 => [
 
 /**
  * Orbit Explorer on the home page, without the app around it: the sampled
- * catalogue on its orbits at ten minutes a second, round a dot-matrix Earth
+ * catalog on its orbits at ten minutes a second, around a dot-matrix Earth
  * lit by the real Sun. Scrolling pulls the camera back in log-distance, out
  * past the navigation satellites to the geostationary ring.
  */
@@ -69,7 +69,7 @@ export class OrbitHomeScene implements Scene {
     loadCatalog().then((cat) => {
       this.cat = cat;
       if (cat) {
-        this.dots = catalogueDots(cat, f.n * 0.66);
+        this.dots = catalogDots(cat, f.n * 0.66);
         this.jd = cat.jd;
       }
     });

@@ -20,7 +20,7 @@ import {
 } from "../orbit-app";
 import {
   type Catalog,
-  catalogueDots,
+  catalogDots,
   type Earth,
   gmst,
   loadCatalog,
@@ -47,7 +47,7 @@ const DEG = Math.PI / 180;
 const MARKERS = [281, 1373, 1672, 1823, 2208];
 
 /**
- * The app's opening view, in dots: the catalogue sample on two-body orbits
+ * The app's opening view, in dots: the catalog sample on two-body orbits
  * from the snapshot, around an Earth lit by the real Sun with its night side
  * in city lights, the Fly to list on the right. The camera pulls back until
  * the geostationary ring is in frame and comes in again for the groups. The
@@ -92,7 +92,7 @@ export class EarthScene implements Scene {
     loadCatalog().then((cat) => {
       this.cat = cat;
       if (cat) {
-        this.dots = catalogueDots(cat, f.n * 0.6);
+        this.dots = catalogDots(cat, f.n * 0.6);
         this.theta0 = gmst(cat.jd);
       }
     });

@@ -38,7 +38,7 @@ import type { Field, Frame, RGB, Scene } from "../types";
 const STEP_AT = [0, 0.2, 0.4, 0.6, 0.8] as const;
 const MODES = ["Explore", "Moons & craft"] as const;
 const CRAFT: RGB = [226, 182, 74];
-/** sRGB of a linear albedo, for the rings' colours. */
+/** sRGB of a linear albedo, for the rings' colors. */
 const srgb = (c: number[]): RGB =>
   c.map((v) =>
     Math.round(
@@ -59,7 +59,7 @@ const RING_COLORS: RGB[] = [
   srgb([0.42, 0.42, 0.42]),
 ];
 
-/** Saturn's rings, from the app (`scene/giants.ts`): edges in km, optical depth, colour. */
+/** Saturn's rings, from the app (`scene/giants.ts`): edges in km, optical depth, color. */
 const BANDS: { r0: number; r1: number; tau: number; c: number }[] = [
   { r0: 66_900, r1: 74_510, tau: 0.002, c: 2 },
   { r0: 74_658, r1: 92_000, tau: 0.09, c: 1 },
@@ -169,7 +169,7 @@ export class GiantsScene implements Scene {
       while (k < N - 1 && cdf[k + 1] < u) k++;
       const frac = (u - cdf[k]) / Math.max(1e-9, cdf[k + 1] - cdf[k]);
       this.ring[2 * i] = R0 + ((k + frac) / N) * (R1 - R0);
-      // Golden-angle spacing round the ring.
+      // Golden-angle spacing around the ring.
       this.ring[2 * i + 1] = (i * 2.399963) % TAU;
     }
   }
@@ -246,7 +246,7 @@ export class GiantsScene implements Scene {
         flat[1] * Math.cos(tilt) + pole[1] * Math.sin(tilt),
         flat[2] * Math.cos(tilt) + pole[2] * Math.sin(tilt),
       ]);
-      // Swing round toward the Earth's view for the tilt step, and back out after.
+      // Swing around toward the Earth's view for the tilt step, and back out after.
       const toEarth = saturn
         ? smoothstep(STEP_AT[3], STEP_AT[3] + 0.08, p) *
           (1 - smoothstep(STEP_AT[4], STEP_AT[4] + 0.1, p))
@@ -430,7 +430,7 @@ export class GiantsScene implements Scene {
     }
   }
 
-  /** Far out, every orbit as a faint line, coloured by its direction. */
+  /** Far out, every orbit as a faint line, colored by its direction. */
   private orbitLines(ctx: CanvasRenderingContext2D, W: World) {
     const cam = this.cam;
     const q = this.q;

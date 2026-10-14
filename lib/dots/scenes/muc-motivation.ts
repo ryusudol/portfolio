@@ -256,7 +256,7 @@ export class MotivationScene implements Scene {
       const name = compact && m > RETRAINED ? model.short : model.name;
       const method = m > RETRAINED;
       // Names, then run time, then (for methods, off phones) how each
-      // forgets, a line apiece so neighbours never run together.
+      // forgets, a line apiece so neighbors never run together.
       const lines = !compact && method ? 3 : 2;
       const top = y - (compact ? 17 : lines === 3 ? 35 : 22);
       label(ctx, palette, name, x, top, {

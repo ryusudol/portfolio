@@ -33,7 +33,7 @@ type Box = { x: number; y: number; w: number; h: number };
  * (18, B²) and (B², 18) — the shapes `einsum('aij,bij->ab')` contracts — and
  * every one of the 324 cells fills at once, fed by its row and its column. The
  * off-diagonal and column sums shrink each strip to a short vector and sweep
- * the correction terms across; normalising turns the grid into the CKA map.
+ * the correction terms across; normalizing turns the grid into the CKA map.
  * Model A's layers run bottom to top and model B's left to right, so layer 1
  * of both sits at the bottom-left, as in every heatmap on the site.
  */
@@ -49,7 +49,7 @@ export class BatchScene implements Scene {
   private out: Box = { x: 0, y: 0, w: 0, h: 0 };
   private rowsBox: Box = { x: 0, y: 0, w: 0, h: 0 };
   private colsBox: Box = { x: 0, y: 0, w: 0, h: 0 };
-  /** Where the finished map settles: centred, and larger. */
+  /** Where the finished map settles: centered, and larger. */
   private final: Box = { x: 0, y: 0, w: 0, h: 0 };
   /** The output grid's box this frame. */
   private box: Box = { x: 0, y: 0, w: 0, h: 0 };
@@ -242,7 +242,7 @@ export class BatchScene implements Scene {
           (alpha + sweeping * 0.4) * boost * (this.hover === c ? 1.3 : 1),
         );
         f.gh[i] = Math.min(1, sweeping) * (1 - normalize);
-        // Colour arrives dot by dot as the values are normalised.
+        // Color arrives dot by dot as the values are normalized.
         if (f.r3[i] < normalize) f.gc[i] = rampClass(value, f.r0[i]);
         continue;
       }

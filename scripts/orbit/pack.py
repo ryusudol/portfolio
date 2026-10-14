@@ -68,7 +68,7 @@ def group(cat):
     return 0 if cat == 1 else (1 if cat in (3, 4) else 2)
 
 
-# ---------------------------------------------------------------- catalogue
+# ---------------------------------------------------------------- catalog
 rows = [r for r in csv.DictReader(open(f"{src}/catalog-states.csv")) if r["ok"] == "1"]
 jd = None
 for line in open(f"{src}/../jd.txt"):

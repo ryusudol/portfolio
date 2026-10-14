@@ -22,14 +22,14 @@ export function EarthChapter() {
           globe and stop there. I wanted a twin that answers the questions an
           engineer would ask, worked out from the orbit model up and checked
           against a published reference. Here is the app redrawn in dots, its
-          catalogue sampled to fit your screen, at ten minutes a second.
+          catalog sampled to fit your screen, at ten minutes a second.
         </>
       }
       steps={[
-        "It opens over North America with all 32,583 objects of the 9 October catalogue live, around an Earth lit by the real Sun.",
+        "It opens over North America with all 32,583 objects of the October 9 catalog live, around an Earth lit by the real Sun.",
         "Nearly nine in ten circle within 2,000 km of the surface, the bright halo hugging the globe.",
         "Pull back, and the navigation satellites near 20,000 km and the geostationary ring at 35,786 km come into view.",
-        "Colour is kept for data. A third of the catalogue is Starlink, in blue, and two in five objects are debris or spent rocket bodies, in red.",
+        "Color is kept for data. A third of the catalog is Starlink, in blue, and two in five objects are debris or spent rocket bodies, in red.",
         "Layers switches the reference frame. Fixed to the stars, the orbital planes hold still and the Earth turns beneath them.",
       ]}
       visual={
@@ -91,32 +91,32 @@ export function RoutingChapter() {
       scene="orbit-routing"
       topic="Laser routing"
       source="+Grid · Dijkstra"
-      title={["London to New York,", "faster than fibre."]}
+      title={["London to New York,", "faster than fiber."]}
       length={4.5}
       body={
         <>
           SpaceX doesn’t publish how its satellites link to one another, so the
           twin models the +Grid from the research literature. Four times a
           second it recovers shells and orbital planes from the elements alone,
-          links each satellite to its neighbours, and runs Dijkstra between two
+          links each satellite to its neighbors, and runs Dijkstra between two
           ground terminals. The 53° shell here runs live in this page on a port
           of the engine’s code, and at the snapshot it finds the engine’s own
           route, to the microsecond.
         </>
       }
       steps={[
-        "Starlink’s 53° shell, 4,640 satellites at 464 km, flying from their 9 October positions at a minute a second.",
-        "Nothing is labelled. Gaps in inclination, altitude, and node split the catalogue into seven shells, and this shell into 100 planes.",
+        "Starlink’s 53° shell, 4,640 satellites at 464 km, flying from their October 9 positions at a minute a second.",
+        "Nothing is labeled. Gaps in inclination, altitude, and node split the catalog into seven shells, and this shell into 100 planes.",
         "+Grid links each satellite to the ones ahead and behind in its plane, and to the nearest one in the next plane east.",
-        "Dijkstra finds the shortest path between London and New York through satellites at least 25° above each city.",
-        "Light in vacuum beats light in glass. About 21 ms one way, against 27.3 ms through an ideal cable on the great circle.",
+        "Dijkstra finds the shortest chain of laser hops from London to New York, entering and leaving through satellites at least 25° above each city.",
+        "Light in vacuum beats light in fiber. About 21 ms one way, against 27.3 ms through an ideal cable on the great circle.",
       ]}
       visual={
         <Readout
           items={[
             ["laser links", <Counter key="l" name="links" initial="–" />],
             ["one-way latency", <Counter key="m" name="latency" initial="–" />],
-            ["ideal fibre", "27.3 ms"],
+            ["ideal fiber", "27.3 ms"],
           ]}
         />
       }
@@ -139,15 +139,15 @@ export function ConjunctionsChapter() {
           for close approaches, up to a day ahead, and marks each on the
           timeline. The hour after the snapshot holds 2,981 pairs passing within
           5 km. Most meet where the planes of Starlink’s dense shells cross,
-          nearly head-on. TLEs are only good to about a kilometre, so these are
+          nearly head-on. TLEs are only good to about a kilometer, so these are
           screening hits to look at more closely, not collision probabilities.
         </>
       }
       steps={[
-        "Each dot is one encounter under 5 km in the hour after the snapshot, placed where it happens and coloured by miss distance.",
+        "Each dot is one encounter under 5 km in the hour after the snapshot, placed where it happens and colored by miss distance.",
         "Sorted by how fast each pair closes, 68% meet faster than 10 km/s, crossing almost head-on.",
         "55% are Starlink meeting Starlink.",
-        "30% involve debris or a spent rocket body, which only the full catalogue shows.",
+        "30% involve debris or a spent rocket body, which only the full catalog shows.",
         "The closest, STARLINK-2063 and FLOCK 4G 24, pass 43 m apart at 14.5 km/s. Watch it happen jumps the clock to 90 s before, with both orbits drawn.",
       ]}
       visual={
@@ -182,9 +182,9 @@ export function CoverageChapter() {
         </>
       }
       steps={[
-        "Each dot of the globe is coloured by how many Starlinks its 2° cell sees above 25°, from the engine’s grid at the snapshot.",
+        "Each dot of the globe is colored by how many Starlinks its 2° cell sees above 25°, from the engine’s grid at the snapshot.",
         "Every cell sees at least four, and 46 on average, weighted by area.",
-        "Averaged round each latitude, the count peaks near 47° north and south, where the 53° shells turn round and bunch up.",
+        "Averaged around each latitude, the count peaks near 47° north and south, where the 53° shells turn around and bunch up.",
         "The equator sees about 38, and near the poles only the 70° and 97° shells pass, a dozen at a time.",
       ]}
       visual={
@@ -200,13 +200,13 @@ export function CoverageChapter() {
   );
 }
 
-export function CatalogueChapter() {
+export function CatalogChapter() {
   return (
     <Chapter
-      id="catalogue"
-      scene="orbit-catalogue"
-      topic="Catalogue"
-      source="Space-Track · 9 October 2026"
+      id="catalog"
+      scene="orbit-catalog"
+      topic="Catalog"
+      source="Space-Track · October 9, 2026"
       title={["Unfold the sky,", "and the structure shows."]}
       length={5}
       body={
@@ -221,7 +221,7 @@ export function CatalogueChapter() {
         </>
       }
       steps={[
-        "The app’s Catalogue mode counts what is up there, and at which altitude, one row of histograms per group, each on its own scale.",
+        "The app’s Catalog mode counts what is up there, and at which altitude, one row of histograms per group, each on its own scale.",
         "Unfold the sky. Each object moves to its mean altitude, on a log scale, and its inclination.",
         "Starlink flies in shells, thousands of satellites at one height and one tilt, at 43°, 53°, 70°, and 97°.",
         "Fengyun-1C, destroyed in a 2007 anti-satellite test, still fills 98.8° at 824 km with 1,979 pieces.",
@@ -264,9 +264,9 @@ export function FlightChapter() {
       }
       steps={[
         "Click the Moon in the Fly to list, 384,796 km away at the snapshot.",
-        "The camera rises off the Earth, its distance growing geometrically while it swings round to the side facing the Moon.",
+        "The camera rises off the Earth, its distance growing geometrically while it swings around to the side facing the Moon.",
         "Halfway, 192,000 km from each, it has already turned to look at where it is going.",
-        "It falls toward the Moon and swings round to arrive 50° off the Sun, so the terminator shows the relief of LRO’s map.",
+        "It falls toward the Moon and swings around to arrive 50° off the Sun, so the terminator shows the relief of LRO’s map.",
         "Five spacecraft orbit the Moon on their missions’ own trajectories, from JPL Horizons. LRO, Chandrayaan-2, and Danuri circle the poles every two hours, and the two ARTEMIS probes loop out to 16,000 km.",
       ]}
       visual={
@@ -336,7 +336,7 @@ export function GiantsChapter() {
       scene="orbit-giants"
       topic="The giant planets"
       source="every known moon, on JPL’s trajectories"
-      title={["115 moons round Jupiter,", "290 round Saturn."]}
+      title={["115 moons around Jupiter,", "290 around Saturn."]}
       length={5}
       body={
         <>
@@ -433,14 +433,14 @@ export function ValidationChapter() {
           deep-space resonance and every <code>sgp4fix</code> included, then
           held it to the paper’s published verification output. To check it on
           real orbits too, I compared it with satellite.js across the live
-          catalogue.
+          catalog.
         </>
       }
       steps={[
         "Each dot is one of the 666 reference states, placed by how far my position lands from the published one.",
         "92% are closer than the reference file’s own print rounding, 0.01 mm. The worst, 0.10 mm, is a deep-space orbit 1,280 days past its epoch.",
         "Seven objects are built to fail by decaying or escaping. Mine fail at the same step with the same error codes.",
-        "Against satellite.js on 2,507 catalogue objects, 89.7% of 17,549 states agree within a micrometre. Each dot here is five states.",
+        "Against satellite.js on 2,507 catalog objects, 89.7% of 17,549 states agree within a micrometer. Each dot here is five states.",
         "The reference computes angles it only needs the sine and cosine of. Exact identities instead made propagation 25% faster, for a median difference of 2 nm, a billionth of a TLE’s own error.",
       ]}
       visual={
@@ -471,7 +471,7 @@ export function PipelineChapter() {
       length={4}
       body={
         <>
-          A frame gets 16.7 ms, and running SGP4 on the whole catalogue takes
+          A frame gets 16.7 ms, and running SGP4 on the whole catalog takes
           8.6 ms natively, about 6 ms a keyframe even split across four
           WebAssembly workers. So SGP4 never runs per frame. The workers write
           keyframes, every object’s position and velocity at one instant, into
@@ -483,7 +483,7 @@ export function PipelineChapter() {
       }
       steps={[
         "The render loop asks for a keyframe by writing a Julian date into shared memory and calling Atomics.notify.",
-        "Four workers wake from Atomics.wait, run SGP4 on their quarter of the catalogue, and write into one of four keyframe slots. Nothing is posted or copied.",
+        "Four workers wake from Atomics.wait, run SGP4 on their quarter of the catalog, and write into one of four keyframe slots. Nothing is posted or copied.",
         "Each frame, a cubic Hermite spline on position and velocity carries all 32,583 objects between two keyframes in 0.22 ms.",
         "Keyframes 60 s apart are off by 2.5 m at worst. When time runs an hour a second they are 300 s apart, off by 0.28 km, and SGP4 runs 12 times a second.",
         "Five times a second the loop publishes a summary to a Zustand store, and only the panels that read it re-render.",
@@ -547,20 +547,20 @@ export function PrecisionChapter() {
       length={3.5}
       body={
         <>
-          Following a satellite from a few dozen metres, its model shook. The
+          Following a satellite from a few dozen meters, its model shook. The
           positions were fine, because JavaScript numbers are already 64-bit.
-          The GPU’s are 32-bit, and 7,000 km from Earth’s centre a float32 can
-          only step in half metres. So every layer is placed at the camera, and
+          The GPU’s are 32-bit, and 7,000 km from Earth’s center a float32 can
+          only step in half meters. So every layer is placed at the camera, and
           each object stores its position minus the camera’s, subtracted on the
           CPU in float64. Near the camera those offsets are small, and float32
-          holds them to a few micrometres.
+          holds them to a few micrometers.
         </>
       }
       steps={[
-        "The camera rides 40 m from a Starlink V2 Mini. Both are 6,842 km from Earth’s centre.",
+        "The camera rides 40 m from a Starlink V2 Mini. Both are 6,842 km from Earth’s center.",
         "In float32, coordinates that large come in steps of 0.49 m. Every vertex snaps to its own step each frame, and the model shakes.",
-        "Subtracting the camera on the CPU, in float64, leaves offsets of tens of metres, which float32 holds to a few micrometres.",
-        "The cost is re-uploading the satellites’ offsets every frame, 0.38 MB for the whole catalogue, measured.",
+        "Subtracting the camera on the CPU, in float64, leaves offsets of tens of meters, which float32 holds to a few micrometers.",
+        "The cost is re-uploading the satellites’ offsets every frame, 0.38 MB for the whole catalog, measured.",
       ]}
       visual={
         <>
@@ -624,7 +624,7 @@ export function SieveChapter() {
           million pairs of objects are near each other. Checking them all takes
           638 ms a step, and a day of screening at 60 s steps has 1,441 of them.
           A spatial grid sorts objects into cubic cells. A pair closer than one
-          cell must share a cell or sit in neighbouring ones, so each object
+          cell must share a cell or sit in neighboring ones, so each object
           only looks around itself and finds exactly the same pairs.
         </>
       }
@@ -632,7 +632,7 @@ export function SieveChapter() {
         "Low Earth orbit from the sample, seen from above the North Pole, at two minutes a second.",
         "Checking all pairs tests every object against every other, like this one against all the rest.",
         "A spatial grid buckets every object by its cell, drawn here 485 km across, the size a 60 s screening step uses.",
-        "Only the 26 cells around an object can hold a partner. Radix-sorted by cell, each column is one run of memory, and a cell need only check itself and the 13 neighbours ahead of it, so every pair is met exactly once.",
+        "Only the 26 cells around an object can hold a partner. Radix-sorted by cell, each column is one run of memory, and a cell need only check itself and the 13 neighbors ahead of it, so every pair is met exactly once.",
         "It finds the same pairs, pair for pair. Finding every pair within 10 km at one instant takes 1.5 ms instead of 638 ms, and at 100,000 objects the gap is 1,522×.",
       ]}
       visual={
@@ -664,7 +664,7 @@ export function BoundChapter() {
       length={4}
       body={
         <>
-          Screening samples the catalogue once a step, so two objects can pass
+          Screening samples the catalog once a step, so two objects can pass
           close between samples and look far apart at both. A bound closes the
           gap. If a pair passes within d at closest approach, then at the
           nearest sample it is at most d + v·Δt/2 apart, where v is the speed at
@@ -676,7 +676,7 @@ export function BoundChapter() {
       steps={[
         "A satellite in low orbit and a rocket body on a transfer orbit meet head-on at 18 km/s, closest midway between two samples 120 s apart.",
         "At the nearest sample a pair is at most d + v·Δt/2 apart, so a search radius that size can’t miss it.",
-        "One radius once served every pair, sized for 16 km/s, twice the top speed of 95% of the catalogue. At 18 km/s both samples sit outside it.",
+        "One radius once served every pair, sized for 16 km/s, twice the top speed of 95% of the catalog. At 18 km/s both samples sit outside it.",
         "Now the 1,741 objects that can pass 8 km/s each search farther, by their own top speed plus the fastest object’s, and the pass is caught.",
         "Newton’s method on full SGP4 states then finds the closest approach. Over 24 hours, 10, 20, 60, and 120 s steps find the same 60,756 encounters.",
       ]}

@@ -44,7 +44,7 @@ const FAST = 10;
 const JD = 2461323.3930127779;
 /** The screened hour, replayed in this many seconds. */
 const REPLAY = 9;
-/** The app's severity colours for miss distance: under 1 km, 1–2 km, 2–5 km. */
+/** The app's severity colors for miss distance: under 1 km, 1–2 km, 2–5 km. */
 const SEVERITY: RGB[] = [
   [255, 90, 90],
   [255, 154, 82],
@@ -88,9 +88,9 @@ type Spot = { x: number; y: number };
 /**
  * The app's Conjunctions mode, then what its numbers say. All 2,981
  * encounters under 5 km that the engine finds in the hour after the
- * snapshot, first as markers where each happens, coloured by miss distance
- * the way the app colours them, appearing as the hour replays. Then the same
- * dots leave the globe and swarm by closing speed, coloured by who meets whom.
+ * snapshot, first as markers where each happens, colored by miss distance
+ * the way the app colors them, appearing as the hour replays. Then the same
+ * dots leave the globe and swarm by closing speed, colored by who meets whom.
  */
 export class ConjunctionsScene implements Scene {
   private ev: Encounters | null = null;

@@ -212,7 +212,7 @@ export class HeliosphereScene implements Scene {
     this.E = E;
     const dist = (E * cam.focal) / (0.46 * Math.min(vw.w, vw.h));
     this.dist = dist;
-    // From above the ecliptic, slowly round toward the heliosphere's nose.
+    // From above the ecliptic, slowly around toward the heliosphere's nose.
     const az = (200 + 70 * p) * DEG;
     const el = lerp(32, 22, p) * DEG;
     cam.lookAt(
@@ -468,7 +468,7 @@ export class HeliosphereScene implements Scene {
         alpha: 0.9 * a,
       });
     };
-    // The two boundaries are labelled on opposite flanks, where they are widest.
+    // The two boundaries are labeled on opposite flanks, where they are widest.
     const side = unitOf([-NOSE[1], NOSE[0], 0]);
     const kuiper = fade.belt * (1 - smoothstep(110, 200, this.E));
     region("KUIPER BELT", 0, 47, 5, kuiper);
@@ -497,7 +497,7 @@ export class HeliosphereScene implements Scene {
         (1 - smoothstep(60_000, 120_000, this.E)),
     );
     region(
-      "OUTER OORT CLOUD (MODELLED)",
+      "OUTER OORT CLOUD (MODELED)",
       0,
       0,
       62_000,

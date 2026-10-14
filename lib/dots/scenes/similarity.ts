@@ -22,7 +22,7 @@ const PAPER_ALPHA = 1.25;
  * (bottom for seed B, left for seed A); scrolling
  * compares them pair by pair, and each pair settles into its cell — denser and
  * further along inferno where the two networks see the input the same way.
- * Per-dot jitter dithers neighbouring colour steps, so the scale reads as
+ * Per-dot jitter dithers neighboring color steps, so the scale reads as
  * continuous.
  */
 export class SimilarityScene implements Scene {

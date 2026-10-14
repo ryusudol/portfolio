@@ -186,7 +186,7 @@ export class WorkflowScene implements Scene {
         continue;
       }
       if (i < barsEnd) {
-        // Three short bars per screened model, in the metric colours.
+        // Three short bars per screened model, in the metric colors.
         const k = i - chipsEnd;
         const m = Math.floor(k / (3 * BAR));
         const metric = Math.floor((k % (3 * BAR)) / BAR);

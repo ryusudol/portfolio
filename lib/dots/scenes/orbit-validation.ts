@@ -21,7 +21,7 @@ const S_LO = -16;
 const S_HI = 1.5;
 /** One dot per this many satellite.js states. */
 const PER_DOT = 5;
-/** log10 of satellite.js' differences, mm: a micrometre, and the median of 2.3 nm. */
+/** log10 of satellite.js' differences, mm: a micrometer, and the median of 2.3 nm. */
 const MICRON = -3;
 const MEDIAN = Math.log10(2.3188e-6);
 /** Error codes of the seven verification objects built to fail. */
@@ -36,7 +36,7 @@ type Spot = { x: number; y: number };
  * reference file's print rounding marked and the seven failure cases as
  * crosses. Then the same dots grow into a unit chart of the satellite.js
  * cross-check, five states a dot: a small block of bit-identical states and
- * a histogram of the rest across seventeen decades, with a micrometre and
+ * a histogram of the rest across seventeen decades, with a micrometer and
  * the median marked.
  */
 export class ValidationScene implements Scene {
@@ -387,7 +387,7 @@ export class ValidationScene implements Scene {
         size,
         alpha: 0.7,
       });
-      // A micrometre: 89.7% of states agree at least that closely.
+      // A micrometer: 89.7% of states agree at least that closely.
       const at = (lg: number) => vx + h.x + ((lg - S_LO) / (S_HI - S_LO)) * h.w;
       const line = (
         lg: number,

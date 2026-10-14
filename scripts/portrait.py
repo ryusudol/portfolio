@@ -11,7 +11,7 @@ shoulders) is removed so only the head remains.
 
 Output: public/portrait/dots.bin — little-endian uint16:
     [version, aspect * 10000, n, (x, y) * n]
-Coordinates are normalised to the head's bounding box (0..65535). Dots follow
+Coordinates are normalized to the head's bounding box (0..65535). Dots follow
 the *dark* parts of the photo (hair, brows, shadows) — like ink — which reads
 as a face in both the dark and light themes, and matches the dotted name.
 """

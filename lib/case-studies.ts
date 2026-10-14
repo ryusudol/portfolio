@@ -14,7 +14,7 @@ export type Result = {
     | "linked"
     | "stars"
     | "redraw"
-    | "catalogue"
+    | "catalog"
     | "vallado"
     | "sieve"
     | "latency";
@@ -264,10 +264,10 @@ export const orbitExplorer: CaseStudy = {
   role: "Solo project, from the Rust engine to the interface",
   when: "Live in the browser",
   summary:
-    "A digital twin of Earth orbit that runs in the browser, and flies out to every planet, the Moon, and the Oort cloud. It propagates all 32,583 objects in the public catalogue live, routes packets across Starlink’s laser mesh, screens the whole catalogue for close approaches, and maps coverage. Beyond Earth, every known moon of Mars and the giant planets and every spacecraft orbiting another world fly on JPL’s trajectories. I wrote the orbital mechanics in Rust from the published model definitions, compiled them to WebAssembly, and checked each result against a published reference.",
+    "A digital twin of Earth orbit that runs in the browser, and flies out to every planet, the Moon, and the Oort cloud. It propagates all 32,583 objects in the public catalog live, routes packets across Starlink’s laser mesh, screens the whole catalog for close approaches, and maps coverage. Beyond Earth, every known moon of Mars and the giant planets and every spacecraft orbiting another world fly on JPL’s trajectories. I wrote the orbital mechanics in Rust from the published model definitions, compiled them to WebAssembly, and checked each result against a published reference.",
   definition: {
     term: "What is SGP4?",
-    body: "SGP4 is the standard model for predicting where a tracked object will be. The US Space Force publishes every object’s orbit as a few mean elements, and SGP4 turns them back into a position and velocity at any time, accounting for Earth’s flattening, atmospheric drag, and, on high orbits, the pull of the Sun and Moon. The elements are only good to about a kilometre, so an implementation is judged by how exactly it reproduces the reference code.",
+    body: "SGP4 is the standard model for predicting where a tracked object will be. The US Space Force publishes every object’s orbit as a few mean elements, and SGP4 turns them back into a position and velocity at any time, accounting for Earth’s flattening, atmospheric drag, and, on high orbits, the pull of the Sun and Moon. The elements are only good to about a kilometer, so an implementation is judged by how exactly it reproduces the reference code.",
   },
   blurb:
     "A browser digital twin of Earth orbit, with all 32,583 tracked objects at 60 fps, Starlink laser routing, conjunction screening, and flights out to every planet’s moons, on a Rust engine checked against published references.",
@@ -289,8 +289,8 @@ export const orbitExplorer: CaseStudy = {
     {
       value: "32,583",
       label: "objects propagated live",
-      note: "The full public catalogue from Space-Track, at 60 fps on an M1 MacBook Air. Each frame’s JavaScript takes about 2.6 ms, and moving every object takes 0.22 ms of it.",
-      chart: "catalogue",
+      note: "The full public catalog from Space-Track, at 60 fps on an M1 MacBook Air. Each frame’s JavaScript takes about 2.6 ms, and moving every object takes 0.22 ms of it.",
+      chart: "catalog",
     },
     {
       value: "0.10 mm",
@@ -307,14 +307,14 @@ export const orbitExplorer: CaseStudy = {
     {
       value: "21 ms",
       label: "London to New York by laser",
-      note: "About 6 ms faster than the best fibre possible, a straight cable along the 5,570 km great circle, routed over the satellites’ real positions.",
+      note: "About 6 ms faster than the best fiber possible, a straight cable along the 5,570 km great circle, routed over the satellites’ real positions.",
       chart: "latency",
     },
   ],
   highlights: [
     {
       title: "Check against the reference, not yourself",
-      body: "SGP4 has a published verification set. Matching it to a tenth of a millimetre, error codes included, is what made every later number worth trusting. An independent Rust implementation then agreed to 0.7 µm.",
+      body: "SGP4 has a published verification set. Matching it to a tenth of a millimeter, error codes included, is what made every later number worth trusting. An independent Rust implementation then agreed to 0.7 µm.",
       proof: {
         value: "666 / 666",
         label: "reference states matched",

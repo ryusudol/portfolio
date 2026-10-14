@@ -15,7 +15,7 @@ import {
 } from "../orbit-app";
 import {
   type Catalog,
-  catalogueDots,
+  catalogDots,
   type Earth,
   gmst,
   loadCatalog,
@@ -91,11 +91,11 @@ const rotZ = (a: number): Mat3 => [
 
 /**
  * Fly to the Moon, in dots, on the app's own flight plan (`travel.ts`). The
- * camera leaves the opening view over North America with the catalogue round
- * the Earth, rises in log-distance while swinging round to face the Moon,
+ * camera leaves the opening view over North America with the catalog around
+ * the Earth, rises in log-distance while swinging around to face the Moon,
  * passes halfway at 192,000 km, and falls to the Moon's lit side, 50° off
  * the Sun. The stars are fixed on the sky, so they wheel as the camera turns.
- * On arrival the catalogue's dots become the five lunar orbiters' tracks,
+ * On arrival the catalog's dots become the five lunar orbiters' tracks,
  * from the JPL Horizons snapshot, at ten minutes a second.
  */
 export class FlightScene implements Scene {
@@ -127,7 +127,7 @@ export class FlightScene implements Scene {
     this.frame = freeArea(fr, 14);
     loadCatalog().then((cat) => {
       this.cat = cat;
-      if (cat) this.dots = catalogueDots(cat, f.n * 0.4);
+      if (cat) this.dots = catalogDots(cat, f.n * 0.4);
     });
     loadEarth().then((e) => {
       this.earth = e;
@@ -235,7 +235,7 @@ export class FlightScene implements Scene {
       f.gh[i] = 0;
       f.gj[i] = 0.03;
       if (this.orbitsIn > 0 && moons.length) {
-        // The catalogue's dots become the lunar orbiters' tracks.
+        // The catalog's dots become the lunar orbiters' tracks.
         const m = moons[i % moons.length];
         const j = Math.floor(i / moons.length);
         const per = Math.ceil(C / moons.length);
@@ -389,7 +389,7 @@ export class FlightScene implements Scene {
       if (w.ahead && Number.isFinite(w.r) && inBox(l.view, w.cx, w.cy))
         skyTag(ctx, type, name, w.cx + w.r, w.cy, a);
     }
-    // The orbiters themselves, labelled as the app labels them.
+    // The orbiters themselves, labeled as the app labels them.
     const moons = this.worlds?.worlds.moon.moons ?? [];
     if (this.orbitsIn > 0.05) {
       const B = this.moonPos;

@@ -441,7 +441,7 @@ export class DotEngine {
       f.y[i] = y + vy * scale;
       f.a[i] += (f.ta[i] - f.a[i]) * ease;
       f.h[i] += (f.th[i] - f.h[i]) * ease;
-      // Changing class fades the old colour out before the new one fades in.
+      // Changing class fades the old color out before the new one fades in.
       const tc = f.tc[i];
       if (tc > 0 && (f.c[i] === 0 || f.cw[i] < 0.2)) f.c[i] = tc;
       f.cw[i] += ((tc > 0 && tc === f.c[i] ? 1 : 0) - f.cw[i]) * ease;
@@ -458,7 +458,7 @@ export class DotEngine {
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Counting sort particles into colour/alpha buckets so each bucket is one fill.
+    // Counting sort particles into color/alpha buckets so each bucket is one fill.
     const counts = this.bucketFill;
     counts.fill(0);
     const heat = T * T * 1.1;

@@ -189,7 +189,7 @@ export class TraceScene implements Scene {
     const kEnd = this.kN;
     const lEnd = kEnd + this.lN;
     const vEnd = lEnd + this.vN;
-    // Step one: K left of centre, L right of it.
+    // Step one: K left of center, L right of it.
     const kA = {
       x: vx + this.center.x - this.gap / 2 - this.S,
       y: vy + this.center.y - this.S / 2,

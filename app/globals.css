@@ -32,7 +32,7 @@
   --mono: var(--font-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --gutter: clamp(18px, 3.4vw, 48px);
   --nav-space: clamp(76px, 7vw, 124px);
-  /* Page content stays within this width, centred; wider screens get margin.
+  /* Page content stays within this width, centered; wider screens get margin.
      The fixed chrome (header, chapter nav, dock) still hugs the edges. */
   --content: 1440px;
   --inset-left: max(var(--gutter), (100% - var(--content)) / 2);
@@ -1108,7 +1108,7 @@ code {
 }
 
 /* A short listing pinned to the top of a stage; particles work below it.
-   Centred like the scene's figure and readout, so all three share one axis. */
+   Centered like the scene's figure and readout, so all three share one axis. */
 .snippet {
   position: absolute;
   top: 0;
@@ -1135,7 +1135,7 @@ code {
   white-space: nowrap;
 }
 
-/* A labelled list under a chapter's steps, like the ideas a chapter rests on. */
+/* A labeled list under a chapter's steps, like the ideas a chapter rests on. */
 .chapter__aside {
   margin-top: 22px;
 }
@@ -1814,7 +1814,7 @@ code {
 
 .colophon {
   position: relative;
-  /* The bottom padding centres the base line on the fixed bottom-right dock
+  /* The bottom padding centers the base line on the fixed bottom-right dock
      (34px tall), so the two share a row. */
   padding: 64px var(--inset-right) calc(clamp(16px, 3vw, 32px) + 7px)
     var(--inset-left);

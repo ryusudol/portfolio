@@ -15,7 +15,7 @@ const MARK = 9;
 
 type Series = {
   values: number[];
-  /** 0 retrained (Model A colour), 1 Random Labeling (Model B colour). */
+  /** 0 retrained (Model A color), 1 Random Labeling (Model B color). */
   model: number;
   forget: boolean;
   /** Scroll range over which the line draws itself left to right. */
@@ -95,7 +95,7 @@ export class LayersScene implements Scene {
 
   /**
    * Point `u` of the way along a series' polyline by length, so steep drops
-   * get as many dots as flat stretches. Returns the distance travelled.
+   * get as many dots as flat stretches. Returns the distance traveled.
    */
   private along(s: Series, u: number, out: [number, number]) {
     const last = s.values.length - 1;
@@ -226,7 +226,7 @@ export class LayersScene implements Scene {
       },
     );
 
-    // Legend: colour is the model, dashes are airplanes.
+    // Legend: color is the model, dashes are airplanes.
     const legendY = vy + plot.y - 40;
     const right = vx + plot.x + plot.w;
     const items: [string, number][] = [

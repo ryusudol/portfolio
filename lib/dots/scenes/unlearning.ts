@@ -12,7 +12,7 @@ type Cluster = {
   sin: number;
 };
 
-/** CIFAR-10, alphabetical, each with its Tableau 10 colour. */
+/** CIFAR-10, alphabetical, each with its Tableau 10 color. */
 const CLASSES: [number, number, string, RGB][] = [
   [0.14, 0.2, "airplane", [78, 121, 167]],
   [0.4, 0.1, "automobile", [242, 142, 43]],
@@ -32,9 +32,9 @@ const FORGET = 3;
 const START = 0.2;
 
 /**
- * A UMAP-like embedding of 2,000 activations across ten classes, coloured by
+ * A UMAP-like embedding of 2,000 activations across ten classes, colored by
  * label. Scrolling unlearns one class: its points leave their cluster,
- * scatter into the others, and take on their colours, while the rest of the
+ * scatter into the others, and take on their colors, while the rest of the
  * embedding stays put — the
  * question the Machine Unlearning Comparator answers.
  */
@@ -182,7 +182,7 @@ export class UnlearningScene implements Scene {
       if (e < 0.5) stayed++;
     }
 
-    // A point still in its cluster is one the model still recognises, so
+    // A point still in its cluster is one the model still recognizes, so
     // "cat" accuracy falls as it's unlearned. It's drawn under the class
     // label (see draw) and mirrored to hidden text for screen readers.
     this.accuracy = `${Math.round((100 * stayed) / Math.max(1, total))}%`;
@@ -206,7 +206,7 @@ export class UnlearningScene implements Scene {
       ctx.fillText(label, vx + c.x, vy + c.y + c.sy * 2.4 + 6);
     });
 
-    // Its accuracy, centred on the same x a line below: the value in fg,
+    // Its accuracy, centered on the same x a line below: the value in fg,
     // "accuracy" in muted small caps, like the site's labels.
     const c = this.clusters[FORGET];
     if (c) {

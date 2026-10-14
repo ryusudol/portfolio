@@ -8,7 +8,7 @@ const portraits = new Map<string, Promise<Portrait | null>>();
 
 /**
  * Loads stippled portrait dots written by `scripts/portrait.py`:
- * uint16 [version, aspect * 10000, n, (x, y) * n], normalised to 0..65535.
+ * uint16 [version, aspect * 10000, n, (x, y) * n], normalized to 0..65535.
  */
 function loadPortrait(url: string) {
   let pending = portraits.get(url);

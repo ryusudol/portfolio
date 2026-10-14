@@ -39,7 +39,7 @@ export function OrbitChapter({ id, topic = "Featured project" }: Props) {
         <>
           Built a digital twin of Earth orbit that propagates all 32,583 tracked
           objects live on an SGP4 engine I wrote in Rust and WebAssembly, routes
-          packets across Starlink’s laser mesh, screens the catalogue for close
+          packets across Starlink’s laser mesh, screens the catalog for close
           approaches, and flies out to every planet’s moons.
         </>
       }

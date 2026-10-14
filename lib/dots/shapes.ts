@@ -230,7 +230,7 @@ export type TextSample = {
 };
 
 /**
- * Rasterises an element's text with its computed font and returns the inked
+ * Rasterizes an element's text with its computed font and returns the inked
  * pixel coordinates relative to the element's box.
  */
 export function sampleText(el: HTMLElement): TextSample {

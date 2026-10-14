@@ -2,7 +2,7 @@ import { useId } from "react";
 
 /**
  * A striped roadwork barrier (🚧). Drawn by hand because reicon-react has no
- * construction sign; stripes use the accent colour, the frame `currentColor`.
+ * construction sign; stripes use the accent color, the frame `currentColor`.
  */
 export function BarrierIcon({ size = 22 }: { size?: number }) {
   const clip = useId();

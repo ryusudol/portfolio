@@ -62,7 +62,7 @@ export class RequestsScene implements Scene {
     const cols = [0.02, 0.25, 0.48, 0.7, 0.9];
     const rand = mulberry32(11);
 
-    // Build the tree top-down, then place leaves evenly and centre parents.
+    // Build the tree top-down, then place leaves evenly and center parents.
     const nodes: TreeNode[] = [
       { x: cols[0] * w, y: h / 2, depth: 0, parent: -1 },
     ];

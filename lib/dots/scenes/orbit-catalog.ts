@@ -23,7 +23,7 @@ import {
 import {
   ALTITUDE,
   type Catalog,
-  catalogueDots,
+  catalogDots,
   DEBRIS,
   type Earth,
   gmst,
@@ -82,13 +82,13 @@ const ROW_NAMES = ["Starlink", "Debris & rocket bodies", "Other satellites"];
 const HIST_DOTS = 900;
 
 /**
- * The app's Catalogue mode, then past it. The sample orbits the dot-matrix
- * Earth while the Catalogue card counts the groups and draws its mean-altitude
+ * The app's Catalog mode, then past it. The sample orbits the dot-matrix
+ * Earth while the Catalog card counts the groups and draws its mean-altitude
  * histograms, one row per group on its own scale, in dots. Then the same
  * objects leave their orbits for a map of mean altitude against inclination
  * that fills the window: Starlink's shells, old breakups, and the high orbits.
  */
-export class CatalogueScene implements Scene {
+export class CatalogScene implements Scene {
   private cat: Catalog | null = null;
   private earth: Earth | null = null;
   private globe = new DotGlobe();
@@ -129,7 +129,7 @@ export class CatalogueScene implements Scene {
     loadCatalog().then((cat) => {
       this.cat = cat;
       if (cat) {
-        this.dots = catalogueDots(cat, f.n * 0.6);
+        this.dots = catalogDots(cat, f.n * 0.6);
         this.theta0 = gmst(cat.jd);
       }
     });
@@ -276,7 +276,7 @@ export class CatalogueScene implements Scene {
     }
   }
 
-  /** The Catalogue card's histograms: one column of dots per bin, per row. */
+  /** The Catalog card's histograms: one column of dots per bin, per row. */
   private histogram(f: Field, i: number, h: number, shown: boolean) {
     const hb = this.hist;
     f.gj[i] = 0;
@@ -314,7 +314,7 @@ export class CatalogueScene implements Scene {
       const l = this.l;
       if (l.panel) this.panel(ctx);
       drawChrome(ctx, type, l, {
-        mode: "Catalogue",
+        mode: "Catalog",
         t: this.t,
         warp: "10M",
         legend: undefined,
@@ -337,7 +337,7 @@ export class CatalogueScene implements Scene {
     const l = this.map;
     this.axes(ctx, fr);
     drawChrome(ctx, type, l, {
-      mode: "Catalogue",
+      mode: "Catalog",
       t: this.t,
       warp: "10M",
       legend: false,
@@ -445,7 +445,7 @@ export class CatalogueScene implements Scene {
     }
   }
 
-  /** The Catalogue card, as the app's. */
+  /** The Catalog card, as the app's. */
   private panel(ctx: CanvasRenderingContext2D) {
     const b = this.l.panel as Box;
     const hb = this.hist;
@@ -456,7 +456,7 @@ export class CatalogueScene implements Scene {
       ctx,
       type,
       b,
-      "CATALOGUE",
+      "CATALOG",
       "What is up there, and at which altitude.",
     );
     y += 18;

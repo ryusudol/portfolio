@@ -159,7 +159,7 @@ export function layerAxes(
 
 /**
  * The hovered cell's outline and readout, written beside the cell (toward the
- * map's centre) so it never lands on an axis title.
+ * map's center) so it never lands on an axis title.
  */
 export function cellReadout(
   ctx: CanvasRenderingContext2D,

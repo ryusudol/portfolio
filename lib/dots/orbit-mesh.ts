@@ -1,7 +1,7 @@
 /**
  * Starlink's laser mesh as Orbit Explorer builds it (its `engine/src/isl.rs`),
  * ported to TypeScript for the case study. The satellites are the 53° shell
- * the engine recovers from the 9 October 2026 catalogue, flown on circular
+ * the engine recovers from the October 9, 2026, catalog, flown on circular
  * orbits from their state at that instant, so the page can move them without
  * SGP4. Everything is Earth-fixed (ECEF, km), so the ground stays put while
  * the shell sweeps over it.
@@ -21,8 +21,8 @@ const DEG = Math.PI / 180;
 const TAU = Math.PI * 2;
 
 export const C_KM_S = 299_792.458;
-/** Refractive index of the fibre the engine compares against. */
-export const FIBRE_INDEX = 1.4682;
+/** Refractive index of the fiber the engine compares against. */
+export const FIBER_INDEX = 1.4682;
 
 /** The engine's `IslConfig::default()`. */
 const MAX_IN_PLANE_KM = 2600;

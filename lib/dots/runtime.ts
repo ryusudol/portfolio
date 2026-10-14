@@ -66,7 +66,7 @@ class DotsRuntime {
     this.set({ temperature });
   }
 
-  /** Radial shockwave; defaults to the viewport centre. */
+  /** Radial shockwave; defaults to the viewport center. */
   burst(x?: number, y?: number, power = 1) {
     this.engine?.burst(
       x ?? window.innerWidth / 2,

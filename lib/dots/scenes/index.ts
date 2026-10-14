@@ -23,7 +23,7 @@ import { ScreenScene } from "./muc-screen";
 import { StateScene } from "./muc-state";
 import { WorkflowScene } from "./muc-workflow";
 import { BoundScene } from "./orbit-bound";
-import { CatalogueScene } from "./orbit-catalogue";
+import { CatalogScene } from "./orbit-catalog";
 import { ConjunctionsScene } from "./orbit-conjunctions";
 import { EarthScene } from "./orbit-earth";
 import { FlightScene } from "./orbit-flight";
@@ -78,7 +78,7 @@ export const scenes: Record<string, () => Scene> = {
   "orbit-routing": () => new RoutingScene("routing"),
   "orbit-conjunctions": () => new ConjunctionsScene(),
   "orbit-coverage": () => new RoutingScene("coverage"),
-  "orbit-catalogue": () => new CatalogueScene(),
+  "orbit-catalog": () => new CatalogScene(),
   "orbit-flight": () => new FlightScene(),
   "orbit-relay": () => new RelayScene(),
   "orbit-giants": () => new GiantsScene(),

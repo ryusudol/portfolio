@@ -121,7 +121,7 @@ export class RelayScene implements Scene {
     const R = RADIUS[id];
     const W = w?.worlds[id];
 
-    // The camera above the site, looking down at the world's centre, from
+    // The camera above the site, looking down at the world's center, from
     // a little toward the Sun so the site is lit when it can be.
     if (W && plan) {
       const up = mul(

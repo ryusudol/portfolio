@@ -2,14 +2,14 @@
  * Exports what the Orbit Explorer case study needs from beyond Earth orbit, by
  * running the app's own `web/src/sim` modules (VSOP87, the Moon and Mars
  * series, the JPL Horizons snapshots, the relay planner) in a browser against
- * its Vite dev server, at the catalogue snapshot's instant.
+ * its Vite dev server, at the catalog snapshot's instant.
  *
  *     pnpm --dir ../orbit-explorer dev      # serves http://localhost:5173
  *     node scripts/orbit/worlds.mjs [app url] [out dir]
  *
  * Writes `worlds.json` (orientation, moons, relay passes, Starlink generations),
  * `solar.bin` (planet orbits, the Kuiper belt, the Voyagers' paths) and
- * `maps.bin` (palette-quantised surface maps of the worlds drawn in dots).
+ * `maps.bin` (palette-quantized surface maps of the worlds drawn in dots).
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -18,7 +18,7 @@ import { chromium } from "@playwright/test";
 const app = process.argv[2] ?? "http://localhost:5173";
 const out = process.argv[3] ?? "public/orbit";
 
-/** The catalogue snapshot: Space-Track, generated 2026-10-09 21:25:56 UTC. */
+/** The catalog snapshot: Space-Track, generated 2026-10-09 21:25:56 UTC. */
 const SNAPSHOT_MS = Date.UTC(2026, 9, 9, 21, 25, 56);
 
 const browser = await chromium.launch();
@@ -75,7 +75,7 @@ const data = await page.evaluate(async (snapshotMs) => {
         kind: o.kind,
         r: o.radiusKm ?? (listed?.radii ? listed.radii[0] : undefined),
         found: o.found?.year,
-        // Body-centred ICRF, km and radians, at the snapshot.
+        // Body-centered ICRF, km and radians, at the snapshot.
         el: [el.a, el.e, el.i, el.node, el.peri, el.M].map((x) => round(x, 9)),
         n: round(el.n, 9),
       });
@@ -214,7 +214,7 @@ const data = await page.evaluate(async (snapshotMs) => {
       (cw * cO - sw * sO * cI) * x + (-sw * cO - cw * sO * cI) * y,
       (cw * sO + sw * cO * cI) * x + (-sw * sO + cw * cO * cI) * y,
       sw * sI * x + cw * sI * y,
-      // Scattered and detached objects, as the app colours them warmer.
+      // Scattered and detached objects, as the app colors them warmer.
       a > 50 || e > 0.25 ? 1 : 0,
     );
   }
@@ -280,21 +280,21 @@ mkdirSync(out, { recursive: true });
 
 /**
  * k-means in RGB, seeded from the image's own spread, so a world's dots get
- * its few real colours and brightness rides on alpha.
+ * its few real colors and brightness rides on alpha.
  */
-function quantise(rgb, k) {
+function quantize(rgb, k) {
   const n = rgb.length / 4;
-  const centres = [];
+  const centers = [];
   const lum = (i) =>
     0.3 * rgb[4 * i] + 0.59 * rgb[4 * i + 1] + 0.11 * rgb[4 * i + 2];
   const order = [...Array(n).keys()].sort((a, b) => lum(a) - lum(b));
   for (let c = 0; c < k; c++) {
     const i = order[Math.floor(((c + 0.5) / k) * n)];
-    centres.push([rgb[4 * i], rgb[4 * i + 1], rgb[4 * i + 2]]);
+    centers.push([rgb[4 * i], rgb[4 * i + 1], rgb[4 * i + 2]]);
   }
   const label = new Uint8Array(n);
   for (let it = 0; it < 24; it++) {
-    const sum = centres.map(() => [0, 0, 0, 0]);
+    const sum = centers.map(() => [0, 0, 0, 0]);
     for (let i = 0; i < n; i++) {
       let best = 0;
       let bd = Infinity;
@@ -304,7 +304,7 @@ function quantise(rgb, k) {
         b = rgb[4 * i + 2];
       const l = (r + g + b) / 3 || 1;
       for (let c = 0; c < k; c++) {
-        const [R, G, B] = centres[c];
+        const [R, G, B] = centers[c];
         const L = (R + G + B) / 3 || 1;
         const d =
           ((r / l - R / L) ** 2 + (g / l - G / L) ** 2 + (b / l - B / L) ** 2) *
@@ -322,19 +322,19 @@ function quantise(rgb, k) {
       sum[best][3]++;
     }
     for (let c = 0; c < k; c++) {
-      if (sum[c][3]) centres[c] = sum[c].slice(0, 3).map((v) => v / sum[c][3]);
+      if (sum[c][3]) centers[c] = sum[c].slice(0, 3).map((v) => v / sum[c][3]);
     }
   }
-  return { centres: centres.map((c) => c.map(Math.round)), label };
+  return { centers: centers.map((c) => c.map(Math.round)), label };
 }
 
 // maps.bin: u8 count | per map: u8 id length + id, u16 w, u16 h, u8 k, k × rgb,
 // then w × h bytes, palette index in the top 3 bits and brightness (0-31) below.
-const MAP_COLOURS = { moon: 2, mars: 4, jupiter: 5, saturn: 3 };
+const MAP_COLORS = { moon: 2, mars: 4, jupiter: 5, saturn: 3 };
 const chunks = [Uint8Array.of(Object.keys(data.maps).length)];
 for (const [id, m] of Object.entries(data.maps)) {
-  const k = MAP_COLOURS[id];
-  const { centres, label } = quantise(m.rgb, k);
+  const k = MAP_COLORS[id];
+  const { centers, label } = quantize(m.rgb, k);
   const head = new Uint8Array(1 + id.length + 5 + 3 * k);
   const dv = new DataView(head.buffer);
   head[0] = id.length;
@@ -342,7 +342,7 @@ for (const [id, m] of Object.entries(data.maps)) {
   dv.setUint16(1 + id.length, m.w, true);
   dv.setUint16(3 + id.length, m.h, true);
   head[5 + id.length] = k;
-  centres.forEach((c, j) => {
+  centers.forEach((c, j) => {
     head.set(c, 6 + id.length + 3 * j);
   });
   const px = new Uint8Array(m.w * m.h);
@@ -359,8 +359,8 @@ for (const [id, m] of Object.entries(data.maps)) {
   }
   chunks.push(head, px);
   console.log(
-    `maps.bin ${id}: ${k} colours`,
-    centres.map((c) => `rgb(${c})`).join(" "),
+    `maps.bin ${id}: ${k} colors`,
+    centers.map((c) => `rgb(${c})`).join(" "),
   );
 }
 writeFileSync(join(out, "maps.bin"), Buffer.concat(chunks));

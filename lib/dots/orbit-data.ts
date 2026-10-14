@@ -3,7 +3,7 @@ import { decodeShell } from "./orbit-mesh";
 /**
  * Real data behind the Orbit Explorer story. The binaries in `public/orbit`
  * are exported from the app's own Rust engine, run natively on its snapshot
- * of the full Space-Track catalogue (32,583 objects, 9 October 2026), and
+ * of the full Space-Track catalog (32,583 objects, October 9, 2026), and
  * packed small (see the case study's data notes in the README). The engine
  * reproduces the README's figures from them: seven Starlink shells, 17,719
  * laser links, and 2,981 encounters under 5 km in the hour after the snapshot.
@@ -70,7 +70,7 @@ const LOG_LO = Math.log(6400);
 const LOG_HI = Math.log(420000);
 
 /**
- * `catalog.bin`: a random 8,192 of the catalogue in shuffled order, so any
+ * `catalog.bin`: a random 8,192 of the catalog in shuffled order, so any
  * prefix is a random sample too. u32 n, f64 jd, then u16 arrays of log
  * semi-major axis, eccentricity, inclination, node, perigee and mean anomaly,
  * and a u8 group.
@@ -105,7 +105,7 @@ export const loadShell = loader("/orbit/shell.bin", decodeShell);
 
 /**
  * Two-body position (TEME, km) of object `k`, `t` seconds after the
- * snapshot. Good to a few kilometres over the hours a scene runs for, far
+ * snapshot. Good to a few kilometers over the hours a scene runs for, far
  * below a pixel at the scales drawn.
  */
 export function orbitPosition(
@@ -148,10 +148,10 @@ export function gmst(jd: number) {
 }
 
 /**
- * How many catalogue objects get a dot: the story's sky and its unfolded
+ * How many catalog objects get a dot: the story's sky and its unfolded
  * map share this, so the same dot is the same object in both.
  */
-export const catalogueDots = (cat: Catalog, particles: number) =>
+export const catalogDots = (cat: Catalog, particles: number) =>
   Math.min(cat.n, Math.round(particles * 0.74));
 
 export type Earth = {
@@ -225,7 +225,7 @@ const CAT_DEBRIS = 4;
 
 /**
  * Starlink meeting Starlink, anything involving debris or a rocket body, and
- * every other pairing, coloured as the groups they're named after.
+ * every other pairing, colored as the groups they're named after.
  */
 function pairGroup(a: number, b: number) {
   const junk = (c: number) => c === CAT_DEBRIS || c === CAT_ROCKET_BODY;
@@ -349,11 +349,11 @@ export const SIEVE = {
 };
 
 /**
- * Orbit Explorer's SGP4 against satellite.js on 2,507 catalogue objects at
+ * Orbit Explorer's SGP4 against satellite.js on 2,507 catalog objects at
  * 7 times each (`docs/validation/satellitejs-diff.csv`): how many of the
  * 17,549 states match bit for bit, and the rest by half-decade of |Δr| in mm.
  * Rewriting the reference's slow steps as exact identities moved most states
- * off bit-identical by a few nanometres; the large differences didn't move.
+ * off bit-identical by a few nanometers; the large differences didn't move.
  */
 export const SATJS = {
   states: 17549,
@@ -466,7 +466,7 @@ export const VALLADO_LOG = [
 ];
 
 /**
- * Mean-altitude histograms as the app's Catalogue card draws them: 46 log
+ * Mean-altitude histograms as the app's Catalog card draws them: 46 log
  * bins from 150 to 45,000 km, per group (Starlink, debris and rocket bodies,
  * other satellites), from the snapshot's mean motions (`drawAltitude` in the
  * app's `panels/charts.ts`).

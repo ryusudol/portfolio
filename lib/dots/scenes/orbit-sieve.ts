@@ -17,7 +17,7 @@ const STEP_AT = [0, 0.2, 0.4, 0.6, 0.8] as const;
 const CELL = 485;
 const REACH = RE + 2100;
 /**
- * Pairs a step checks across the full catalogue: all of them, and what the
+ * Pairs a step checks across the full catalog: all of them, and what the
  * grid leaves at 485 km cells (460 M over the 1,441 steps of a day's screen,
  * the app's README).
  */
@@ -50,7 +50,7 @@ export class SieveScene implements Scene {
   private n = 0;
   private query = 0;
   private near = new Uint8Array(0);
-  private centre = { x: 0, y: 0, s: 1 };
+  private center = { x: 0, y: 0, s: 1 };
   private step = 0;
   private steps = new Steps();
   private readouts = new Readouts();
@@ -60,7 +60,7 @@ export class SieveScene implements Scene {
   layout(f: Field, fr: Frame) {
     const area = freeArea(fr, 16);
     const r = Math.min(area.w, area.h) * 0.48;
-    this.centre = {
+    this.center = {
       x: area.x + area.w / 2,
       y: area.y + area.h / 2,
       s: r / REACH,
@@ -75,7 +75,7 @@ export class SieveScene implements Scene {
     this.readouts.collect(fr.section);
   }
 
-  /** The sample's low-orbit objects, and the one whose neighbourhood is shown. */
+  /** The sample's low-orbit objects, and the one whose neighborhood is shown. */
   private place(f: Field) {
     const cat = this.cat as Catalog;
     const cap = Math.round(f.n * 0.7);
@@ -89,7 +89,7 @@ export class SieveScene implements Scene {
     this.pts = new Float32Array(2 * this.n);
     this.near = new Uint8Array(this.n);
     this.move(0);
-    // The query: the object with the busiest neighbourhood at the snapshot.
+    // The query: the object with the busiest neighborhood at the snapshot.
     const cell = (v: number) => Math.floor(v / CELL);
     const counts = new Map<string, number>();
     for (let k = 0; k < this.n; k++) {
@@ -146,9 +146,9 @@ export class SieveScene implements Scene {
       if (!fr.reduced) this.t += fr.dt * WARP;
       this.move(this.t);
     }
-    const cx = fr.visual.x + this.centre.x;
-    const cy = fr.visual.y + this.centre.y;
-    const s = this.centre.s;
+    const cx = fr.visual.x + this.center.x;
+    const cy = fr.visual.y + this.center.y;
+    const s = this.center.s;
     const boost = this.ink ? 1 : 1.25;
     for (let i = 0; i < f.n; i++) {
       if (i >= this.n) {
@@ -179,9 +179,9 @@ export class SieveScene implements Scene {
   draw(ctx: CanvasRenderingContext2D, fr: Frame, palette: Palette) {
     this.ink = palette.ink;
     if (!this.n) return;
-    const cx = fr.visual.x + this.centre.x;
-    const cy = fr.visual.y + this.centre.y;
-    const s = this.centre.s;
+    const cx = fr.visual.x + this.center.x;
+    const cy = fr.visual.y + this.center.y;
+    const s = this.center.s;
     const step = this.step;
     const size = fr.compact ? 9 : 10;
     const qx = cx + this.pts[2 * this.query] * s;
@@ -209,7 +209,7 @@ export class SieveScene implements Scene {
       ctx.stroke();
     }
     if (step >= 2) {
-      // The grid, aligned to Earth's centre as the engine's floor(x / cell) is.
+      // The grid, aligned to Earth's center as the engine's floor(x / cell) is.
       const px = CELL * s;
       const n = Math.ceil(REACH / CELL);
       ctx.strokeStyle = rgba(palette.muted, 0.14);
@@ -232,7 +232,7 @@ export class SieveScene implements Scene {
         (2 * span + 1) * px,
       );
       if (step >= 3) {
-        // The half of the neighbourhood a cell searches: the rest search it.
+        // The half of the neighborhood a cell searches: the rest search it.
         ctx.fillStyle = rgba(palette.accent, this.ink ? 0.13 : 0.1);
         for (const [dx, dy] of AHEAD) {
           ctx.fillRect(cx + (gx + dx) * px, cy - (gy + dy + 1) * px, px, px);

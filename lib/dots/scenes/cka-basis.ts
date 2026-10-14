@@ -10,7 +10,7 @@ const LINES = 2 * N + 1;
 const REACH = 6;
 const STEP_AT = [0, 0.14, 0.34, 0.54, 0.76] as const;
 
-/** Three CIFAR-10 classes, in the same Tableau colours as the unlearning map. */
+/** Three CIFAR-10 classes, in the same Tableau colors as the unlearning map. */
 const CLUSTERS: { x: number; y: number; name: string; color: RGB }[] = [
   { x: -1.7, y: -1.1, name: "airplane", color: [78, 121, 167] },
   { x: 1.5, y: -1.4, name: "cat", color: [118, 183, 178] },
@@ -53,7 +53,7 @@ export class BasisScene implements Scene {
   /** Cloud point per particle, in grid units. */
   private px = new Float32Array(0);
   private py = new Float32Array(0);
-  /** XᵀX of the centred cloud. */
+  /** XᵀX of the centered cloud. */
   private sigma: M2 = [1, 0, 0, 1];
   private A: M2 = [1, 0, 0, 1];
   private steps = new Steps();

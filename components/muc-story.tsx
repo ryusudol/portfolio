@@ -185,7 +185,7 @@ export function MatrixChapter() {
       steps={[
         "The first design. Bubble size is the proportion of predictions, and color is the confidence.",
         "Unlearning spreads the airplane row thin, and small bubbles hide their color.",
-        "The redesign splits each cell, proportion at the lower left and confidence at the upper right, on one grey scale so the halves compare directly. The bubbles stay behind a hidden toggle.",
+        "The redesign splits each cell, proportion at the lower left and confidence at the upper right, on one gray scale so the halves compare directly. The bubbles stay behind a hidden toggle.",
         "Now the mismatch is plain. 90% of airplanes are called birds, at 0.16 confidence. Hover any cell to read its numbers.",
       ]}
       visual={

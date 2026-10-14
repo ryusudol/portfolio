@@ -84,7 +84,7 @@ export const orbitChapters: Chapter[] = [
   { id: "routing", label: "Laser routing" },
   { id: "conjunctions", label: "Conjunctions" },
   { id: "coverage", label: "Coverage" },
-  { id: "catalogue", label: "Catalogue" },
+  { id: "catalog", label: "Catalog" },
   { id: "flight", label: "Flight to the Moon" },
   { id: "relay", label: "Link to Earth" },
   { id: "giants", label: "Giant planets" },
@@ -125,7 +125,7 @@ export const operators = [
 export type Operator = (typeof operators)[number];
 
 export const operatorNotes: Record<Operator, string> = {
-  mergeMap: "Every request runs. Nothing is cancelled.",
+  mergeMap: "Every request runs. Nothing is canceled.",
   concatMap: "Requests wait in line, one at a time.",
   switchMap: "A new request cancels the stale one.",
   exhaustMap: "Busy? New requests are ignored.",

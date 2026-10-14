@@ -1,7 +1,7 @@
 import { mix } from "./math";
 import type { RGB } from "./types";
 
-/** Tableau 10, which the comparator colours CIFAR-10's classes with. */
+/** Tableau 10, which the comparator colors CIFAR-10's classes with. */
 export const TABLEAU: RGB[] = [
   [78, 121, 167],
   [242, 142, 43],
@@ -19,7 +19,7 @@ export const TABLEAU: RGB[] = [
 export const EMERALD: RGB = [16, 185, 129];
 export const PURPLE: RGB = [168, 85, 247];
 
-/** Its metric colours, for accuracy, efficiency, and privacy. */
+/** Its metric colors, for accuracy, efficiency, and privacy. */
 export const METRIC: RGB[] = [
   [74, 163, 104],
   [72, 128, 196],

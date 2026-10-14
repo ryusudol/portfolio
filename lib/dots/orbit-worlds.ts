@@ -4,7 +4,7 @@ import type { Field, RGB } from "./types";
 /**
  * Orbit Explorer beyond Earth orbit. `scripts/orbit/worlds.mjs` runs the
  * app's own `sim` modules (VSOP87, the Moon and Mars series, the JPL Horizons
- * snapshots, the relay planner) at the catalogue snapshot's instant, 9
+ * snapshots, the relay planner) at the catalog snapshot's instant, 9
  * October 2026 21:25:56 UTC, and writes what these scenes draw.
  */
 
@@ -22,7 +22,7 @@ export type Moon = {
   /** Radius, km, where JPL lists one. */
   r?: number;
   found?: number;
-  /** Body-centred ICRF osculating elements at the snapshot: a (km), e, i, node, peri, M (rad). */
+  /** Body-centered ICRF osculating elements at the snapshot: a (km), e, i, node, peri, M (rad). */
   el: number[];
   /** Mean motion, rad/s. */
   n: number;
@@ -33,7 +33,7 @@ export type World = {
   polar: number;
   /** Body-fixed to ICRF, row-major. */
   orient: Mat3;
-  /** The Sun and the Earth seen from the world's centre, km, ICRF. */
+  /** The Sun and the Earth seen from the world's center, km, ICRF. */
   sun: Vec3;
   earth: Vec3;
   lightS: number;
@@ -140,7 +140,7 @@ export type SurfaceMap = {
   px: Uint8Array;
 };
 
-/** `maps.bin`: each world's 2k texture, quantised to a few colours. */
+/** `maps.bin`: each world's 2k texture, quantized to a few colors. */
 function decodeMaps(buffer: ArrayBuffer): Record<string, SurfaceMap> {
   const bytes = new Uint8Array(buffer);
   const dv = new DataView(buffer);
@@ -230,7 +230,7 @@ export function moonAt(
 
 /**
  * A point on an orbit at mean anomaly `M` (or eccentric anomaly when `mean`
- * is false, which spaces samples evenly round long, thin ellipses).
+ * is false, which spaces samples evenly around long, thin ellipses).
  */
 export function ellipsePoint(
   el: number[],
@@ -360,7 +360,7 @@ export function slerp(a: Vec3, b: Vec3, t: number): Vec3 {
 export type Shade = { cls: number; a: number };
 
 /**
- * Colours a surface point. `mu0` is the cosine of the Sun's angle from the
+ * Colors a surface point. `mu0` is the cosine of the Sun's angle from the
  * vertical (negative at night), `mu` the cosine of the camera's.
  */
 export type Sampler = (
@@ -371,7 +371,7 @@ export type Sampler = (
   out: Shade,
 ) => void;
 
-/** A sampler for a world's quantised map, lit with Minnaert's law. */
+/** A sampler for a world's quantized map, lit with Minnaert's law. */
 export function mapSampler(
   map: SurfaceMap | null,
   slot: number,
@@ -419,10 +419,10 @@ const SQRT3 = Math.sqrt(3);
 /**
  * A world as a dot matrix seen through a `Camera`: a hexagonal lattice laid
  * over the part of the screen the world covers, each dot ray-cast onto the
- * spheroid, coloured by the world's sampler. The lattice is anchored on the
- * world's centre and spaced from its disc, so it zooms with the world while
+ * spheroid, colored by the world's sampler. The lattice is anchored on the
+ * world's center and spaced from its disc, so it zooms with the world while
  * the whole disc is in view, and from the screen once the world fills it, so
- * a horizon a few hundred kilometres below gets as many dots as a far Moon.
+ * a horizon a few hundred kilometers below gets as many dots as a far Moon.
  */
 export class DotWorld {
   private o = new Float64Array(3);
@@ -430,13 +430,13 @@ export class DotWorld {
   private q = new Float64Array(3);
   private sunB = new Float64Array(3);
   private shade: Shade = { cls: 0, a: 0 };
-  /** Screen radius and centre of the last world placed. */
+  /** Screen radius and center of the last world placed. */
   r = 0;
   cx = 0;
   cy = 0;
   /** Lattice spacing used, px. */
   spacing = 0;
-  /** Whether the world's centre is in front of the camera. */
+  /** Whether the world's center is in front of the camera. */
   ahead = false;
 
   /** Distance along the ray (body frame, sphere scaled) to the surface, or -1. */
@@ -471,8 +471,8 @@ export class DotWorld {
   }
 
   /**
-   * Writes goals for particles [start, start + count) for a world centred at
-   * `centre`, clipped to `box`; particles it doesn't need are hidden.
+   * Writes goals for particles [start, start + count) for a world centered at
+   * `center`, clipped to `box`; particles it doesn't need are hidden.
    * Returns how many it lit.
    */
   place(
@@ -480,7 +480,7 @@ export class DotWorld {
     start: number,
     count: number,
     cam: Camera,
-    centre: ArrayLike<number>,
+    center: ArrayLike<number>,
     look: WorldLook,
     box: { x: number; y: number; w: number; h: number },
     { alpha = 1, maxSize = 3.2, minSize = 0.9 } = {},
@@ -488,17 +488,17 @@ export class DotWorld {
     const R = look.radius;
     const flat = look.polar / look.radius;
     const s = this.q;
-    cam.project(centre[0], centre[1], centre[2], s);
+    cam.project(center[0], center[1], center[2], s);
     const dist = Math.hypot(
-      cam.pos[0] - centre[0],
-      cam.pos[1] - centre[1],
-      cam.pos[2] - centre[2],
+      cam.pos[0] - center[0],
+      cam.pos[1] - center[1],
+      cam.pos[2] - center[2],
     );
     let lit = 0;
-    // The camera in the body frame, the sphere scaled round.
+    // The camera in the body frame, the sphere scaled around it.
     mulT(
       look.orient,
-      [cam.pos[0] - centre[0], cam.pos[1] - centre[1], cam.pos[2] - centre[2]],
+      [cam.pos[0] - center[0], cam.pos[1] - center[1], cam.pos[2] - center[2]],
       this.o,
     );
     this.o[2] /= flat;
@@ -517,7 +517,7 @@ export class DotWorld {
       hide(0);
       return 0;
     }
-    // The disc on screen: exact for a sphere whose centre is ahead.
+    // The disc on screen: exact for a sphere whose center is ahead.
     const ahead = s[2] > 0;
     const rs = ahead
       ? (cam.focal * R) / Math.sqrt(Math.max(1e-9, dist * dist - R * R))
@@ -583,7 +583,7 @@ export class DotWorld {
     const rowH = (sp * SQRT3) / 2;
     const sh = this.shade;
     const q = this.q;
-    // Rows anchored on the centre, so the lattice holds still as the world turns.
+    // Rows anchored on the center, so the lattice holds still as the world turns.
     const r0 = Math.ceil((y0 - this.cy) / rowH);
     for (let row = r0; ; row++) {
       const y = this.cy + row * rowH;
@@ -728,8 +728,8 @@ export function skyTag(
 
 /**
  * The app's flight between worlds (`scene/travel.ts`): planned in
- * log-distance, rising off world A while swinging round to face B, then
- * falling toward B and round to its lit side. Positions are relative to A.
+ * log-distance, rising off world A while swinging around to face B, then
+ * falling toward B and around to its lit side. Positions are relative to A.
  */
 export type TravelPlan = {
   from: Vec3;

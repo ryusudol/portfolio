@@ -236,7 +236,7 @@ export class EmbeddingScene implements Scene {
         f.ga[i] = forget ? 0 : Math.min(1, (0.5 + f.r3[i] * 0.3) * boost * lit);
         continue;
       }
-      // Each image leaves A for its place in B, a little after its neighbours.
+      // Each image leaves A for its place in B, a little after its neighbors.
       const go = smoothstep(0.25 + f.r0[i] * 0.07, 0.33 + f.r0[i] * 0.07, p);
       this.bAt(j, pb);
       const bend = Math.sin(Math.PI * go) * 26 * (f.r1[i] - 0.5);
@@ -346,7 +346,7 @@ export class EmbeddingScene implements Scene {
       ctx.stroke();
     }
 
-    // Airplanes as crosses, coloured by the class each model predicts.
+    // Airplanes as crosses, colored by the class each model predicts.
     const arm = fr.compact ? 2.2 : 2.6;
     ctx.lineWidth = 1.1;
     for (let c = 0; c < colors.length; c++) {

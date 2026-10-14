@@ -1,5 +1,5 @@
 //! Exports real Orbit Explorer engine results for the portfolio case study.
-//! Reads the app's catalogue snapshot and writes CSVs (and jd.txt, gmst.txt
+//! Reads the app's catalog snapshot and writes CSVs (and jd.txt, gmst.txt
 //! one level up) for `scripts/orbit/pack.py`.
 //!
 //!     cargo run --release -- <catalog.bin> <out dir>
@@ -58,7 +58,7 @@ fn main() {
     let snap = load(&path);
     let n = snap.category.len();
     let jd = snap.generated_jd;
-    println!("catalogue: {n} objects, generated jd {jd:.6}, gmst {:.6} rad", gstime(jd));
+    println!("catalog: {n} objects, generated jd {jd:.6}, gmst {:.6} rad", gstime(jd));
     std::fs::write(format!("{out}/../jd.txt"), format!("{jd:.10}\n")).unwrap();
     std::fs::write(format!("{out}/../gmst.txt"), format!("{:.12}\n", gstime(jd))).unwrap();
 

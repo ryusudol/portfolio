@@ -12,8 +12,8 @@ import type { Field, Frame, RGB } from "./types";
 /**
  * Orbit Explorer's own look, for scenes that show the app: pure black, one
  * near-white ink in alpha steps, short uppercase letter-spaced labels,
- * square corners and hairlines, colour only for data. The app is dark in
- * either theme, so these scenes draw a black window and colour every dot by
+ * square corners and hairlines, color only for data. The app is dark in
+ * either theme, so these scenes draw a black window and color every dot by
  * class, which the engine renders the same on ink and paper.
  */
 export const INK: RGB = [240, 240, 250];
@@ -138,7 +138,7 @@ export const EARTH_MODES = [
   "Routing",
   "Conjunctions",
   "Coverage",
-  "Catalogue",
+  "Catalog",
 ] as const;
 export type Mode = string;
 
@@ -149,7 +149,7 @@ export type AppLayout = {
   frame: Box;
   header: number;
   dock: number;
-  /** The space the globe centres in, left of the panel. */
+  /** The space the globe centers in, left of the panel. */
   view: Box;
   panel: Box | null;
   wide: boolean;
@@ -200,7 +200,7 @@ export const EARTH_LEGEND: LegendRow[] = [
   { name: "Debris", count: 13_744, color: [222, 112, 130] },
 ];
 
-/** The worlds the app can fly to, inside out, with the colour each is listed in. */
+/** The worlds the app can fly to, inside out, with the color each is listed in. */
 export const WORLDS = [
   { id: "mercury", name: "MERCURY", hex: [165, 157, 148] },
   { id: "venus", name: "VENUS", hex: [232, 215, 168] },
@@ -245,7 +245,7 @@ export type ChromeState = {
   paused?: boolean;
 };
 
-/** The snapshot's generation time, 9 October 2026 21:25:56 UTC. */
+/** The snapshot's generation time, October 9, 2026, 21:25:56 UTC. */
 export const SNAPSHOT_UTC = Date.UTC(2026, 9, 9, 21, 25, 56);
 
 /**
@@ -279,7 +279,7 @@ export const nearKm = (km: number) =>
       ? `${fixed(km / 1e6, 0)}M km`
       : `${Math.round(km).toLocaleString("en-US")} km`;
 
-/** The app's line icons, drawn at a centre in `s` pixels. */
+/** The app's line icons, drawn at a center in `s` pixels. */
 const icon = {
   mark(ctx: CanvasRenderingContext2D, x: number, y: number, a: number) {
     ctx.strokeStyle = ink(0.9 * a);
@@ -846,10 +846,10 @@ export function through(l: AppLayout, x: number, y: number) {
 
 /**
  * The globe as a dot matrix: a hexagonal lattice over the visible disc, each
- * dot coloured by what lies under it, from the app's day texture, lit by the
+ * dot colored by what lies under it, from the app's day texture, lit by the
  * real Sun, with its night texture's city lights past the terminator. Dots
  * stay put on screen while the Earth turns or the camera moves; only their
- * colours change, like a display.
+ * colors change, like a display.
  */
 export class DotGlobe {
   /** Lattice points in the unit disc, xy-interleaved. */

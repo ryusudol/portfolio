@@ -39,7 +39,7 @@ const FACE = { lat: 30, lon: -116 };
 /** The camera's angle off the satellite once it rides along: behind, above, a little aside. */
 const RIDE: Vec3 = [-0.55, 0.3, 0.78];
 
-/** Each generation's model, metres in the satellite's frame (+x along track, +z up). */
+/** Each generation's model, meters in the satellite's frame (+x along track, +z up). */
 type Part = {
   x0: number;
   x1: number;
@@ -358,7 +358,7 @@ export class FollowScene implements Scene {
         faceDir[2] * far,
       ];
       const u = this.flight;
-      // Flown in log-distance from the satellite, swinging round on a great circle.
+      // Flown in log-distance from the satellite, swinging around on a great circle.
       const fromSat: Vec3 = [
         startPos[0] - sat[0],
         startPos[1] - sat[1],

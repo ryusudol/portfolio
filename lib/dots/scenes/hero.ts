@@ -53,7 +53,6 @@ export class HeroScene implements Scene {
       });
     }
     this.split(f);
-    document.documentElement.classList.add("dots-ready");
   }
 
   /** Share particles between the portrait and the name. */

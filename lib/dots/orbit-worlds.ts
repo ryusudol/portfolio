@@ -436,6 +436,11 @@ export class DotWorld {
   cy = 0;
   /** Lattice spacing used, px. */
   spacing = 0;
+  /**
+   * The eased spacing that fits the visible part of a clipped world, px;
+   * 0 once the world is hidden, so it starts fresh when it comes back.
+   */
+  private fit = 0;
   /** Whether the world's center is in front of the camera. */
   ahead = false;
 
@@ -514,6 +519,7 @@ export class DotWorld {
     };
     if (dist <= R * 1.000001 || count <= 0) {
       this.ahead = false;
+      this.fit = 0;
       hide(0);
       return 0;
     }
@@ -531,6 +537,7 @@ export class DotWorld {
     const y0 = Math.max(box.y, this.cy - rs);
     const y1 = Math.min(box.y + box.h, this.cy + rs);
     if (x1 <= x0 || y1 <= y0 || rs < 0.5) {
+      this.fit = 0;
       hide(0);
       return 0;
     }
@@ -551,6 +558,7 @@ export class DotWorld {
     }
     if (hits === 0 && !ahead) {
       // Behind the camera and nowhere in view.
+      this.fit = 0;
       hide(0);
       return 0;
     }
@@ -562,23 +570,25 @@ export class DotWorld {
     // the lattice zooms with the world and every particle keeps its slot; any
     // lag would change the slot count and reshuffle the globe mid-zoom. Once
     // the world overflows the view the spacing follows the part that shows,
-    // eased so the estimate's noise can't jitter it.
+    // eased so the estimate's noise can't jitter it, and never wider than the
+    // disc's, so it meets the disc's exactly as the world fits back in view.
     const clipped =
       this.cx - rs < box.x ||
       this.cx + rs > box.x + box.w ||
       this.cy - rs < box.y ||
       this.cy + rs > box.y + box.h;
-    const target = Math.max(
-      0.6,
-      clipped
-        ? Math.sqrt((area * 2) / (SQRT3 * count)) * 1.04
-        : rs * Math.sqrt((2 * Math.PI) / (SQRT3 * count)),
-    );
-    const prev = this.spacing;
-    const sp =
-      clipped && prev > 0 && Math.abs(Math.log(target / prev)) < 0.7
-        ? prev + (target - prev) * 0.2
-        : target;
+    const disc = rs * Math.sqrt((2 * Math.PI) / (SQRT3 * count));
+    if (clipped) {
+      const target = Math.sqrt((area * 2) / (SQRT3 * count)) * 1.04;
+      const prev = this.fit;
+      this.fit =
+        prev > 0 && Math.abs(Math.log(target / prev)) < 0.7
+          ? prev + (target - prev) * 0.2
+          : target;
+    } else {
+      this.fit = disc;
+    }
+    const sp = Math.max(0.6, Math.min(this.fit, disc));
     this.spacing = sp;
     const size = Math.min(maxSize, Math.max(minSize, sp * 0.8));
     const thin = Math.min(1, (sp / 2.2) ** 2 + 0.3);

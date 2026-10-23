@@ -118,6 +118,14 @@ export class RequestsScene implements Scene {
       }
       return path;
     });
+    // A resize can change the leaf count; carry live requests to the leaf at
+    // the same height so their indices stay inside the new tree.
+    const was = this.leaves.length;
+    if (was > 0 && was !== leaves.length) {
+      const remap = (k: number) => Math.floor((k * leaves.length) / was);
+      for (const r of this.requests) r.leaf = remap(r.leaf);
+      if (this.hoverLeaf >= 0) this.hoverLeaf = remap(this.hoverLeaf);
+    }
     this.nodes = nodes;
     this.edges = edges;
     this.leaves = leaves;

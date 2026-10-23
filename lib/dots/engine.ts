@@ -154,7 +154,11 @@ export class DotEngine {
   destroy() {
     cancelAnimationFrame(this.raf);
     for (const dispose of this.disposers) dispose();
-    if (dots.engine === this) dots.engine = null;
+    // A newer engine may already own the page; leave its state alone.
+    if (dots.engine !== this) return;
+    dots.engine = null;
+    dots.reset();
+    document.documentElement.classList.remove("dots-ready");
   }
 
   relayout() {

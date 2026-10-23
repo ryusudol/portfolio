@@ -1,5 +1,6 @@
 import { clamp, mix, mulberry32, rgba, TAU } from "../math";
 import { dust } from "../shapes";
+import { Readouts } from "../story";
 import type { Field, Frame, Palette, RGB, Scene } from "../types";
 
 type Cluster = {
@@ -44,8 +45,7 @@ export class UnlearningScene implements Scene {
   /** Where each forgotten point ends up, weighted toward nearby classes. */
   private destinations: number[] = [];
   private hover = -1;
-  private counters: Record<string, HTMLElement> = {};
-  private shown: Record<string, string> = {};
+  private readouts = new Readouts();
   /** Paper needs denser dots to read as well as ink does. */
   private ink = true;
   private accuracy = "100%";
@@ -74,20 +74,7 @@ export class UnlearningScene implements Scene {
       for (let s = 0; s < share; s++) this.destinations.push(k);
     });
     this.clusterN = Math.round(f.n * 0.86);
-    this.counters = {};
-    this.shown = {};
-    for (const el of fr.section.querySelectorAll<HTMLElement>(
-      "[data-counter]",
-    )) {
-      this.counters[el.dataset.counter ?? ""] = el;
-    }
-  }
-
-  private write(key: string, value: string) {
-    const el = this.counters[key];
-    if (!el || this.shown[key] === value) return;
-    this.shown[key] = value;
-    el.textContent = value;
+    this.readouts.collect(fr.section);
   }
 
   private position(
@@ -186,7 +173,7 @@ export class UnlearningScene implements Scene {
     // "cat" accuracy falls as it's unlearned. It's drawn under the class
     // label (see draw) and mirrored to hidden text for screen readers.
     this.accuracy = `${Math.round((100 * stayed) / Math.max(1, total))}%`;
-    this.write("forget", this.accuracy);
+    this.readouts.write("forget", this.accuracy);
   }
 
   draw(ctx: CanvasRenderingContext2D, fr: Frame, palette: Palette) {

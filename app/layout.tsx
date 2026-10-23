@@ -29,9 +29,10 @@ const description =
   "Software engineer and Rice MCS student working across frontend engineering, data visualization, and machine learning.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  // Unset, Next falls back to the deployment's own URL (localhost in dev).
+  metadataBase: process.env.NEXT_PUBLIC_SITE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+    : undefined,
   title,
   description,
   authors: [{ name: profile.name, url: profile.github }],

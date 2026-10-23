@@ -1,5 +1,6 @@
 import { clamp, gauss, smoothstep } from "../math";
 import { dust } from "../shapes";
+import { Readouts } from "../story";
 import type { Field, Frame, Palette, Scene } from "../types";
 
 const CORNERS: [number, number, number][] = [
@@ -41,28 +42,14 @@ export class CkaScene implements Scene {
   private latticeN = 0;
   private edgeN = 0;
   private yaw = 0;
-  private counters: Record<string, HTMLElement> = {};
-  private shown: Record<string, string> = {};
+  private readouts = new Readouts();
   private ink = true;
 
   layout(f: Field, fr: Frame) {
     this.grid = fr.compact ? 8 : 10;
     this.latticeN = Math.round(f.n * 0.6);
     this.edgeN = Math.round(f.n * 0.2);
-    this.counters = {};
-    this.shown = {};
-    for (const el of fr.section.querySelectorAll<HTMLElement>(
-      "[data-counter]",
-    )) {
-      this.counters[el.dataset.counter ?? ""] = el;
-    }
-  }
-
-  private write(key: string, value: string) {
-    const el = this.counters[key];
-    if (!el || this.shown[key] === value) return;
-    this.shown[key] = value;
-    el.textContent = value;
+    this.readouts.collect(fr.section);
   }
 
   update(f: Field, fr: Frame) {
@@ -160,9 +147,9 @@ export class CkaScene implements Scene {
       }
     }
 
-    this.write("order", collapse > 0.5 ? "O(B²)" : "O(B³)");
-    this.write("speed", `${(1 + 5.8 * collapse).toFixed(1)}×`);
-    this.write(
+    this.readouts.write("order", collapse > 0.5 ? "O(B²)" : "O(B³)");
+    this.readouts.write("speed", `${(1 + 5.8 * collapse).toFixed(1)}×`);
+    this.readouts.write(
       "memory",
       `${(100 - (100 - RETAINED * 100) * release).toFixed(1)}%`,
     );

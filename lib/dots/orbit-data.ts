@@ -27,24 +27,32 @@ export const STARLINK = 0;
 export const DEBRIS = 1;
 export const OTHER = 2;
 
-const buffers = new Map<string, Promise<ArrayBuffer | null>>();
-
-function loadBuffer(url: string) {
-  let pending = buffers.get(url);
-  if (!pending) {
-    pending = fetch(url)
-      .then((res) => (res.ok ? res.arrayBuffer() : null))
-      .catch(() => null);
-    buffers.set(url, pending);
-  }
-  return pending;
-}
-
+/**
+ * Loads and decodes `url` once. Resolves null, never rejects, when the file
+ * can't be fetched (retried on the next call) or can't be decoded (kept, since
+ * the same bytes would fail again).
+ */
 export function loader<T>(url: string, decode: (buffer: ArrayBuffer) => T) {
   let decoded: Promise<T | null> | null = null;
   return () => {
-    decoded ??= loadBuffer(url).then((b) => (b ? decode(b) : null));
-    return decoded;
+    if (decoded) return decoded;
+    const pending = fetch(url)
+      .then((res) => (res.ok ? res.arrayBuffer() : null))
+      .catch(() => null)
+      .then((buffer) => {
+        if (!buffer) {
+          if (decoded === pending) decoded = null;
+          return null;
+        }
+        try {
+          return decode(buffer);
+        } catch (error) {
+          console.error(`[dots] couldn't decode ${url}`, error);
+          return null;
+        }
+      });
+    decoded = pending;
+    return pending;
   };
 }
 

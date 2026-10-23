@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { profile } from "@/lib/content";
 
 export type ContactState = {
@@ -12,6 +13,49 @@ export type ContactState = {
 };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Sends allowed per visitor and per server instance in a 10-minute window,
+ * so a script can't spend the Resend quota or flood the inbox. It lives in
+ * memory, so it's best effort across instances, but each one holds its limit.
+ */
+const WINDOW_MS = 10 * 60 * 1000;
+const PER_VISITOR = 3;
+const PER_INSTANCE = 30;
+const recent = new Map<string, number[]>();
+let recentAll: number[] = [];
+
+/**
+ * Takes a slot for one send, or returns null when the visitor or the instance
+ * is over the limit. Calling the returned function gives the slot back.
+ */
+function reserveSend(visitor: string | null, now: number) {
+  const fresh = (times: number[]) => times.filter((t) => now - t < WINDOW_MS);
+  recentAll = fresh(recentAll);
+  if (recent.size > 1000) {
+    for (const [key, times] of recent) {
+      const kept = fresh(times);
+      if (kept.length) recent.set(key, kept);
+      else recent.delete(key);
+    }
+  }
+  // Without an address there's no visitor to count, so only the cap applies.
+  const mine = visitor ? fresh(recent.get(visitor) ?? []) : [];
+  if (mine.length >= PER_VISITOR || recentAll.length >= PER_INSTANCE) {
+    return null;
+  }
+  mine.push(now);
+  if (visitor) recent.set(visitor, mine);
+  recentAll.push(now);
+  return () => {
+    const drop = (times: number[] | undefined) => {
+      const k = times?.indexOf(now) ?? -1;
+      if (k >= 0) times?.splice(k, 1);
+    };
+    drop(recentAll);
+    if (visitor) drop(recent.get(visitor));
+  };
+}
 
 const field = (data: FormData, key: string, max: number) =>
   String(data.get(key) ?? "")
@@ -69,6 +113,23 @@ export async function sendContact(
     };
   }
 
+  // The nearest proxy appends the address it saw to X-Forwarded-For, so the
+  // last entry is the one a visitor can't write themselves.
+  const requestHeaders = await headers();
+  const visitor =
+    requestHeaders.get("x-forwarded-for")?.split(",").at(-1)?.trim() ||
+    requestHeaders.get("x-real-ip")?.trim() ||
+    null;
+  const release = reserveSend(visitor, at);
+  if (!release) {
+    return {
+      status: "error",
+      message: `That’s a lot of messages in a few minutes — please try again later or email ${profile.email}.`,
+      values,
+      at,
+    };
+  }
+
   const sender = values.name
     ? `${values.name} <${values.email}>`
     : values.email;
@@ -79,8 +140,8 @@ export async function sendContact(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: process.env.CONTACT_FROM ?? "Portfolio <onboarding@resend.dev>",
-      to: [process.env.CONTACT_TO ?? profile.email],
+      from: process.env.CONTACT_FROM || "Portfolio <onboarding@resend.dev>",
+      to: [process.env.CONTACT_TO || profile.email],
       reply_to: values.email,
       subject: `Portfolio message from ${values.name || values.email}`,
       text: `${values.message}\n\n— ${sender}`,
@@ -91,6 +152,8 @@ export async function sendContact(
   });
 
   if (!response?.ok) {
+    // Nothing was delivered, so a retry shouldn't count against the visitor.
+    release();
     if (response)
       console.error(
         "[contact] Resend rejected",

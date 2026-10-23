@@ -1,11 +1,5 @@
 import type { ReactNode } from "react";
-
-const t = {
-  c: (s: string) => <span className="tok-comment">{s}</span>,
-  k: (s: string) => <span className="tok-key">{s}</span>,
-  s: (s: string) => <span className="tok-string">{s}</span>,
-  f: (s: string) => <span className="tok-fn">{s}</span>,
-};
+import { tok as t } from "./story-parts";
 
 /** The wiring of the card beside it, kept short enough to fit its column. */
 const lines: ReactNode[] = [

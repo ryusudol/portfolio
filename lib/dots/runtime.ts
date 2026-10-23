@@ -58,6 +58,11 @@ class DotsRuntime {
     for (const listener of this.listeners) listener();
   }
 
+  /** Back to the page-load state, so one page's readouts don't reach the next. */
+  reset() {
+    this.set(initial);
+  }
+
   setOperator(operator: Operator) {
     this.set({ operator });
   }

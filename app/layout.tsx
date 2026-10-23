@@ -69,6 +69,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${serif.variable} ${mono.variable}`}
+      // Smooth scrolling for in-page links only; page changes jump to the top.
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <head>

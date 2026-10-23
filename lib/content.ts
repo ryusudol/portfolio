@@ -57,6 +57,7 @@ export const homeChapters: Chapter[] = [
 /** Order matches the `data-scene` sections of the ABC Fitness case study. */
 export const abcChapters: Chapter[] = [
   { id: "results", label: "Results" },
+  { id: "redesign", label: "Redesign" },
   { id: "async", label: "Async" },
   { id: "interface", label: "Interface" },
   { id: "orchestration", label: "Orchestration" },
@@ -123,6 +124,16 @@ export const operators = [
 ] as const;
 
 export type Operator = (typeof operators)[number];
+
+export type Certification = { name: string; issuer: string };
+
+/** Rows for the certifications editor, in the order the live page lists them. */
+export const certifications: Certification[] = [
+  { name: "Certified Personal Trainer", issuer: "ACE" },
+  { name: "Strength and Conditioning Specialist", issuer: "NSCA" },
+  { name: "Exercise Therapy Certification", issuer: "ISSA" },
+  { name: "Sport Conditioning Specialist", issuer: "CanFitPro" },
+];
 
 export const operatorNotes: Record<Operator, string> = {
   mergeMap: "Every request runs. Nothing is canceled.",

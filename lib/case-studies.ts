@@ -60,19 +60,19 @@ export const abcFitness: CaseStudy = {
   links: [],
   results: [
     {
-      value: "React",
-      label: "rewritten from scratch",
-      note: "The whole jQuery profile page, rebuilt with its existing business logic carried over intact.",
+      value: "7",
+      label: "sections, one React layout",
+      note: "Header, contact, certifications, score and views, intro video, services, and photo feed, each a slot in one shared page layout.",
     },
     {
-      value: "Flagged",
-      label: "gradual rollout",
-      note: "Landed as independently reviewable stacked PRs behind a LaunchDarkly feature flag.",
+      value: "8",
+      label: "requests sent at once",
+      note: "The profile, its view counts, and six photos leave within 2 ms of each other and settle in about a quarter second.",
     },
     {
-      value: "Beyond",
-      label: "the migration scope",
-      note: "Redesigned the hierarchy with a streamlined header, grouped cards, modal editing, and drag-and-drop certification reordering.",
+      value: "0.00",
+      label: "layout shift on load",
+      note: "Cards hold their final size while data arrives, so nothing on the page jumps. Measured in Chrome on the shipped page.",
     },
     {
       value: "97%",

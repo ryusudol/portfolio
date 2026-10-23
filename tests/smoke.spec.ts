@@ -63,6 +63,45 @@ test.describe("portfolio smoke", () => {
     ).toBeVisible();
   });
 
+  test("before and after screenshots expand together", async ({ page }) => {
+    await page.goto("/experience/abc-fitness#redesign");
+    const shots = page.locator(".compare__frame img");
+    await expect(shots).toHaveCount(2);
+    const toggle = page.getByRole("button", { name: "Show both full pages" });
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    const cropped = await page.locator(".compare__frame").first().boundingBox();
+    await toggle.click();
+    await expect(
+      page.getByRole("button", { name: "Show the first screen" }),
+    ).toHaveAttribute("aria-expanded", "true");
+    const full = await page.locator(".compare__frame").first().boundingBox();
+    expect(full?.height ?? 0).toBeGreaterThan((cropped?.height ?? 0) + 100);
+  });
+
+  test("certifications reorder from the keyboard", async ({ page }) => {
+    await page.goto("/experience/abc-fitness#interface");
+    const rows = page.locator(".certs__row b");
+    await expect(rows.first()).toHaveText("Certified Personal Trainer");
+    const handle = page.getByRole("button", {
+      name: /^Reorder Certified Personal Trainer/,
+    });
+    await handle.focus();
+    await page.keyboard.press("Space");
+    await expect(handle).toHaveAttribute("aria-pressed", "true");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Space");
+    await expect(rows.nth(2)).toHaveText("Certified Personal Trainer");
+    await expect(
+      page.getByText("Dropped Certified Personal Trainer at position 3."),
+    ).toBeAttached();
+
+    await page.keyboard.press("Space");
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("Escape");
+    await expect(rows.nth(2)).toHaveText("Certified Personal Trainer");
+  });
+
   test("contact form submits on Enter and keeps the draft on errors", async ({
     page,
   }) => {

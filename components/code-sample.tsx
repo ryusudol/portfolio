@@ -11,41 +11,27 @@ const t = {
 const lines: ReactNode[] = [
   t.c("// the card on the right is live"),
   <>
-    {t.k("const")} dots = {t.f("useDots")}();
+    {t.k("const")} [order, setOrder] = {t.f("useState")}(certs);
   </>,
   "",
   <>
     {"<"}
-    {t.f("Switch")} checked={"{"}ink{"}"}
+    {t.f("Handle")} aria-pressed={"{"}lifted{"}"}
   </>,
   <>
-    {"  "}onChange={"{"}
-    {t.f("setInk")}
+    {"  "}onKeyDown={"{"}
+    {t.f("liftMoveDrop")}
+    {"}"}
+  </>,
+  <>
+    {"  "}onPointerMove={"{"}
+    {t.f("reorder")}
     {"}"} /{">"}
   </>,
   "",
   <>
     {"<"}
-    {t.f("Slider")} value={"{"}temperature{"}"}
-  </>,
-  <>
-    {"  "}onChange={"{"}dots.{t.f("setTemperature")}
-    {"}"} /{">"}
-  </>,
-  "",
-  <>
-    {"<"}
-    {t.f("Button")} onClick={"{"}() {t.k("=>")} dots.{t.f("burst")}(){"}"}
-    {">"}
-  </>,
-  <>
-    {"  "}
-    {t.s("Scatter")}
-  </>,
-  <>
-    {"</"}
-    {t.f("Button")}
-    {">"}
+    {t.f("Live")} {"/>"} {t.c("// announces each move")}
   </>,
 ];
 

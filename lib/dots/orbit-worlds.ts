@@ -558,9 +558,11 @@ export class DotWorld {
       1,
       (x1 - x0) * (y1 - y0) * Math.max(0.03, hits / (G * G)),
     );
-    // While the whole disc is in view the spacing follows the disc, so the
-    // lattice zooms with the world; once the world overflows the view it
-    // follows the part that shows, eased so the estimate's noise can't jitter it.
+    // While the whole disc is in view the spacing follows the disc exactly, so
+    // the lattice zooms with the world and every particle keeps its slot; any
+    // lag would change the slot count and reshuffle the globe mid-zoom. Once
+    // the world overflows the view the spacing follows the part that shows,
+    // eased so the estimate's noise can't jitter it.
     const clipped =
       this.cx - rs < box.x ||
       this.cx + rs > box.x + box.w ||
@@ -574,7 +576,7 @@ export class DotWorld {
     );
     const prev = this.spacing;
     const sp =
-      prev > 0 && Math.abs(Math.log(target / prev)) < 0.7
+      clipped && prev > 0 && Math.abs(Math.log(target / prev)) < 0.7
         ? prev + (target - prev) * 0.2
         : target;
     this.spacing = sp;

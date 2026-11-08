@@ -11,6 +11,15 @@ import { TraceScene } from "./cka-trace";
 import { CurtainScene } from "./curtain";
 import { HeroScene } from "./hero";
 import { InterfaceScene } from "./interface";
+import { CritiqueScene } from "./inv-critique";
+import { GateScene } from "./inv-gate";
+import { IntakeScene } from "./inv-intake";
+import { LedgerScene } from "./inv-ledger";
+import { MachineScene } from "./inv-machine";
+import { MatchScene } from "./inv-match";
+import { PrincipleScene } from "./inv-principle";
+import { ReplayScene } from "./inv-replay";
+import { ResumeScene } from "./inv-resume";
 import { AttackScene } from "./muc-attack";
 import { EmbeddingScene } from "./muc-embedding";
 import { LayersScene } from "./muc-layers";
@@ -88,6 +97,15 @@ export const scenes: Record<string, () => Scene> = {
   "orbit-precision": () => new PrecisionScene(),
   "orbit-sieve": () => new SieveScene(),
   "orbit-bound": () => new BoundScene(),
+  "inv-principle": () => new PrincipleScene(),
+  "inv-machine": () => new MachineScene(),
+  "inv-intake": () => new IntakeScene(),
+  "inv-match": () => new MatchScene(),
+  "inv-gate": () => new GateScene(),
+  "inv-critique": () => new CritiqueScene(),
+  "inv-ledger": () => new LedgerScene(),
+  "inv-resume": () => new ResumeScene(),
+  "inv-replay": () => new ReplayScene(),
   contact: () => new ShapesScene({ share: 0.5 }),
   curtain: () => new CurtainScene(),
   results: () => new ShapesScene({ share: 0.5, alpha: 0.75 }),

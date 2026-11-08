@@ -116,6 +116,21 @@ export const mucChapters: Chapter[] = [
   { id: "more", label: "More" },
 ];
 
+/** Order matches the `data-scene` sections of the Invoice Pipeline case study. */
+export const invoiceChapters: Chapter[] = [
+  { id: "results", label: "Results" },
+  { id: "principle", label: "Principle" },
+  { id: "orchestration", label: "Orchestration" },
+  { id: "extraction", label: "Extraction" },
+  { id: "matching", label: "Item matching" },
+  { id: "policy", label: "Policy gate" },
+  { id: "approval", label: "Approval" },
+  { id: "payment", label: "Duplicates and payment" },
+  { id: "persistence", label: "Persistence" },
+  { id: "testing", label: "Testing" },
+  { id: "more", label: "More" },
+];
+
 export const operators = [
   "mergeMap",
   "concatMap",
@@ -153,6 +168,8 @@ export const links = {
   orbitDemo: "https://orbit-explorer.pages.dev/",
   orbitCode: "https://github.com/ryusudol/orbit-explorer",
   vallado: "https://celestrak.org/publications/AIAA/2006-6753/",
+  invoiceCode: "https://github.com/ryusudol/multi-agent-invoice-pipeline",
+  pydanticAi: "https://ai.pydantic.dev/",
 } as const;
 
 export const education = [

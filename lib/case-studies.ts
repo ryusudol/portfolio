@@ -351,11 +351,63 @@ export const orbitExplorer: CaseStudy = {
   ],
 };
 
+export const invoicePipeline: CaseStudy = {
+  slug: "invoice-pipeline",
+  href: "/projects/invoice-pipeline",
+  kind: "Project",
+  title: "Multi-Agent Invoice Pipeline",
+  role: "Solo project, from the agents to the dashboard",
+  when: "Runs locally · CLI and dashboard",
+  summary:
+    "An accounts-payable pipeline in which four Grok agents read invoices in any format, match their lines to inventory, and draft an approval that a second agent audits. Every decision that moves money is made by plain code: the arithmetic, stock checks, duplicate detection, the approval policy, and the payment itself. The agents can make an outcome stricter, never looser. A typed state machine drives each invoice and saves it to SQLite before every stage, so the CLI and the web dashboard share one database, and a review left in one can be finished in the other.",
+  definition: {
+    term: "What does accounts payable decide?",
+    body: "Accounts payable turns a vendor’s invoice into a payment. Before money moves, someone reads the document, checks that the items exist and are in stock, checks the math, makes sure the invoice hasn’t already been paid, and decides whether it needs a person to look at it. Invoices arrive as emails, PDFs, spreadsheets, JSON, and XML, full of typos and OCR errors. Reading them is a job for an LLM. Everything after that is a job for code.",
+  },
+  blurb:
+    "Grok agents read and audit invoices while deterministic code decides and pays, matching the answer key on 20 of 20 sample invoices against live Grok.",
+  stack: [
+    "Python",
+    "Pydantic AI",
+    "Grok",
+    "FastAPI",
+    "SQLite",
+    "React",
+    "TanStack Query",
+    "pytest",
+  ],
+  links: [{ label: "Code", href: links.invoiceCode }],
+  results: [
+    {
+      value: "20 / 20",
+      label: "invoices decided as expected, on live Grok",
+      note: "A live end-to-end run matched the answer key on every sample invoice: final status, amount paid, and the finding codes behind each decision. Six were paid, eight rejected, three sent to a person, and three caught as duplicates.",
+    },
+    {
+      value: "11 of 17",
+      label: "outcomes fixed by code first",
+      note: "Every invoice with an error, or with a finding a person must review, had its outcome set by the policy gate before any approval agent ran. The VP agent still wrote the rationale, but code checked its decision against the gate.",
+    },
+    {
+      value: "3 / 3",
+      label: "duplicates caught across formats",
+      note: "Duplicates are matched by content, not by file. The PDF and the text file of INV-1012 hash to the same fingerprint, 6d751f33753066a3, so the second one pays nothing.",
+    },
+    {
+      value: "126",
+      label: "offline tests in 4.6 s",
+      note: "Recorded Grok outputs replay through Pydantic AI’s FunctionModel, so the whole batch, every guard, and a race between two concurrent payments all run with no API key and no network.",
+    },
+  ],
+  highlights: [],
+};
+
 export const caseStudies = [
   abcFitness,
   orbitExplorer,
   unlearningComparator,
   pytorchCka,
+  invoicePipeline,
 ];
 
 export const projectStudies = caseStudies.filter((s) => s.kind === "Project");

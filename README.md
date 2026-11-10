@@ -186,6 +186,20 @@ pnpm install
 pnpm dev
 ```
 
+Or, with nothing installed on the host but Docker:
+
+```bash
+docker compose up -d                       # installs deps, serves http://localhost:3000
+docker compose exec app pnpm lint          # run any command inside the container
+docker compose exec app pnpm test:e2e      # reuses the running dev server
+docker compose down -v                     # stop and delete node_modules, .next, the pnpm store
+```
+
+`node_modules`, `.next` and the pnpm store live in Docker volumes, and
+Chromium is baked into the image, so the project folder only holds source.
+Editors on the host won't see `node_modules` (no library types or
+autocomplete).
+
 Quality checks (CI runs lint, typecheck, and e2e on every push and PR to
 `main`):
 

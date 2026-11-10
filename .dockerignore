@@ -1,0 +1,3 @@
+# The dev image copies nothing from the repo (the source is bind-mounted),
+# so send an empty build context.
+*

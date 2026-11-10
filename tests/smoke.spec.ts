@@ -167,7 +167,7 @@ test.describe("portfolio smoke", () => {
         page.getByRole("heading", { level: 2, name, exact: true }),
       ).toBeVisible();
     }
-    await expect(page.locator(".work-card")).toHaveCount(5);
+    await expect(page.locator(".work-card")).toHaveCount(6);
     await page.getByRole("link", { name: "PyTorch-CKA" }).click();
     await expect(page).toHaveURL(/\/projects\/pytorch-cka$/);
   });

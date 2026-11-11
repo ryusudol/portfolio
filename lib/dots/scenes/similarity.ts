@@ -6,7 +6,7 @@ import {
   shareByValue,
   similarity,
 } from "../cka-data";
-import { smoothstep } from "../math";
+import { rgba, smoothstep } from "../math";
 import { dust } from "../shapes";
 import { axisGutter, cellReadout, layerAxes, resetText } from "../story";
 import type { Field, Frame, Palette, Scene } from "../types";
@@ -33,6 +33,8 @@ export class SimilarityScene implements Scene {
   /** Distances out from the plot edge: waiting band, tick numbers, title. */
   private gutter = { band: 8, spread: 14, tick: 34, title: 54 };
   private hover = -1;
+  /** The cell being compared right now, or -1 before the first and after the last. */
+  private scan = -1;
   private counter: HTMLElement | null = null;
   private shown = -1;
   private ink = true;
@@ -96,6 +98,11 @@ export class SimilarityScene implements Scene {
       }
     }
 
+    const scanning = computed > 0 && computed < cells;
+    const scanRow = Math.floor(computed / LAYERS);
+    const scanCol = computed % LAYERS;
+    this.scan = scanning ? computed : -1;
+
     for (let i = 0; i < f.n; i++) {
       if (i >= this.heatN) {
         dust(f, i, fr, 0.12);
@@ -120,13 +127,16 @@ export class SimilarityScene implements Scene {
       }
 
       // Not compared yet: waiting as activations on either network's axis.
+      // The two layers being compared right now are lit, so the pair about
+      // to land in its cell can be picked out on both axes.
       const fromBottom = f.r3[i] < 0.5;
       const along = (fromBottom ? col : row) + 0.5 + (f.r1[i] - 0.5) * 0.7;
       const out = band + f.r2[i] * spread;
+      const next = scanning && (fromBottom ? col === scanCol : row === scanRow);
       f.gx[i] = fromBottom ? left + along * cell : left - out;
       f.gy[i] = fromBottom ? bottom + out : bottom - along * cell;
-      f.ga[i] = (0.22 + f.r0[i] * 0.3) * boost;
-      f.gh[i] = 0;
+      f.ga[i] = Math.min(1, (next ? 0.75 : 0.22 + f.r0[i] * 0.3) * boost);
+      f.gh[i] = next ? 1 : 0;
     }
 
     if (computed !== this.shown && this.counter) {
@@ -149,6 +159,25 @@ export class SimilarityScene implements Scene {
       { x: "ResNet-18 · seed B", y: "ResNet-18 · seed A" },
       { compact: fr.compact },
     );
+    if (this.scan >= 0 && this.hover < 0) {
+      // The comparison in progress: one layer from each network, and the
+      // cell their similarity lands in.
+      const row = Math.floor(this.scan / LAYERS);
+      const col = this.scan % LAYERS;
+      const cell = size / LAYERS;
+      const x = left + (col + 0.5) * cell;
+      const y = bottom - (row + 0.5) * cell;
+      ctx.strokeStyle = rgba(palette.accent, 0.55);
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(left - this.gutter.band, y);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x, bottom + this.gutter.band);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.strokeRect(x - cell / 2, y - cell / 2, cell, cell);
+    }
     if (this.hover >= 0) {
       const row = Math.floor(this.hover / LAYERS);
       const col = this.hover % LAYERS;

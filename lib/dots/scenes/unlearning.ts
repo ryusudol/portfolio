@@ -163,9 +163,14 @@ export class UnlearningScene implements Scene {
       const bend = Math.sin(Math.PI * eased) * (f.r1[i] - 0.5) * 0.5;
       f.gx[i] = vx + pos[0] + dx * eased - dy * bend;
       f.gy[i] = vy + pos[1] + dy * eased + dx * bend;
-      // Once past halfway, the point takes on the class it now sits in.
-      if (eased > 0.5) f.gc[i] = dest + 1;
-      f.ga[i] = Math.min(1, (0.6 + 0.35 * f.r3[i]) * boost);
+      // Forgetting, in three beats: the point lets go of its color as it
+      // leaves (the model no longer knows what it is), crosses the gap
+      // unlabeled, and takes the color of the class it's mistaken for only
+      // once it lands there.
+      if (eased > 0.86) f.gc[i] = dest + 1;
+      else if (eased > 0.1) f.gc[i] = 0;
+      const crossing = eased > 0.1 && eased <= 0.86;
+      f.ga[i] = Math.min(1, (crossing ? 0.5 : 0.6 + 0.35 * f.r3[i]) * boost);
       if (e < 0.5) stayed++;
     }
 

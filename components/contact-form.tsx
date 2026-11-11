@@ -13,11 +13,13 @@ export function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const sendRef = useRef<HTMLButtonElement>(null);
 
-  // Celebrate a delivered message with a shockwave from the send button.
+  // A delivered message leaves: a shockwave from the send button, and the
+  // dots that outlined the letter fold into a paper plane and fly it off.
   useEffect(() => {
     if (state.status !== "sent") return;
     const r = sendRef.current?.getBoundingClientRect();
     if (r) dots.burst(r.left + r.width / 2, r.top + r.height / 2, 1.6);
+    dots.markSent();
   }, [state]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {

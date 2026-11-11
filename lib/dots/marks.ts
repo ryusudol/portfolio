@@ -35,6 +35,8 @@ export type Mark = {
   size: number;
   start: number;
   count: number;
+  /** Along a flow: how many comet-shaped packets the stream is grouped into. */
+  packets: number;
 };
 
 type Geometry = Partial<
@@ -59,6 +61,7 @@ const blank = (kind: MarkKind): Mark => ({
   size: 0,
   start: 0,
   count: 0,
+  packets: 1,
 });
 
 /** How many particles a mark wants at `density` per pixel (or per px² for areas). */
@@ -129,6 +132,13 @@ export class Marks {
     const vx = fr.visual.x;
     const vy = fr.visual.y;
     const time = fr.reduced ? 0 : fr.time;
+    for (const m of this.list) {
+      if (m.flow && (m.kind === "line" || m.kind === "curve"))
+        m.packets = Math.max(
+          1,
+          Math.round(Math.hypot(m.x2 - m.x, m.y2 - m.y) / 120),
+        );
+    }
     for (let i = 0; i < f.n; i++) {
       const o = this.owner[i];
       if (o < 0) {
@@ -141,6 +151,8 @@ export class Marks {
       const shown = q <= m.show + 1e-6;
       let x = 0;
       let y = 0;
+      let comet = 1;
+      let lead = false;
       switch (m.kind) {
         case "box": {
           const per = 2 * (m.w + m.h);
@@ -179,8 +191,18 @@ export class Marks {
         case "curve": {
           const head = Math.min(1, m.show);
           let t = m.flow ? (q + time * m.flow) % 1 : q;
-          if (m.flow) t *= head;
-          else if (!shown) t = head;
+          if (m.flow) {
+            // A stream of evenly lit dots reads as a dotted line, not as
+            // movement. Grouping it into packets — a bright head with a tail
+            // thinning out behind — shows which way it runs at a glance.
+            const along = (q * m.packets) % 1;
+            comet = 0.28 + 0.95 * along * along;
+            if (along > 0.86) lead = true;
+            // Dots fade in at the source and out at the end, so the jump
+            // back to the start is never seen.
+            comet *= Math.min(1, t * 12, (1 - t) * 12);
+            t *= head;
+          } else if (!shown) t = head;
           if (m.kind === "line") {
             x = m.x + (m.x2 - m.x) * t;
             y = m.y + (m.y2 - m.y) * t;
@@ -217,11 +239,12 @@ export class Marks {
       f.gy[i] = vy + y;
       const visible = m.flow && m.kind !== "fill" ? true : shown;
       f.ga[i] = visible
-        ? Math.min(1, m.a * (0.65 + 0.35 * f.r3[i]) * boost)
+        ? Math.min(1, m.a * (0.65 + 0.35 * f.r3[i]) * boost * comet)
         : 0;
       f.gh[i] = m.tint;
       f.gc[i] = m.cls;
       if (m.size) f.gz[i] = m.size;
+      else if (lead) f.gz[i] = 1.9;
     }
   }
 }

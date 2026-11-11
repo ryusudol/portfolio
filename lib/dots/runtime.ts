@@ -18,6 +18,7 @@ export type DotsSnapshot = {
 
 type EngineCommands = {
   burst(x: number, y: number, power?: number): void;
+  restage(): void;
 };
 
 const initial: DotsSnapshot = {
@@ -36,6 +37,11 @@ class DotsRuntime {
   private snapshot: DotsSnapshot = initial;
   private listeners = new Set<() => void>();
   engine: EngineCommands | null = null;
+  /**
+   * Counts messages the contact form has delivered. Scenes poll it each
+   * frame; it isn't part of the snapshot, so it never re-renders React.
+   */
+  sent = 0;
 
   subscribe = (listener: () => void) => {
     this.listeners.add(listener);
@@ -69,6 +75,19 @@ class DotsRuntime {
 
   setTemperature(temperature: number) {
     this.set({ temperature });
+  }
+
+  /** A message went out: the contact scene folds it up and flies it off. */
+  markSent() {
+    this.sent++;
+  }
+
+  /**
+   * The current scene's figure just changed wholesale (its data arrived):
+   * build it with the chapter's entrance instead of letting dots fly to it.
+   */
+  restage() {
+    this.engine?.restage();
   }
 
   /** Radial shockwave; defaults to the viewport center. */

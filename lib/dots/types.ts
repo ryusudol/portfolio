@@ -63,13 +63,54 @@ export type Field = {
   classColors: RGB[];
   k: Float32Array;
   release: Float32Array;
+  /**
+   * Excitement, 0..1: a short glint the engine sets when a particle lands
+   * after a long flight or a shockwave passes, then lets decay. Drawn as a
+   * brighter, slightly larger dot.
+   */
+  fx: Float32Array;
+  /** Set while a particle is far from its target, so its landing can glint. */
+  far: Uint8Array;
+  /**
+   * Set by `dust` each frame (reset every frame): this particle is spare
+   * grain, not part of the scene's figure.
+   */
+  loose: Uint8Array;
 };
+
+/**
+ * How a chapter's figure arrives when the page scrolls to it. Each is a way
+ * of building the figure where it stands: the old one fades out in place and
+ * no dot crosses the screen, except in `flock`.
+ *
+ * - `flock`: the whole swarm wheels round the stage and lands. The one loud
+ *   entrance, kept for the hero.
+ * - `wipe`: laid down by a front moving at `angle` (degrees; 0 is left to
+ *   right, 90 top to bottom, -90 bottom to top), the way a plotter draws.
+ * - `bloom`: opens outward from a point (`at`, in fractions of the stage,
+ *   default its center).
+ * - `rain`: drops into place from above, column after column.
+ * - `focus`: resolves from a soft blur around each dot's place.
+ * - `draw`: traced along each outline in order, like a pen.
+ * - `cut`: dissolves in where it stands.
+ */
+export type Entrance =
+  | { kind: "flock" }
+  | { kind: "wipe"; angle: number }
+  | { kind: "bloom"; at?: readonly [number, number] }
+  | { kind: "rain" }
+  | { kind: "focus" }
+  | { kind: "draw" }
+  | { kind: "cut" };
 
 export type Pointer = {
   x: number;
   y: number;
   active: boolean;
   lastMove: number;
+  /** Smoothed velocity, in pixels per 60 Hz frame. */
+  vx: number;
+  vy: number;
 };
 
 export type Frame = {
@@ -78,6 +119,8 @@ export type Frame = {
   vw: number;
   vh: number;
   progress: number;
+  /** The page's scroll offset, for anything that should drift past as it moves. */
+  scroll: number;
   visual: Rect;
   section: HTMLElement;
   pointer: Pointer;

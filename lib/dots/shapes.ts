@@ -1,13 +1,55 @@
 import { gauss, TAU } from "./math";
 import type { Field, Frame } from "./types";
 
-/** Faint, slowly drifting background grain for particles a scene doesn't need. */
+/** Off-screen band the grain wraps through, so no mote pops in or out in view. */
+const MARGIN = 48;
+
+/**
+ * Background grain for particles a scene doesn't need, with depth. Each mote
+ * sits at its own distance: far ones are small, faint and nearly still; near
+ * ones are larger, brighter, ride a wider current, and slide past faster as
+ * the page scrolls. The page reads as a window onto a slow field of dust
+ * rather than a texture printed on it.
+ */
 export function dust(f: Field, i: number, fr: Frame, alpha = 0.16) {
-  const t = fr.reduced ? 0 : fr.time * 0.05;
-  f.gx[i] = f.r0[i] * fr.vw + Math.sin(t + f.r2[i] * TAU) * 28;
-  f.gy[i] = f.r1[i] * fr.vh + Math.cos(t * 0.8 + f.r3[i] * TAU) * 28;
-  f.ga[i] = alpha * (0.35 + f.r3[i] * 0.65);
+  const near = f.r2[i] * f.r2[i];
+  const t = fr.reduced ? 0 : fr.time;
+  const reach = 12 + near * 44;
+  const pace = 0.045 + near * 0.06;
+  const phase = f.r3[i] * TAU;
+  const wide = fr.vw + MARGIN * 2;
+  const tall = fr.vh + MARGIN * 2;
+  const x =
+    f.r0[i] * wide -
+    MARGIN +
+    Math.sin(t * pace + phase) * reach +
+    Math.sin(t * 0.027 + f.r1[i] * 11) * 18;
+  const slide = fr.reduced ? 0 : fr.scroll * (0.035 + near * 0.26);
+  let y =
+    f.r1[i] * tall -
+    slide +
+    Math.cos(t * pace * 0.8 + phase * 1.7) * reach * 0.7;
+  y = y - Math.floor(y / tall) * tall - MARGIN;
+
+  // A mote that has slid off one edge comes back in on the other without
+  // crossing the screen to get there.
+  if (
+    (f.y[i] < -6 || f.y[i] > fr.vh + 6) &&
+    Math.abs(y - f.y[i]) > fr.vh * 0.9 &&
+    f.release[i] <= fr.time
+  ) {
+    f.x[i] = f.tx[i] = x;
+    f.y[i] = f.ty[i] = y;
+    f.vx[i] = 0;
+    f.vy[i] = 0;
+  }
+
+  f.gx[i] = x;
+  f.gy[i] = y;
+  f.ga[i] = alpha * (0.4 + near * 1.1);
   f.gh[i] = 0;
+  f.gz[i] = 0.7 + near * 1.5;
+  f.loose[i] = 1;
 }
 
 export type ShapeKind = "outline" | "rule" | "disc" | "ring" | "bar" | "fill";
@@ -24,6 +66,10 @@ type Shape = {
   /** Build order; shapes above `DomShapes.stage` stay unbuilt (dust). */
   stage: number;
   rect: DOMRect | null;
+  /** The link, button or form this shape outlines, if any; it lights on hover. */
+  control: Element | null;
+  /** 0..1, eased: how lit the shape is from hover or focus. */
+  lit: number;
 };
 
 const corner: [number, number, number, number] = [0, 0, 0, 0];
@@ -93,6 +139,20 @@ function inkLength(kind: ShapeKind, w: number, h: number, radius: number) {
   }
 }
 
+const CONTROLS = "a[href], button, form";
+
+/**
+ * The link, button or form a shape stands for: the one it sits inside, or
+ * the only one it holds, as with a card whose title link covers the card. A
+ * shape around several controls stands for none of them.
+ */
+function controlOf(el: HTMLElement) {
+  const outer = el.closest(CONTROLS);
+  if (outer) return outer;
+  const inner = el.querySelectorAll(CONTROLS);
+  return inner.length === 1 ? inner[0] : null;
+}
+
 /**
  * Lets markup decide where particles go. Elements tagged with
  * `data-dots="outline|rule|disc|ring|bar|fill"` are traced every frame, so the dots
@@ -120,6 +180,8 @@ export class DomShapes {
         ),
         radius: 0,
         rect: null,
+        control: controlOf(el),
+        lit: 0,
       }),
     );
     return this;
@@ -155,7 +217,11 @@ export class DomShapes {
   refresh() {
     for (const s of this.shapes) {
       s.rect = s.el.getBoundingClientRect();
-      s.tint = Number(s.el.dataset.dotsTint ?? 0);
+      // An outline around something clickable warms up under the pointer or
+      // the keyboard focus, the way a hover state would.
+      const on = s.control?.matches(":hover, :focus-within") ? 1 : 0;
+      s.lit += (on - s.lit) * 0.16;
+      s.tint = Math.max(Number(s.el.dataset.dotsTint ?? 0), s.lit * 0.62);
     }
   }
 
@@ -214,7 +280,7 @@ export class DomShapes {
     }
     f.gx[i] = x;
     f.gy[i] = y;
-    f.ga[i] = alpha * (0.55 + f.r3[i] * 0.45);
+    f.ga[i] = Math.min(1, alpha * (0.55 + f.r3[i] * 0.45) * (1 + s.lit * 0.3));
     f.gh[i] = s.tint;
     return true;
   }

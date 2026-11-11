@@ -1,4 +1,5 @@
 import { decodeShell } from "./orbit-mesh";
+import { dots } from "./runtime";
 
 /**
  * Real data behind the Orbit Explorer story. The binaries in `public/orbit`
@@ -52,6 +53,11 @@ export function loader<T>(url: string, decode: (buffer: ArrayBuffer) => T) {
         }
       });
     decoded = pending;
+    // A scene waiting on this file has drawn nothing yet; once it lands, the
+    // figure should make its entrance rather than assemble out of flying dust.
+    pending.then((value) => {
+      if (value) dots.restage();
+    });
     return pending;
   };
 }

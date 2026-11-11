@@ -8,17 +8,18 @@ where to be, so scrolling hands the same dots from one formation to the next.
 
 | #   | Chapter               | What the dots do                                                                       |
 | --- | --------------------- | -------------------------------------------------------------------------------------- |
-| 00  | Intro                 | A stippled portrait beside the name; the cursor pushes through, a click pulses.        |
+| 00  | Intro                 | A band of light writes the name, then develops a stippled portrait; scrolling raises a wind that carries both off as grain. |
 | 01  | Orbit Explorer        | The tracked catalog orbits a dot-matrix Earth; scrolling pulls back to the GEO ring. |
-| 02  | Unlearning Comparator | A 10-class UMAP-like embedding; scrolling scatters one class into the others.          |
-| 03  | PyTorch-CKA           | A layer-by-layer CKA heatmap of two ResNet-18s fills in, pair by pair.                 |
-| 04  | Contact               | Outline a message form that emails me directly.                                        |
+| 02  | Unlearning Comparator | A 10-class UMAP-like embedding; scrolling unlearns one class: its points lose their color, cross to other clusters, and take theirs. |
+| 03  | PyTorch-CKA           | A layer-by-layer CKA heatmap of two ResNet-18s fills in, pair by pair, with the two layers being compared lit on the axes. |
+| 04  | Contact               | Outline a message form that emails me directly; a sent message folds into a paper plane and flies off. |
 
 The footer under Contact lists education, links, and skills.
 
 **Case studies** open with results (not a hero): title, role, summary, and
 result cards, each with a small particle chart of its evidence. Each one ends
-with a "More" section linking to the other case studies.
+with a "More" section linking to the other case studies, where the grain
+gathers into a slow, tilted spiral disk that echoes the logo.
 
 - `/projects/orbit-explorer` — a digital twin of Earth orbit that flies out
   to every planet. Its feature chapters redraw the app itself in dots, inside a
@@ -135,19 +136,45 @@ node scripts/orbit/worlds.mjs http://localhost:5173 public/orbit
 
 - `components/dot-stage.tsx` — mounts the canvas and starts the engine. Each
   page renders its own `<DotStage />`.
-- `lib/dots/engine.ts` — the particle engine: springs, pointer repulsion,
-  click shockwaves, temperature, scroll-driven chapter switching, and batched
-  Canvas 2D rendering (particles are bucketed by color/alpha, one fill each).
+- `lib/dots/engine.ts` — the particle engine: springs, click shockwaves,
+  temperature, scroll-driven chapter switching, and batched Canvas 2D
+  rendering (particles are bucketed by color/alpha, one fill each). It also
+  owns how the dots feel:
+  - Each chapter's figure makes its own entrance, set per scene in
+    `entrances` (`scenes/index.ts`). The old figure fades where it stands and
+    the new one is built in place, in the order it is read: a timeline or flow
+    is wiped in left to right, a table top to bottom, a histogram from its
+    baseline up; a matrix rains in by column, a scatter comes into focus,
+    anything with a center blooms from it, and an outline is drawn like a pen
+    stroke. Views of the Orbit Explorer app cut to one another. No dot crosses
+    the screen, with one exception: arriving at or leaving the hero, the whole
+    swarm flocks round the stage on a slow vortex.
+  - A dot already close to its next place just moves there, so a figure two
+    chapters share (the globe, say) carries over instead of rebuilding.
+  - A fast dot draws its motion as a short streak, is fainter while in flight,
+    and glints once as it lands.
+  - Accent-tinted dots get a soft bloom from a low-resolution layer drawn
+    underneath, so whatever a scene marks as current is also the brightest
+    thing on screen. A lone tinted dot doesn't bloom; a dense stroke does.
+  - The pointer pushes dots aside, drags a wake through them as it moves, and
+    brightens what it touches.
+  - All of the motion above is off under `prefers-reduced-motion`.
 - `lib/dots/types.ts` — particles are structure-of-arrays typed buffers.
   Scenes write goals; the engine commits them to targets after each particle's
   stagger delay, then eases position, alpha, tint, and class color.
 - `lib/dots/scenes/*` — one scene per chapter, registered in
   `scenes/index.ts` under the section's `data-scene` name (`muc-*`, `cka-*`, and
   `orbit-*` for the case studies). A scene writes a goal position, alpha, and tint
-  for every particle each frame; unused particles become dust.
+  for every particle each frame; unused particles become dust, which has
+  depth: near motes are larger and slide past faster as the page scrolls.
 - `lib/dots/shapes.ts` — lets markup place dots. Elements tagged
   `data-dots="outline|rule|disc|ring|bar|fill"` are traced every frame, so the
-  dots follow real, keyboard-accessible controls.
+  dots follow real, keyboard-accessible controls. An outline that sits
+  inside a link, button, or form, or holds exactly one (a card whose title
+  link covers it), warms to the accent on hover and focus.
+- `lib/dots/marks.ts` — a scene's particles as a list of boxes, lines, curves,
+  rings, and fills. A line or curve with `flow` set streams in comet-shaped
+  packets, bright head first, so its direction reads at a glance.
 - `lib/dots/story.ts` — keeps a chapter's `[data-step]` captions and
   `[data-counter]` readouts in sync with its scene.
 - `lib/dots/cka-data.ts`, `lib/dots/muc-data.ts`, `lib/dots/orbit-data.ts` —

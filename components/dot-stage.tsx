@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 import { DotEngine } from "@/lib/dots/engine";
-import { scenes } from "@/lib/dots/scenes";
+import { entrances, scenes } from "@/lib/dots/scenes";
 
 /** The single full-viewport canvas every chapter draws into. */
 export function DotStage() {
@@ -15,7 +15,7 @@ export function DotStage() {
     if (!canvas || !root) return;
     let engine: DotEngine;
     try {
-      engine = new DotEngine(canvas, root, scenes);
+      engine = new DotEngine(canvas, root, scenes, entrances);
     } catch {
       return;
     }

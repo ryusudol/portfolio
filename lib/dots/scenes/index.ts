@@ -1,4 +1,4 @@
-import type { Scene } from "../types";
+import type { Entrance, Scene } from "../types";
 import { AgentsScene } from "./agents";
 import { CkaScene } from "./cka";
 import { BasisScene } from "./cka-basis";
@@ -8,6 +8,7 @@ import { MemoryScene } from "./cka-memory";
 import { RaceScene } from "./cka-race";
 import { CkaResultsScene } from "./cka-results";
 import { TraceScene } from "./cka-trace";
+import { ContactScene } from "./contact";
 import { CurtainScene } from "./curtain";
 import { HeroScene } from "./hero";
 import { InterfaceScene } from "./interface";
@@ -106,8 +107,85 @@ export const scenes: Record<string, () => Scene> = {
   "inv-ledger": () => new LedgerScene(),
   "inv-resume": () => new ResumeScene(),
   "inv-replay": () => new ReplayScene(),
-  contact: () => new ShapesScene({ share: 0.5 }),
+  contact: () => new ContactScene(),
   curtain: () => new CurtainScene(),
   results: () => new ShapesScene({ share: 0.5, alpha: 0.75 }),
   outro: () => new OutroScene(),
+};
+
+const right: Entrance = { kind: "wipe", angle: 0 };
+const down: Entrance = { kind: "wipe", angle: 90 };
+const up: Entrance = { kind: "wipe", angle: -90 };
+const rain: Entrance = { kind: "rain" };
+const focus: Entrance = { kind: "focus" };
+const draw: Entrance = { kind: "draw" };
+const cut: Entrance = { kind: "cut" };
+const bloom = (x = 0.5, y = 0.5): Entrance => ({ kind: "bloom", at: [x, y] });
+
+/**
+ * How each chapter's figure arrives, keyed like `scenes`. The rule: a figure
+ * enters the way it is read. A timeline or a flow is laid down left to right,
+ * a table or a listing top to bottom, a histogram from its baseline up; a
+ * matrix fills by column, a scatter comes into focus, anything with a center
+ * opens from it, and an outline is drawn. Views of the Orbit Explorer app cut
+ * to one another, as a screen does. Only the hero flocks.
+ */
+export const entrances: Record<string, Entrance> = {
+  hero: { kind: "flock" },
+  async: bloom(0.02, 0.5),
+  interface: draw,
+  visualization: bloom(0.52, 0.47),
+  orchestration: right,
+  performance: focus,
+  // The heatmap's two axes grow out of their shared corner.
+  similarity: { kind: "wipe", angle: -45 },
+  "cka-results": draw,
+  "cka-loop": down,
+  "cka-basis": bloom(0.5, 0.42),
+  "cka-trace": rain,
+  "cka-batch": down,
+  "cka-memory": right,
+  "cka-race": right,
+  "muc-results": draw,
+  "muc-motivation": focus,
+  "muc-screen": down,
+  "muc-workflow": bloom(),
+  "muc-embedding": focus,
+  "muc-matrix": rain,
+  "muc-layers": right,
+  "muc-attack": up,
+  "muc-state": down,
+  "muc-render": right,
+  "muc-redraw": up,
+  // Sunrise: the globe is lit from one limb across to the other.
+  orbit: right,
+  "orbit-results": draw,
+  "orbit-earth": bloom(0.5, 0.45),
+  "orbit-follow": cut,
+  "orbit-routing": cut,
+  "orbit-conjunctions": cut,
+  "orbit-coverage": cut,
+  "orbit-catalog": cut,
+  "orbit-flight": cut,
+  "orbit-relay": cut,
+  "orbit-giants": cut,
+  "orbit-heliosphere": bloom(0.5, 0.45),
+  "orbit-validation": right,
+  "orbit-pipeline": right,
+  "orbit-precision": focus,
+  "orbit-sieve": bloom(),
+  "orbit-bound": right,
+  "inv-principle": down,
+  "inv-machine": down,
+  "inv-intake": right,
+  "inv-match": down,
+  "inv-gate": right,
+  "inv-critique": right,
+  "inv-ledger": down,
+  "inv-resume": down,
+  "inv-replay": right,
+  contact: draw,
+  curtain: rain,
+  results: draw,
+  outro: focus,
 };

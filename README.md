@@ -3,8 +3,8 @@
 A scroll-told portfolio drawn entirely in dots, set in space. One
 full-viewport canvas holds 5–11k particles (scaled to the viewport); each
 chapter of the page tells them where to be, so scrolling hands the same dots
-from one formation to the next. Behind them is a fixed night sky: a faint
-galactic band, a few thousand stars, and a meteor now and then.
+from one formation to the next. Behind them is a fixed night sky: the Milky
+Way toward the galactic center, and a meteor now and then.
 
 **Home (`/`)**
 
@@ -24,7 +24,7 @@ studies end on a plain strip instead.
 **Case studies** open with results (not a hero): title, role, summary, and
 result cards, each with a small particle chart of its evidence. Each one ends
 with a "More" section linking to the other case studies, where the grain
-gathers into a slow, tilted spiral disk that echoes the logo.
+gathers into a slow, tilted spiral disk.
 
 - `/projects/orbit-explorer` — a digital twin of Earth orbit that flies out
   to every planet. Its feature chapters redraw the app itself in dots, inside a
@@ -73,9 +73,16 @@ marked under construction.
 **Not found (`app/not-found.tsx`)** — any other address: "Lost in space."
 over the same spiral disk that closes the case studies, with links back.
 
-The logo is a live particle black hole (`components/logo.tsx`). A fixed dock
-holds back-to-top, social links, and an opt-in music player that keeps playing
-across page navigations (`components/site-audio.tsx`, never autoplays).
+The logo is a planet of fine grain lit by one small amber star
+(`components/logo.tsx`). The star orbits it, so the lit side follows the star
+round: full when the star is in front, a thin crescent on the limb when it
+swings behind. Nothing outlines the planet; it is only the grain the light
+reaches. The star trails a wake of dust, and hovering speeds its orbit.
+`app/icon.svg` is a still of the same figure with fewer, heavier grains.
+
+A fixed dock holds back-to-top, social links, and an opt-in music player that
+keeps playing across page navigations (`components/site-audio.tsx`, never
+autoplays).
 
 ### Portrait
 
@@ -142,18 +149,34 @@ node scripts/orbit/worlds.mjs http://localhost:5173 public/orbit
 
 ## How it works
 
-- `components/space-backdrop.tsx` and `lib/sky.ts` — the far sky, mounted once
-  in the root layout so it stays put across page changes. `paintSky` draws it
-  to a canvas once per size and theme, never per frame: a nebula along a
-  diagonal galactic band (warped fractal noise computed on a coarse grid in
-  floating point, then interpolated up with dithering so the faint gradients
-  don't band), roughly two thousand stars in view on a laptop screen with a
-  few bright ones that glow, a falloff toward the corners, and the page's own
-  background color underneath. The sky is planned on a fixed
-  field from a fixed seed, so every visit sees the same stars and resizing
-  uncovers more of them instead of reshuffling. The component also fires a
-  meteor (one CSS-animated streak) every 16–42 seconds; not under
-  `prefers-reduced-motion`, and not on the light theme.
+- `components/space-backdrop.tsx` — the far sky, mounted once in the root
+  layout so it stays put across page changes. It is a picture of the real
+  Milky Way, looking toward the galactic center, rendered ahead of time from
+  NASA's [Deep Star Maps 2020](https://svs.gsfc.nasa.gov/4851) and served
+  from `public/sky/` as AVIF: a wide frame at five widths up to 8K
+  (7680×4320) and an upright one for portrait screens, picked by `srcset` so a
+  screen is sent no more pixels than it can show (about 250 KB at 1080p,
+  2.3 MB at 8K). The component also fires a meteor (one CSS-animated streak)
+  every 16–42 seconds; not under `prefers-reduced-motion`, and not on the
+  light theme.
+- `scripts/sky/milkyway.py` — renders those frames. It points a camera at the
+  galactic center, projects the all-sky map onto a flat frame
+  (stereographic, so stars stay round out to the corners), and grades it for
+  a page background in linear light: the band's glow is held under the
+  luminance at which the site's muted text still clears 4.5:1, its faint
+  outskirts are cooled toward the page's blue-black while the bulge stays
+  warm, and the stars are exposed separately at each size so they hold their
+  brightness from phone to 8K. To change the view or the grade, download
+  `starmap_2020_64k_gal.exr` (3.3 GB) from the link above, edit the constants
+  at the top of the script, and run:
+
+  ```bash
+  pip install numpy opencv-python-headless OpenEXR pillow
+  python scripts/sky/milkyway.py starmap_2020_64k_gal.exr public/sky
+  ```
+
+  `--preview out.png` renders one small frame instead, and works against the
+  40 MB `starmap_2020_4k_gal.exr` for quick tries.
 - `components/dot-stage.tsx` — mounts the canvas and starts the engine. Each
   page renders its own `<DotStage />`.
 - `lib/dots/engine.ts` — the particle engine: springs, click shockwaves,
@@ -231,7 +254,9 @@ accent, amber. Paper is that sky as a printed star chart: navy ink on cool
 paper, stars as dark specks, the accent darkened to rust so it keeps its
 contrast. The first visit follows the system preference; toggling uses a
 circular View Transition and persists the choice in `localStorage`. Colors are
-the tokens at the top of `app/globals.css`; the sky reads `--bg` from there.
+the tokens at the top of `app/globals.css`. The Milky Way frame is rendered
+onto the ink background; on paper CSS inverts it, drains its color, and
+multiplies it into the page.
 
 Type is [Jost](https://fonts.google.com/specimen/Jost), a geometric sans in
 the Futura line (the face on the Apollo 11 plaque), with JetBrains Mono for

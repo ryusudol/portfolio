@@ -2,60 +2,44 @@
 
 import { useEffect, useRef } from "react";
 
-import { parseColor } from "@/lib/dots/math";
-import { paintSky } from "@/lib/sky";
-
 /** Seconds between meteors: rare enough that each one is a small surprise. */
 const METEOR_MIN = 16;
 const METEOR_MAX = 42;
 
+/** Widths `scripts/sky/milkyway.py` renders each frame at. */
+const WIDE = [1920, 2880, 3840, 5120, 7680];
+const TALL = [810, 1080, 1620, 2160];
+
+const candidates = (name: string, widths: number[]) =>
+  widths.map((w) => `/sky/${name}-${w}.avif ${w}w`).join(", ");
+
 /**
- * The far sky behind every page: a nebula and fixed stars painted once to a
- * canvas (`lib/sky.ts`), with a meteor crossing now and then. It lives in the
- * root layout, so the same sky stays put while pages change in front of it.
+ * The far sky behind every page: the Milky Way toward the galactic center,
+ * rendered from NASA's Deep Star Maps (`scripts/sky/milkyway.py`), with a
+ * meteor crossing now and then. It lives in the root layout, so the same sky
+ * stays put while pages change in front of it.
+ *
+ * The frame covers the viewport, so what the browser needs is the larger of
+ * the viewport's width and its height times the frame's aspect; `sizes` says
+ * so, and a screen is sent no more pixels than it can show. Portrait screens
+ * get a frame composed upright instead of the middle slice of the wide one.
  */
 export function SpaceBackdrop() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const meteorRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const root = document.documentElement;
-    let width = 0;
-    let height = 0;
-    let ink = true;
-
-    const paint = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const dark = root.dataset.theme !== "paper";
-      // Mobile toolbars nudge the height while scrolling; the canvas is
-      // stretched by CSS in between, so only repaint real resizes.
-      if (w === width && Math.abs(h - height) < 140 && dark === ink) return;
-      width = w;
-      height = h;
-      ink = dark;
-      const ground = parseColor(
-        getComputedStyle(root).getPropertyValue("--bg"),
-        dark ? [5, 7, 13] : [233, 236, 242],
-      );
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      paintSky(canvas, w, h, dpr, dark, ground);
+    // Still on its way: hold it clear and let it fade in when it lands. An
+    // image that was already there (cached, or no script) just shows.
+    const image = imageRef.current;
+    const show = () => {
+      delete image?.dataset.loading;
     };
-    paint();
-
-    let pending = 0;
-    const onResize = () => {
-      window.clearTimeout(pending);
-      pending = window.setTimeout(paint, 120);
-    };
-    window.addEventListener("resize", onResize);
-    const themeWatch = new MutationObserver(paint);
-    themeWatch.observe(root, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
+    if (image && !image.complete) {
+      image.dataset.loading = "";
+      image.addEventListener("load", show);
+      image.addEventListener("error", show);
+    }
 
     const meteor = meteorRef.current;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
@@ -93,16 +77,36 @@ export function SpaceBackdrop() {
     schedule();
 
     return () => {
-      window.clearTimeout(pending);
       window.clearTimeout(timer);
-      window.removeEventListener("resize", onResize);
-      themeWatch.disconnect();
+      image?.removeEventListener("load", show);
+      image?.removeEventListener("error", show);
     };
   }, []);
 
   return (
     <div className="sky" aria-hidden="true">
-      <canvas ref={canvasRef} className="sky__stars" tabIndex={-1} />
+      <picture>
+        <source
+          media="(orientation: portrait)"
+          type="image/avif"
+          srcSet={candidates("milkyway-tall", TALL)}
+          sizes="max(100vw, 56.25vh)"
+        />
+        <source
+          type="image/avif"
+          srcSet={candidates("milkyway", WIDE)}
+          sizes="max(100vw, 177.78vh)"
+        />
+        {/* A plain img: the frames are already rendered at every size, and
+            the image optimizer would re-encode an 8K source on demand. */}
+        <img
+          ref={imageRef}
+          className="sky__image"
+          src="/sky/milkyway-1920.avif"
+          alt=""
+          decoding="async"
+        />
+      </picture>
       <span ref={meteorRef} className="sky__meteor" />
     </div>
   );

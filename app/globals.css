@@ -3,7 +3,8 @@
 /* Two skies. "ink" is the night side: a blue-black void, starlight for the
    dots, and one warm accent, the amber of a sunlit limb. "paper" is the same
    sky as a printed star chart: navy ink on cool paper, the accent gone to
-   rust so it still reads. The far sky itself is painted by lib/sky.ts. */
+   rust so it still reads. The far sky itself is a rendered frame of the
+   Milky Way (components/space-backdrop.tsx). */
 :root,
 [data-theme="ink"] {
   --bg: #05070d;
@@ -15,6 +16,7 @@
   --accent: #ffb054;
   --hot: #ff7a33;
   --veil: rgb(5 7 13 / 0.7);
+  --vignette: rgb(1 2 6 / 0.5);
   /* The world the home page ends on: its night side, the air along its
      limb, and the sun coming up behind it. */
   --planet: #03040a;
@@ -34,6 +36,7 @@
   --accent: #ad4a0b;
   --hot: #d4470a;
   --veil: rgb(233 236 242 / 0.8);
+  --vignette: rgb(196 204 220 / 0.4);
   --planet: #e1e5ed;
   --limb: rgb(12 18 34 / 0.42);
   --air: rgb(12 18 34 / 0);
@@ -148,22 +151,53 @@ a {
 
 /* --------------------------------------------------------------------- sky */
 
-/* The far sky, fixed behind everything. The canvas is painted to the
-   viewport's size; between repaints (a phone's toolbar sliding away) CSS
-   stretches it the last few pixels. */
+/* The far sky, fixed behind everything: a frame of the Milky Way that covers
+   the viewport (rendered by scripts/sky/milkyway.py onto the ink theme's own
+   background color, so it meets the page without an edge). The background is
+   what the frame fades in over, and what it is multiplied into on paper. */
 .sky {
   position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  background: var(--bg);
 }
 
-.sky__stars {
+.sky__image {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  transition: opacity 1.4s var(--ease);
+}
+
+/* On paper the same frame is printed as a negative, the way star atlases
+   are: inverted and drained of color, then multiplied into the page so its
+   white is the paper and only the stars and the band leave ink. It is printed
+   a little light, which keeps the band pale enough to set text over. */
+[data-theme="paper"] .sky__image {
+  filter: invert(1) grayscale(1) contrast(1.08);
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+}
+
+/* Set by the backdrop component while the frame is still loading. */
+.sky__image[data-loading] {
+  opacity: 0;
+}
+
+/* The corners of the view fall off, so the middle is where the light is. */
+.sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 120% 105% at 50% 46%,
+    transparent 52%,
+    var(--vignette)
+  );
 }
 
 /* A meteor: a thin streak, bright at its head, that crosses a patch of sky
@@ -565,15 +599,6 @@ main {
   font: var(--label);
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
-}
-
-/* A short amber tick leads the label, like a mark on an instrument scale. */
-.kicker::before {
-  content: "";
-  flex: none;
-  width: 18px;
-  height: 1px;
-  background: var(--accent);
 }
 
 .kicker--center {
@@ -2127,8 +2152,7 @@ code {
 .colophon__base {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 6px 28px;
   color: var(--muted);
   font: var(--label);
   letter-spacing: var(--label-tracking);

@@ -130,6 +130,12 @@ export default function Home() {
             </div>
             <p className="colophon__base">
               <span>© 2026 {profile.name}</span>
+              <span>
+                Sky:{" "}
+                <a href="https://svs.gsfc.nasa.gov/4851">
+                  NASA/Goddard SVS, Deep Star Maps
+                </a>
+              </span>
             </p>
           </footer>
         </section>

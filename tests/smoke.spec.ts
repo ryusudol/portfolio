@@ -133,22 +133,23 @@ test.describe("portfolio smoke", () => {
     ).toBeVisible();
   });
 
-  test("the sky is painted behind the page", async ({ page }) => {
+  test("the Milky Way loads behind the page", async ({ page }) => {
     await page.goto("/");
-    const painted = await page.locator(".sky__stars").evaluate((el) => {
-      const canvas = el as HTMLCanvasElement;
-      const data = canvas
-        .getContext("2d")
-        ?.getImageData(0, 0, canvas.width, canvas.height).data;
-      if (!data) return 0;
-      // Count distinct colors on a coarse sample: a blank canvas has one.
-      const seen = new Set<number>();
-      for (let k = 0; k < data.length; k += 4 * 97) {
-        seen.add((data[k] << 16) | (data[k + 1] << 8) | data[k + 2]);
-      }
-      return seen.size;
-    });
-    expect(painted).toBeGreaterThan(20);
+    const sky = page.locator(".sky__image");
+    // The wide frame, at whichever width `srcset` picked for this screen.
+    await expect
+      .poll(() =>
+        sky.evaluate((el) => {
+          const image = el as HTMLImageElement;
+          return image.complete && image.naturalWidth > 0
+            ? new URL(image.currentSrc).pathname
+            : "";
+        }),
+      )
+      .toMatch(/^\/sky\/milkyway-\d+\.avif$/);
+    // Once it has landed it is faded in, not left clear.
+    await expect(sky).not.toHaveAttribute("data-loading");
+    await expect(sky).not.toHaveCSS("opacity", "0");
   });
 
   test("an unknown address shows the way back", async ({ page }) => {

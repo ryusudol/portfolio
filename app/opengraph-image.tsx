@@ -61,15 +61,12 @@ export default function OpenGraphImage() {
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            gap: 16,
             color: "#8690a8",
             fontSize: 22,
             letterSpacing: 4,
             textTransform: "uppercase",
           }}
         >
-          <div style={{ width: 36, height: 2, background: "#ffb054" }} />
           {profile.role}
         </div>
         <div

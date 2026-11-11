@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 
-import {
-  CaseStudyHighlights,
-  CaseStudyMore,
-  CaseStudyResults,
-} from "@/components/case-study";
+import { CaseStudyMore, CaseStudyResults } from "@/components/case-study";
 import { ChapterNav } from "@/components/chapter-nav";
 import { DotStage } from "@/components/dot-stage";
 import {
@@ -54,12 +50,6 @@ export default function UnlearningCaseStudy() {
         <StateChapter />
         <RenderingChapter />
         <RedrawChapter />
-        <CaseStudyHighlights
-          study={unlearningComparator}
-          id="lessons"
-          kicker="What I learned"
-          title="Lessons I still use."
-        />
         <CaseStudyMore study={unlearningComparator} />
       </main>
     </>

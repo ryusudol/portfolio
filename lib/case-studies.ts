@@ -20,13 +20,6 @@ export type Result = {
     | "latency";
 };
 
-export type Highlight = {
-  title: string;
-  body: string;
-  /** The number that shows the lesson, linking to the chapter it came from. */
-  proof?: { value: string; label: string; href: string };
-};
-
 export type CaseStudy = {
   slug: string;
   href: string;
@@ -42,7 +35,6 @@ export type CaseStudy = {
   stack: string[];
   links: { label: string; href: string }[];
   results: Result[];
-  highlights: Highlight[];
 };
 
 export const abcFitness: CaseStudy = {
@@ -80,7 +72,6 @@ export const abcFitness: CaseStudy = {
       note: "Jest tests for permissions, role-based access, conditional rendering, and overlapping upload and update requests.",
     },
   ],
-  highlights: [],
 };
 
 export const unlearningComparator: CaseStudy = {
@@ -130,44 +121,6 @@ export const unlearningComparator: CaseStudy = {
       chart: "stars",
     },
   ],
-  highlights: [
-    {
-      title: "Summary numbers can hide a failure",
-      body: "Random Labeling matched retraining on every accuracy column. Only the views of images, predictions, and layers showed that it had renamed the airplanes without forgetting them.",
-      proof: {
-        value: "0.003",
-        label: "its privacy score, out of 1",
-        href: "#problem",
-      },
-    },
-    {
-      title: "Test an encoding on its readers",
-      body: "The bubble matrix read fine to me, but the researchers struggled with it. A glyph that small can’t carry two numbers, so each number got its own half of the cell.",
-      proof: {
-        value: "90% · 0.16",
-        label: "share and confidence, one cell",
-        href: "#matrix",
-      },
-    },
-    {
-      title: "A store is only as narrow as its selectors",
-      body: "Zustand lets a component subscribe to one slice of state, but only when it passes a selector. The model table’s selector kept it still through every poll, while the components that still take a whole store re-render as often as they did under Context.",
-      proof: {
-        value: "1 → 0",
-        label: "table re-renders per poll",
-        href: "#state",
-      },
-    },
-    {
-      title: "Draw once, then update",
-      body: "A React effect that redraws a D3 chart runs again on every state change, hovers included. Building the SVG once and changing attributes in place gives the same picture for a fraction of the work, and kept the per-element events that made SVG worth choosing.",
-      proof: {
-        value: "1,133 → 8",
-        label: "SVG nodes rebuilt per hover",
-        href: "#redraw",
-      },
-    },
-  ],
 };
 
 export const pytorchCka: CaseStudy = {
@@ -214,44 +167,6 @@ export const pytorchCka: CaseStudy = {
       label: "monthly downloads",
       note: "The May–August 2026 average on PyPI, across 11 releases tested on Python 3.10–3.14.",
       chart: "downloads",
-    },
-  ],
-  highlights: [
-    {
-      title: "Derive it before optimizing it",
-      body: "Every implementation I read computed tr(K @ L) because that is how the formula is written. Working the estimator out term by term is what showed me the product was optional.",
-      proof: {
-        value: "B³ → B²",
-        label: "multiply-adds per layer pair",
-        href: "#insight",
-      },
-    },
-    {
-      title: "Don’t make the GPU wait on Python",
-      body: "An .item() inside a hot loop stalls the GPU until Python catches up. Keeping every value a tensor until the final division removed 1,998 syncs per batch.",
-      proof: {
-        value: "1,998 → 0",
-        label: ".item() syncs per batch",
-        href: "#redesign",
-      },
-    },
-    {
-      title: "Memory has an owner",
-      body: "A forward hook keeps its object reachable, so del and gc can’t free what it points to. Scoping hooks to a with block and clearing features every batch cut retained memory from 4.26 GB to 0.18 GB.",
-      proof: {
-        value: "4.26 → 0.18 GB",
-        label: "retained after one pass",
-        href: "#memory",
-      },
-    },
-    {
-      title: "Measure against the real thing",
-      body: "My first version felt fast and was only 2.1× faster. Benchmarking against existing libraries on real models is what pointed at the loop, and later proved the rewrite.",
-      proof: {
-        value: "5.87 s → 0.86 s",
-        label: "same GPU, same layers",
-        href: "#benchmark",
-      },
     },
   ],
 };
@@ -311,44 +226,6 @@ export const orbitExplorer: CaseStudy = {
       chart: "latency",
     },
   ],
-  highlights: [
-    {
-      title: "Check against the reference, not yourself",
-      body: "SGP4 has a published verification set. Matching it to a tenth of a millimeter, error codes included, is what made every later number worth trusting. An independent Rust implementation then agreed to 0.7 µm.",
-      proof: {
-        value: "666 / 666",
-        label: "reference states matched",
-        href: "#validation",
-      },
-    },
-    {
-      title: "Exact to the model, not to the bit",
-      body: "Bit-for-bit agreement with satellite.js held only while I kept the reference code’s slow steps. Exact identities in their place made propagation a quarter faster and moved positions by a billionth of a TLE’s own error, so the model is what to match, not its rounding.",
-      proof: {
-        value: "2 nm",
-        label: "median difference from satellite.js",
-        href: "#validation",
-      },
-    },
-    {
-      title: "Keep the simulation out of React",
-      body: "The render loop is a plain class that owns the workers and the GPU. React reads a summary of it five times a second, so a busy panel can never cost the globe a frame.",
-      proof: {
-        value: "0.22 ms",
-        label: "to move all 32,583 objects a frame",
-        href: "#pipeline",
-      },
-    },
-    {
-      title: "Prove a bound, then test the case that broke it",
-      body: "A single speed bound once let a transfer orbit slip past a satellite between samples. Sizing each object’s search from its own top speed closed the gap, and a test now pins that pass.",
-      proof: {
-        value: "60,756",
-        label: "encounters at every step size",
-        href: "#bound",
-      },
-    },
-  ],
 };
 
 export const invoicePipeline: CaseStudy = {
@@ -399,7 +276,6 @@ export const invoicePipeline: CaseStudy = {
       note: "Recorded Grok outputs replay through Pydantic AI’s FunctionModel, so the whole batch, every guard, and a race between two concurrent payments all run with no API key and no network.",
     },
   ],
-  highlights: [],
 };
 
 export const caseStudies = [

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ArrowRight } from "reicon-react";
 
 import { type CaseStudy, caseStudies } from "@/lib/case-studies";
-import { pad, profile } from "@/lib/content";
+import { profile } from "@/lib/content";
 
 import { CountUp } from "./count-up";
 import { ExternalLink } from "./external-link";
@@ -91,64 +91,6 @@ export function CaseStudyResults({
             ),
           )}
         </ul>
-      </div>
-    </section>
-  );
-}
-
-/**
- * Numbered cards for the work behind the results. A card with a `proof` ends
- * on the number that shows it, linking back to the chapter it came from.
- */
-export function CaseStudyHighlights({
-  study,
-  id = "highlights",
-  kicker = "What I built",
-  title = "The work behind the numbers.",
-}: {
-  study: CaseStudy;
-  id?: string;
-  kicker?: string;
-  title?: string;
-}) {
-  return (
-    <section
-      id={id}
-      className="highlights"
-      data-scene="results"
-      aria-labelledby={`${id}-title`}
-    >
-      <div className="results__inner">
-        <p className="kicker">{kicker}</p>
-        <h2 id={`${id}-title`} className="chapter__title">
-          {title}
-        </h2>
-        <ol className="highlights__grid">
-          {study.highlights.map((item, i) => (
-            <li
-              key={item.title}
-              className="highlight"
-              data-dots="outline"
-              data-dots-spread="1"
-              data-dots-weight="0.8"
-            >
-              <span className="highlight__index">{pad(i + 1)}</span>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-              {item.proof && (
-                <a className="highlight__proof" href={item.proof.href}>
-                  <span className="highlight__proof-value">
-                    {item.proof.value}
-                  </span>
-                  <span className="highlight__proof-label">
-                    {item.proof.label}
-                  </span>
-                  <ArrowRight size={12} aria-hidden />
-                </a>
-              )}
-            </li>
-          ))}
-        </ol>
       </div>
     </section>
   );

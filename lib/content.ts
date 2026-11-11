@@ -73,7 +73,6 @@ export const ckaChapters: Chapter[] = [
   { id: "redesign", label: "Redesign" },
   { id: "memory", label: "Memory management" },
   { id: "benchmark", label: "Benchmark" },
-  { id: "lessons", label: "Lessons" },
   { id: "more", label: "More" },
 ];
 
@@ -95,7 +94,6 @@ export const orbitChapters: Chapter[] = [
   { id: "precision", label: "Precision" },
   { id: "sieve", label: "Spatial grid" },
   { id: "bound", label: "Sampling bound" },
-  { id: "lessons", label: "Lessons" },
   { id: "more", label: "More" },
 ];
 
@@ -112,7 +110,6 @@ export const mucChapters: Chapter[] = [
   { id: "state", label: "State management" },
   { id: "rendering", label: "SVG or canvas" },
   { id: "redraw", label: "Performance" },
-  { id: "lessons", label: "Lessons" },
   { id: "more", label: "More" },
 ];
 

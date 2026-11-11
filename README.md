@@ -43,10 +43,10 @@ with a "More" section linking to the other case studies.
   demo's real data: motivation, the model-screening blind spot, the four-stage
   workflow, the embedding, prediction-matrix, layer-wise-similarity, and attack
   views, then the engineering (Context → Zustand, SVG vs. canvas, the hover
-  redraw fix) and lessons.
+  redraw fix).
 - `/projects/pytorch-cka` — motivation, the linear-algebra groundwork, the
   O(B³) cube collapsing into an O(B²) plane, the batched one-pass redesign,
-  GPU memory cleanup, a benchmark race, and lessons.
+  GPU memory cleanup, and a benchmark race.
 - `/experience/abc-fitness` — **under construction** (the case study is being
   rewritten). It currently has an RxJS request tree with a live
   `merge/concat/switch/exhaustMap` picker, a code-to-card interface rewrite,

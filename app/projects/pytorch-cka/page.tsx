@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 
-import {
-  CaseStudyHighlights,
-  CaseStudyMore,
-  CaseStudyResults,
-} from "@/components/case-study";
+import { CaseStudyMore, CaseStudyResults } from "@/components/case-study";
 import { ChapterNav } from "@/components/chapter-nav";
 import {
   BenchmarkChapter,
@@ -46,12 +42,6 @@ export default function CkaCaseStudy() {
         <RedesignChapter />
         <MemoryChapter />
         <BenchmarkChapter />
-        <CaseStudyHighlights
-          study={pytorchCka}
-          id="lessons"
-          kicker="What I learned"
-          title="Lessons I still use."
-        />
         <CaseStudyMore study={pytorchCka} />
       </main>
     </>

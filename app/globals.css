@@ -1339,8 +1339,7 @@ code {
 
 /* ------------------------------------------------------------ case study */
 
-.results,
-.highlights {
+.results {
   position: relative;
   display: flex;
   align-items: center;
@@ -1492,43 +1491,6 @@ code {
   color: var(--muted);
   font-size: 14.5px;
   line-height: 1.5;
-}
-
-/* The number behind a lesson, and a jump back to where it happened. */
-.highlight__proof {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line-strong);
-  color: var(--fg);
-  text-decoration: none;
-  transition: color 0.2s var(--ease);
-}
-
-.highlight__proof:hover {
-  color: var(--accent);
-}
-
-.highlight__proof-value {
-  font-size: 22px;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-}
-
-.highlight__proof-label {
-  color: var(--muted);
-  font: var(--label);
-  letter-spacing: var(--label-tracking);
-  text-transform: uppercase;
-}
-
-.highlight__proof svg {
-  align-self: center;
-  margin-left: auto;
 }
 
 .highlights__grid {

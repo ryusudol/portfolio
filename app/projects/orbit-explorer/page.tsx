@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
 import { Barlow } from "next/font/google";
 
-import {
-  CaseStudyHighlights,
-  CaseStudyMore,
-  CaseStudyResults,
-} from "@/components/case-study";
+import { CaseStudyMore, CaseStudyResults } from "@/components/case-study";
 import { ChapterNav } from "@/components/chapter-nav";
 import { DotStage } from "@/components/dot-stage";
 import {
@@ -73,12 +69,6 @@ export default function OrbitCaseStudy() {
         <PrecisionChapter />
         <SieveChapter />
         <BoundChapter />
-        <CaseStudyHighlights
-          study={orbitExplorer}
-          id="lessons"
-          kicker="What I learned"
-          title="Lessons I’ll keep."
-        />
         <CaseStudyMore study={orbitExplorer} />
       </main>
     </>

@@ -42,7 +42,7 @@ function readColor(name: string, fallback: string) {
 
 /**
  * The mark: a particle black hole. Dots drift in on a wide, tilted disk, then
- * speed up, flatten further, and warm to vermilion as they spiral into a
+ * speed up, flatten further, and warm to amber as they spiral into a
  * dark core ringed by a lensed halo. The core hides whatever passes behind it.
  */
 export function Logo({ size = 60 }: { size?: number }) {
@@ -81,7 +81,7 @@ export function Logo({ size = 60 }: { size?: number }) {
     brand?.addEventListener("pointerenter", onEnter);
     brand?.addEventListener("pointerleave", onLeave);
 
-    let colors = { dot: "#ece8e1", accent: "#e2583a", bg: "#131312" };
+    let colors = { dot: "#dfe7ff", accent: "#ffb054", bg: "#05070d" };
     const readColors = () => {
       colors = {
         dot: readColor("--dot", colors.dot),

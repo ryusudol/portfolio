@@ -358,12 +358,12 @@ export class DotEngine {
     const read = (name: string, fallback: readonly [number, number, number]) =>
       parseColor(cs.getPropertyValue(name), fallback);
     return {
-      dot: read("--dot", [236, 232, 225]),
-      accent: read("--accent", [226, 88, 58]),
-      hot: read("--hot", [255, 72, 30]),
-      fg: read("--fg", [236, 232, 225]),
-      bg: read("--bg", [19, 19, 18]),
-      muted: read("--muted", [140, 136, 130]),
+      dot: read("--dot", [223, 231, 255]),
+      accent: read("--accent", [255, 176, 84]),
+      hot: read("--hot", [255, 122, 51]),
+      fg: read("--fg", [233, 237, 247]),
+      bg: read("--bg", [5, 7, 13]),
+      muted: read("--muted", [134, 144, 168]),
       mono: cs.getPropertyValue("--font-mono").trim() || "monospace",
       ink: document.documentElement.dataset.theme !== "paper",
     };

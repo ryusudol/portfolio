@@ -120,6 +120,53 @@ function roundedRectPoint(
   return arcAt(x + r, y + r, Math.PI);
 }
 
+/** How much denser an outline's dots lie near its corners than along its sides. */
+const CORNER_DENSITY = 3.4;
+const bracket: [number, number] = [0, 0];
+
+/**
+ * Outlines are drawn the way a viewfinder frames its subject: bright
+ * brackets at the corners, joined by a faint dotted run. This maps an even
+ * u ∈ [0, 1) to a place on the perimeter so the corners get most of the dots,
+ * keeping the order (so an outline is still drawn round in one stroke), and
+ * reports how far into a bracket the place is (1 at a corner, 0 mid-side).
+ */
+function bracketed(w: number, h: number, radius: number, u: number) {
+  const r = Math.max(0, Math.min(radius, w / 2, h / 2));
+  const arc = (Math.PI * r) / 2;
+  // Each side runs from the middle of one corner to the middle of the next.
+  const sideW = w - 2 * r + arc;
+  const sideH = h - 2 * r + arc;
+  const reach = arc / 2 + Math.max(9, Math.min(26, Math.min(w, h) * 0.16));
+  const capW = Math.min(reach, sideW * 0.3);
+  const capH = Math.min(reach, sideH * 0.3);
+  const massW = sideW + 2 * capW * (CORNER_DENSITY - 1);
+  const massH = sideH + 2 * capH * (CORNER_DENSITY - 1);
+  let m = u * 2 * (massW + massH);
+  let before = 0;
+  let side = sideW;
+  let cap = capW;
+  for (let k = 0; k < 4; k++) {
+    side = k % 2 === 0 ? sideW : sideH;
+    cap = k % 2 === 0 ? capW : capH;
+    const mass = k % 2 === 0 ? massW : massH;
+    if (m < mass || k === 3) break;
+    m -= mass;
+    before += side;
+  }
+  const dense = cap * CORNER_DENSITY;
+  let at: number;
+  if (m < dense) at = m / CORNER_DENSITY;
+  else if (m < dense + side - 2 * cap) at = cap + (m - dense);
+  else at = side - cap + (m - dense - (side - 2 * cap)) / CORNER_DENSITY;
+  const edge = Math.min(at, side - at);
+  // `roundedRectPoint` starts where the top side leaves its left corner.
+  const total = 2 * (sideW + sideH);
+  bracket[0] = ((((before + at - arc / 2) / total) % 1) + 1) % 1;
+  bracket[1] = edge < cap ? 1 : Math.max(0, 1 - (edge - cap) / 10);
+  return bracket;
+}
+
 function inkLength(kind: ShapeKind, w: number, h: number, radius: number) {
   const R = Math.min(w, h) / 2;
   switch (kind) {
@@ -236,20 +283,24 @@ export class DomShapes {
     const g = gauss(f.r1[i], f.r2[i]);
     let x = 0;
     let y = 0;
+    /** Brightness of this dot within its shape: an outline's sides sit back. */
+    let level = 1;
     switch (s.kind) {
       case "outline": {
+        const [at, corner] = bracketed(r.width, r.height, s.radius, u);
         const p = roundedRectPoint(
           r.left,
           r.top,
           r.width,
           r.height,
           s.radius,
-          u,
+          at,
         );
-        const wobble = Math.sin(u * TAU * 3 + s.weight) * s.spread * 0.5;
-        const off = g * s.spread + wobble;
+        // The brackets are ruled tight; the sides between them stay loose.
+        const off = g * s.spread * (1 - 0.45 * corner);
         x = p[0] + p[2] * off;
         y = p[1] + p[3] * off;
+        level = 0.5 + 0.5 * corner + s.lit * 0.4 * (1 - corner);
         break;
       }
       case "ring": {
@@ -280,7 +331,10 @@ export class DomShapes {
     }
     f.gx[i] = x;
     f.gy[i] = y;
-    f.ga[i] = Math.min(1, alpha * (0.55 + f.r3[i] * 0.45) * (1 + s.lit * 0.3));
+    f.ga[i] = Math.min(
+      1,
+      alpha * level * (0.55 + f.r3[i] * 0.45) * (1 + s.lit * 0.3),
+    );
     f.gh[i] = s.tint;
     return true;
   }
@@ -310,7 +364,9 @@ export function sampleText(el: HTMLElement): TextSample {
   if (!ctx) return { pts: new Float32Array(0), count: 0, width, height };
 
   const cs = getComputedStyle(el);
-  const text = (el.textContent ?? "").trim();
+  let text = (el.textContent ?? "").trim();
+  if (cs.textTransform === "uppercase") text = text.toUpperCase();
+  else if (cs.textTransform === "lowercase") text = text.toLowerCase();
   ctx.clearRect(0, 0, width, height);
   ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
   if ("letterSpacing" in ctx && cs.letterSpacing !== "normal") {
@@ -323,8 +379,9 @@ export function sampleText(el: HTMLElement): TextSample {
   const m = ctx.measureText(text);
   const ascent = m.actualBoundingBoxAscent;
   const descent = m.actualBoundingBoxDescent;
-  const inkW = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
-  const x = (width - inkW) / 2 + m.actualBoundingBoxLeft;
+  // Horizontally the text starts where the browser starts it, at the padding
+  // edge, so the dots line up with whatever is set under the element.
+  const x = Number.parseFloat(cs.paddingLeft) || 0;
   const y = (height + ascent - descent) / 2;
   ctx.fillText(text, x, y);
 

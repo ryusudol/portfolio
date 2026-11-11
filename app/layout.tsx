@@ -1,20 +1,20 @@
 import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Newsreader } from "next/font/google";
+import { JetBrains_Mono, Jost } from "next/font/google";
 
 import { BackToTop } from "@/components/back-to-top";
 import { SiteAudio } from "@/components/site-audio";
 import { SocialLinks } from "@/components/social-links";
+import { SpaceBackdrop } from "@/components/space-backdrop";
 import { ThemeGuard } from "@/components/theme-guard";
 import { profile } from "@/lib/content";
 import { themeInitScript } from "@/lib/theme-script";
 
-const serif = Newsreader({
+/** A geometric sans in the Futura line, the face on the Apollo 11 plaque. */
+const sans = Jost({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
-  variable: "--font-serif",
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -59,8 +59,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   colorScheme: "dark light",
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#131312" },
-    { media: "(prefers-color-scheme: light)", color: "#ede8df" },
+    { media: "(prefers-color-scheme: dark)", color: "#05070d" },
+    { media: "(prefers-color-scheme: light)", color: "#e9ecf2" },
   ],
 };
 
@@ -68,7 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${serif.variable} ${mono.variable}`}
+      className={`${sans.variable} ${mono.variable}`}
       // Smooth scrolling for in-page links only; page changes jump to the top.
       data-scroll-behavior="smooth"
       suppressHydrationWarning
@@ -81,6 +81,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body>
         <ThemeGuard />
+        <SpaceBackdrop />
         {children}
         <div className="site-dock">
           <BackToTop />

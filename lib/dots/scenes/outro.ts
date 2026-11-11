@@ -27,7 +27,7 @@ export class OutroScene implements Scene {
   private words = { left: 0, right: 0, top: 0, bottom: 0 };
 
   layout(f: Field, fr: Frame) {
-    this.title = fr.section.querySelector<HTMLElement>("h2");
+    this.title = fr.section.querySelector<HTMLElement>("h1, h2");
     this.links = fr.section.querySelector<HTMLElement>(".outro__links");
     this.inner = Math.min(110, Math.max(50, fr.vw * 0.065));
     this.outer = Math.max(this.inner * 5, fr.vw * (fr.compact ? 1 : 0.58));

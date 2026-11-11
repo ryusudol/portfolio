@@ -28,6 +28,19 @@ export default function Home() {
         >
           <div className="hero__sticky">
             <div className="hero__copy">
+              <p className="kicker hero__meta">
+                <span>
+                  {profile.role}
+                  <span className="kicker__source">
+                    {" "}
+                    · {profile.location}
+                    <span className="hide-compact">
+                      {" "}
+                      · {profile.coordinates}
+                    </span>
+                  </span>
+                </span>
+              </p>
               <h1 className="hero__name" data-dots-text>
                 {profile.name}
               </h1>
@@ -43,6 +56,9 @@ export default function Home() {
               aria-label={`Portrait of ${profile.name}, drawn in dots`}
               data-dots-portrait="/portrait/dots.bin"
             />
+            <p className="hero__cue" aria-hidden="true">
+              Scroll
+            </p>
           </div>
         </section>
 

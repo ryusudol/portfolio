@@ -133,6 +133,34 @@ test.describe("portfolio smoke", () => {
     ).toBeVisible();
   });
 
+  test("the sky is painted behind the page", async ({ page }) => {
+    await page.goto("/");
+    const painted = await page.locator(".sky__stars").evaluate((el) => {
+      const canvas = el as HTMLCanvasElement;
+      const data = canvas
+        .getContext("2d")
+        ?.getImageData(0, 0, canvas.width, canvas.height).data;
+      if (!data) return 0;
+      // Count distinct colors on a coarse sample: a blank canvas has one.
+      const seen = new Set<number>();
+      for (let k = 0; k < data.length; k += 4 * 97) {
+        seen.add((data[k] << 16) | (data[k + 1] << 8) | data[k + 2]);
+      }
+      return seen.size;
+    });
+    expect(painted).toBeGreaterThan(20);
+  });
+
+  test("an unknown address shows the way back", async ({ page }) => {
+    const response = await page.goto("/no-such-page");
+    expect(response?.status()).toBe(404);
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Lost in space." }),
+    ).toBeVisible();
+    await page.getByRole("link", { name: "Back to home" }).click();
+    await expect(page).toHaveURL(/\/$/);
+  });
+
   test("featured projects open results-first case studies", async ({
     page,
   }) => {
@@ -207,6 +235,7 @@ test.describe("portfolio smoke", () => {
     "/projects/unlearning-comparator",
     "/projects/pytorch-cka",
     "/playground",
+    "/no-such-page",
   ]) {
     test(`has no serious accessibility violations on ${path}`, async ({
       page,

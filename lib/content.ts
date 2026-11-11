@@ -4,6 +4,7 @@ export const profile = {
   tagline:
     "I build interactive interfaces that make complex data and ML models clear. And beautiful.",
   location: "Houston, TX",
+  coordinates: "29.76° N, 95.37° W",
   email: "suhyeon.yu.2789@gmail.com",
   github: "https://github.com/ryusudol",
   linkedin: "https://www.linkedin.com/in/suhyeon-yu",

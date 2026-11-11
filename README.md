@@ -1,20 +1,25 @@
 # Suhyeon Yu — Portfolio
 
-A scroll-told portfolio drawn entirely in dots. One full-viewport canvas holds
-5–11k particles (scaled to the viewport); each chapter of the page tells them
-where to be, so scrolling hands the same dots from one formation to the next.
+A scroll-told portfolio drawn entirely in dots, set in space. One
+full-viewport canvas holds 5–11k particles (scaled to the viewport); each
+chapter of the page tells them where to be, so scrolling hands the same dots
+from one formation to the next. Behind them is a fixed night sky: a faint
+galactic band, a few thousand stars, and a meteor now and then.
 
 **Home (`/`)**
 
 | #   | Chapter               | What the dots do                                                                       |
 | --- | --------------------- | -------------------------------------------------------------------------------------- |
-| 00  | Intro                 | A band of light writes the name, then develops a stippled portrait; scrolling raises a wind that carries both off as grain. |
+| 00  | Intro                 | A band of light writes the name in spaced capitals, then develops a stippled portrait inside four viewfinder marks; scrolling raises a wind that carries both off as grain. |
 | 01  | Orbit Explorer        | The tracked catalog orbits a dot-matrix Earth; scrolling pulls back to the GEO ring. |
 | 02  | Unlearning Comparator | A 10-class UMAP-like embedding; scrolling unlearns one class: its points lose their color, cross to other clusters, and take theirs. |
 | 03  | PyTorch-CKA           | A layer-by-layer CKA heatmap of two ResNet-18s fills in, pair by pair, with the two layers being compared lit on the axes. |
 | 04  | Contact               | Outline a message form that emails me directly; a sent message folds into a paper plane and flies off. |
 
-The footer under Contact lists education, links, and skills.
+The footer under Contact lists education, links, and skills. It is drawn as
+the night side of a planet: the sky ends at a thin lit limb with the sun about
+to rise at its middle (`.colophon` in `app/globals.css`, CSS only). Case
+studies end on a plain strip instead.
 
 **Case studies** open with results (not a hero): title, role, summary, and
 result cards, each with a small particle chart of its evidence. Each one ends
@@ -64,6 +69,9 @@ case studies, plus other projects that link out (`alsoBuilt` in
 **Playground (`/playground`)** — side interests outside the main work
 (`playground` in `lib/content.ts`), revealed by a parting curtain of dots. Also
 marked under construction.
+
+**Not found (`app/not-found.tsx`)** — any other address: "Lost in space."
+over the same spiral disk that closes the case studies, with links back.
 
 The logo is a live particle black hole (`components/logo.tsx`). A fixed dock
 holds back-to-top, social links, and an opt-in music player that keeps playing
@@ -134,6 +142,18 @@ node scripts/orbit/worlds.mjs http://localhost:5173 public/orbit
 
 ## How it works
 
+- `components/space-backdrop.tsx` and `lib/sky.ts` — the far sky, mounted once
+  in the root layout so it stays put across page changes. `paintSky` draws it
+  to a canvas once per size and theme, never per frame: a nebula along a
+  diagonal galactic band (warped fractal noise computed on a coarse grid in
+  floating point, then interpolated up with dithering so the faint gradients
+  don't band), roughly two thousand stars in view on a laptop screen with a
+  few bright ones that glow, a falloff toward the corners, and the page's own
+  background color underneath. The sky is planned on a fixed
+  field from a fixed seed, so every visit sees the same stars and resizing
+  uncovers more of them instead of reshuffling. The component also fires a
+  meteor (one CSS-animated streak) every 16–42 seconds; not under
+  `prefers-reduced-motion`, and not on the light theme.
 - `components/dot-stage.tsx` — mounts the canvas and starts the engine. Each
   page renders its own `<DotStage />`.
 - `lib/dots/engine.ts` — the particle engine: springs, click shockwaves,
@@ -169,7 +189,10 @@ node scripts/orbit/worlds.mjs http://localhost:5173 public/orbit
   depth: near motes are larger and slide past faster as the page scrolls.
 - `lib/dots/shapes.ts` — lets markup place dots. Elements tagged
   `data-dots="outline|rule|disc|ring|bar|fill"` are traced every frame, so the
-  dots follow real, keyboard-accessible controls. An outline that sits
+  dots follow real, keyboard-accessible controls. An outline is drawn like a
+  viewfinder: bright brackets at the corners joined by a faint dotted run
+  (`bracketed` gives the corners most of the dots while keeping their order,
+  so the outline is still drawn round in one stroke). An outline that sits
   inside a link, button, or form, or holds exactly one (a card whose title
   link covers it), warms to the accent on hover and focus.
 - `lib/dots/marks.ts` — a scene's particles as a list of boxes, lines, curves,
@@ -202,9 +225,18 @@ CONTACT_FROM="Portfolio <you@domain>" # optional; defaults to onboarding@resend.
 CONTACT_TO=you@example.com            # optional; defaults to the email in lib/content.ts
 ```
 
-Themes are **ink** (dark) and **paper** (light). The first visit follows the
-system preference; toggling uses a circular View Transition and persists the
-choice in `localStorage`.
+Themes are **ink** (dark) and **paper** (light), and both are the same sky.
+Ink is the night side: a blue-black void, starlight for the dots, and one warm
+accent, amber. Paper is that sky as a printed star chart: navy ink on cool
+paper, stars as dark specks, the accent darkened to rust so it keeps its
+contrast. The first visit follows the system preference; toggling uses a
+circular View Transition and persists the choice in `localStorage`. Colors are
+the tokens at the top of `app/globals.css`; the sky reads `--bg` from there.
+
+Type is [Jost](https://fonts.google.com/specimen/Jost), a geometric sans in
+the Futura line (the face on the Apollo 11 plaque), with JetBrains Mono for
+labels, actions, and code. Panels are cut nearly square (`--radius`); only
+round controls stay round.
 
 ## Development
 

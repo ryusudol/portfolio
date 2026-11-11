@@ -7,7 +7,7 @@ export const alt = `${profile.name} — ${profile.role}. ${profile.tagline}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/** A static echo of the site's particle field: a dust nebula with a red core. */
+/** A static echo of the site's particle field: a star cloud with an amber core. */
 function field() {
   const rand = mulberry32(42);
   const dots: string[] = [];
@@ -17,7 +17,7 @@ function field() {
     const x = 880 + Math.cos(a) * r * 1.5;
     const y = 315 + Math.sin(a) * r * 0.62;
     const near = Math.max(0, 1 - r / 150);
-    const color = rand() < near * 0.6 ? "#e2583a" : "#ece8e1";
+    const color = rand() < near * 0.6 ? "#ffb054" : "#dfe7ff";
     const o = (0.18 + rand() * 0.55).toFixed(2);
     dots.push(
       `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="1.8" height="1.8" fill="${color}" opacity="${o}"/>`,
@@ -37,8 +37,8 @@ export default function OpenGraphImage() {
         display: "flex",
         width: "100%",
         height: "100%",
-        background: "#131312",
-        color: "#ece8e1",
+        background: "#05070d",
+        color: "#e9edf7",
       }}
     >
       {/* biome-ignore lint/performance/noImgElement: ImageResponse renders plain img */}
@@ -63,19 +63,27 @@ export default function OpenGraphImage() {
             display: "flex",
             alignItems: "center",
             gap: 16,
-            color: "#8f8b84",
+            color: "#8690a8",
             fontSize: 22,
             letterSpacing: 4,
             textTransform: "uppercase",
           }}
         >
-          <div style={{ width: 36, height: 2, background: "#e2583a" }} />
+          <div style={{ width: 36, height: 2, background: "#ffb054" }} />
           {profile.role}
         </div>
-        <div style={{ fontSize: 104, lineHeight: 1.05, marginTop: 28 }}>
+        <div
+          style={{
+            fontSize: 78,
+            lineHeight: 1.05,
+            marginTop: 30,
+            letterSpacing: 13,
+            textTransform: "uppercase",
+          }}
+        >
           {profile.name}
         </div>
-        <div style={{ fontSize: 30, color: "#b9b4ab", marginTop: 26 }}>
+        <div style={{ fontSize: 30, color: "#b6bfd4", marginTop: 26 }}>
           {profile.tagline}
         </div>
       </div>

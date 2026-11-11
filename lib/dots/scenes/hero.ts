@@ -151,7 +151,11 @@ export class HeroScene implements Scene {
         );
         x = text.left + sample.pts[j * 2] + f.r1[i] - 0.5;
         y = text.top + sample.pts[j * 2 + 1] + f.r2[i] - 0.5;
-        alpha = 0.5 + f.r3[i] * 0.5;
+        alpha = 0.55 + f.r3[i] * 0.45;
+        // The name is set in thin capitals: small even dots that hold still,
+        // or the strokes fray.
+        f.gz[i] = fr.compact ? 1 : 1.1;
+        calm = 0.3;
       } else if (i >= textN && i < textN + faceN && portrait) {
         const k = i - textN;
         const j = Math.min(
